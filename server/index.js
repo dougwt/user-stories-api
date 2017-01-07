@@ -3,17 +3,17 @@ import http from 'http'
 import bodyParser from 'body-parser'
 import morgan from 'morgan'
 import mongoose from 'mongoose'
-import router from './router'
+import routes from './routes'
 
 let app = express()
 
 // DB setup
-// mongoose.connect('mongodb://localhost:test')
+mongoose.connect('mongodb://localhost:auth/auth')
 
 // App setup
-app.use(morgan('combined'))
+// app.use(morgan('combined'))
 app.use(bodyParser.json({ type: '*/*' }))
-router(app)
+app.use('/', routes);
 
 // Server setup
 export const port = process.env.API_PORT || 3090
