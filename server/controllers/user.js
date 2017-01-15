@@ -20,6 +20,6 @@ module.exports = {
 
   delete(req, res, next) {
 
-  };
+  }
 
 };

@@ -10,8 +10,8 @@ before(done => {
 });
 
 beforeEach(done => {
-  const { user } = mongoose.connection.collections;
-  user.drop()
+  const { users } = mongoose.connection.collections;
+  users.drop()
     .then(() => done())
     .catch(() => done());
 })
