@@ -1,7 +1,7 @@
 const users = require('express').Router()
 import UsersController from '../../controllers/users';
 
-// users.get('/', UsersController.findAll)
+users.get('/', UsersController.findAll)
 users.post('/', UsersController.create)
 // users.delete('/', UsersController.delete)
 
