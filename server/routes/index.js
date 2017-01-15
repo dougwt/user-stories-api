@@ -1,6 +1,5 @@
 const routes = require('express').Router()
 const users = require('./users')
-const data = require('../data.json')
 
 // Param middleware to automatically return 404 for invalid user ID
 users.param('userId', (req, res, next, value) => {
