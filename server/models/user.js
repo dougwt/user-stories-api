@@ -1,5 +1,6 @@
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
+import mongoose from 'mongoose';
+
+const Schema = mongoose.Schema;
 
 // Define our model
 const userSchema = new Schema({
@@ -7,10 +8,10 @@ const userSchema = new Schema({
   password: String,
   name: String,
   creation_date: { type: Date, default: Date.now }
-})
+});
 
 // Create the model class
-const ModelClass = mongoose.model('user', userSchema)
+const ModelClass = mongoose.model('user', userSchema);
 
 // Export the model
-module.exports = ModelClass
+module.exports = ModelClass;
