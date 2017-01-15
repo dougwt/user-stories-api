@@ -21,7 +21,6 @@
     "chai-http": "^3.0.0",
     "foreman": "^2.0.0",
     "mocha": "*",
-    "node-mongoose-fixtures": "^0.2.4",
     "nodemon": "^1.11.0"
   },
   "dependencies": {
