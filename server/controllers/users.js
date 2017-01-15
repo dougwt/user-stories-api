@@ -11,7 +11,11 @@ module.exports = {
   },
 
   create(req, res, next) {
+    const userProps = req.body;
 
+    User.create(userProps)
+      .then((user) => res.send(user))
+      .catch(next);
   },
 
   update(req, res, next) {

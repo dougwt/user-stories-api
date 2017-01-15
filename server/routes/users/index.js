@@ -1,11 +1,11 @@
 const users = require('express').Router()
-import UserController from '../../controllers/user';
+import UsersController from '../../controllers/users';
 
-users.get('/', UserController.findAll)
-// users.post('/', UserController.create)
-// users.delete('/', UserController.delete)
+// users.get('/', UsersController.findAll)
+users.post('/', UsersController.create)
+// users.delete('/', UsersController.delete)
 
-// users.get('/:userId', UserController.findById)
-// users.put('/:userId', UserController.update)
+// users.get('/:userId', UsersController.findById)
+// users.put('/:userId', UsersController.update)
 
 module.exports = users
