@@ -1,4 +1,4 @@
-import { app } from './app'
+import app from './app'
 
 // Server setup
 export const port = process.env.API_PORT || 8080;

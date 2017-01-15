@@ -5,7 +5,7 @@ import bodyParser from 'body-parser'
 import mongoose from 'mongoose'
 import routes from './routes'
 
-export const app = express();
+const app = express();
 
 // DB setup
 mongoose.Promise = global.Promise;
@@ -22,4 +22,5 @@ app.use((err, req, res, next) => {
   res.status(422).send({ error: err.message });
 })
 
-// export const server = http.createServer(app)
+// module.exports = http.createServer(app)
+module.exports = app;
