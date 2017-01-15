@@ -1,5 +1,5 @@
 const routes = require('express').Router()
-// const users = require('./users')
+const users = require('./users')
 
 // // Param middleware to automatically return 404 for invalid user ID
 // users.param('userId', (req, res, next, value) => {
@@ -15,7 +15,7 @@ const routes = require('express').Router()
 //   }
 // })
 
-// routes.use('/users', users)
+routes.use('/users', users)
 
 routes.get('/', (req, res, next) => {
   res.status(200).json({ message: 'Connected!' })
