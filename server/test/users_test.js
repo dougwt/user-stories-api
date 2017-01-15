@@ -7,17 +7,12 @@ let User = require('../models/user');
 chai.use(chaiHttp)
 
 describe('Users API', function() {
-  beforeEach((done) => {
-    User.remove({}, (err) => {
-       done();
-    });
-  })
 
   //////////////////////////////////////////////////////////
   //  /users
   //////////////////////////////////////////////////////////
 
-  describe('GET /users', function() {
+  describe('GET /users', function(done) {
     it('should list ALL users on /users GET', function(done) {
       chai.request(server)
         .get('/users')
@@ -42,16 +37,16 @@ describe('Users API', function() {
     })
   })
 
-  describe('POST /users', function() {
+  describe('POST /users', function(done) {
 
   })
 
   //////////////////////////////////////////////////////////
-  //  /users/<id>
+  //  /users/:id
   //////////////////////////////////////////////////////////
 
-  describe('GET /users/<id>', function() {
-    it('should list a SINGLE user on /users/<id> GET', function(done) {
+  describe('GET /users/:id', function(done) {
+    it('should list a SINGLE user on /users/:id GET', function(done) {
       chai.request(server)
         .get('/users/2')
         .end(function(err, res){
@@ -69,7 +64,7 @@ describe('Users API', function() {
           done()
         })
     })
-    it('should return 404 status on invalid /users/<id> GET', function(done) {
+    it('should return 404 status on invalid /users/:id GET', function(done) {
       chai.request(server)
         .get('/users/100')
         .end(function(err, res){
@@ -80,11 +75,11 @@ describe('Users API', function() {
     })
   })
 
-  describe('PUT /users/<id>', function() {
+  describe('PUT /users/:id', function(done) {
 
   })
 
-  describe('DELETE /users/<id>', function() {
+  describe('DELETE /users/:id', function(done) {
 
   })
 
@@ -92,24 +87,24 @@ describe('Users API', function() {
   //  /projects
   //////////////////////////////////////////////////////////
 
-  describe('GET /projects', function() {
+  describe('GET /projects', function(done) {
 
   })
 
-  describe('POST /projects', function() {
+  describe('POST /projects', function(done) {
 
   })
 
   //////////////////////////////////////////////////////////
-  //  /projects/<id>
+  //  /projects/:id
   //////////////////////////////////////////////////////////
 
-  describe('GET /projects/<id>', function() {
+  describe('GET /projects/:id', function(done) {
 
   })
 
-  describe('PUT /projects/<id>', function() {
-    // it('should update a SINGLE user on /users/<id> PUT', function(done) {
+  describe('PUT /projects/:id', function(done) {
+    // it('should update a SINGLE user on /users/:id PUT', function(done) {
     //   chai.request(server)
     //     .post('/users')
     //     .end(function(err, res){
@@ -119,7 +114,7 @@ describe('Users API', function() {
     //       done()
     //     })
     // })
-    // it('should return error status on invalid /users/<id> PUT', function(done) {
+    // it('should return error status on invalid /users/:id PUT', function(done) {
     //   chai.request(server)
     //     .post('/users')
     //     .end(function(err, res){
@@ -130,8 +125,8 @@ describe('Users API', function() {
     // })
   })
 
-  describe('DELETE /projects/<id>', function() {
-    //   it('should delete a SINGLE user on /users/<id> DELETE', function(done) {
+  describe('DELETE /projects/:id', function(done) {
+    //   it('should delete a SINGLE user on /users/:id DELETE', function(done) {
     //     chai.request(server)
     //       .post('/users')
     //       .end(function(err, res){
@@ -140,7 +135,7 @@ describe('Users API', function() {
     //         done()
     //       })
     //   })
-    //   it('should return error status on invalid /users/<id> DELETE', function(done) {
+    //   it('should return error status on invalid /users/:id DELETE', function(done) {
     //     chai.request(server)
     //       .post('/users')
     //       .end(function(err, res){
@@ -152,50 +147,50 @@ describe('Users API', function() {
   })
 
   //////////////////////////////////////////////////////////
-  //  /projects/<id>/roles
+  //  /projects/:id/roles
   //////////////////////////////////////////////////////////
 
-  describe('GET /projects/<id>/roles', function() {
+  describe('GET /projects/:id/roles', function(done) {
 
   })
 
-  describe('POST /projects/<id>/roles', function() {
-
-  })
-
-  //////////////////////////////////////////////////////////
-  //  /projects/<id>/roles/<id>
-  //////////////////////////////////////////////////////////
-
-  describe('PUT /projects/<id>/roles/<id>', function() {
-
-  })
-
-  describe('DELETE /projects/<id>/roles/<id>', function() {
+  describe('POST /projects/:id/roles', function(done) {
 
   })
 
   //////////////////////////////////////////////////////////
-  //  /projets/<id>/stories
+  //  /projects/:id/roles/:id
   //////////////////////////////////////////////////////////
 
-  describe('GET /projects/<id>/stories', function() {
+  describe('PUT /projects/:id/roles/:id', function(done) {
 
   })
 
-  describe('POST /projects/<id>/stories', function() {
+  describe('DELETE /projects/:id/roles/:id', function(done) {
 
   })
 
   //////////////////////////////////////////////////////////
-  //  /projects/<id>/stories/<id>
+  //  /projets/:id/stories
   //////////////////////////////////////////////////////////
 
-  describe('PUT /projects/<id>/stories/<id>', function() {
+  describe('GET /projects/:id/stories', function(done) {
 
   })
 
-  describe('DELETE /projects/<id>/stories/<id>', function() {
+  describe('POST /projects/:id/stories', function(done) {
+
+  })
+
+  //////////////////////////////////////////////////////////
+  //  /projects/:id/stories/:id
+  //////////////////////////////////////////////////////////
+
+  describe('PUT /projects/:id/stories/:id', function(done) {
+
+  })
+
+  describe('DELETE /projects/:id/stories/:id', function(done) {
 
   })
 
