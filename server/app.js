@@ -29,10 +29,12 @@ app.get('*', (req, res, next) => {
 });
 app.use((err, req, res, next) => {
   if (res.headersSent) {
+    console.log(err)
     return next(err);
   }
-  else if(err.status === 404) {
+  if(err.status === 404) {
     res.status(404).send(Response.error('The requested resource does not exist.'));
+    next()
   }
   res.status(500).send(Response.error(err.message));
 });

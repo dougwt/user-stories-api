@@ -8,7 +8,10 @@ describe('Express app', () => {
     chai.request(app)
       .get('/')
       .end((err, res) => {
-        res.body.message.should.equal('Connected!');
+        res.should.have.status(200)
+        res.should.be.json
+        res.body.status.should.equal('success')
+        res.body.data.should.equal('Connected!');
         done();
       });
   });
