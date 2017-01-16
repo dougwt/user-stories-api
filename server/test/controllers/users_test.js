@@ -60,6 +60,9 @@ describe('Users API', () => {
           .send({ email: 'test@test.com', name: 'Test' })
           .end((err, res) => {
             User.count().then(newCount => {
+              res.should.have.status(201);
+              res.headers.should.have.property('location');
+              res.headers.location.startsWith('https://api.mycodebytes.com/v1/users/');
               res.body.status.should.equal('success');
               newCount.should.equal(count + 1);
               done();
@@ -75,7 +78,7 @@ describe('Users API', () => {
           res.should.have.status(400);
           res.should.be.json;
           res.body.status.should.equal('error');
-          res.body.message.should.be.equal('Email field is required.');
+          res.body.message.should.be.equal('Email is required.');
           done();
         });
     });
@@ -87,7 +90,7 @@ describe('Users API', () => {
           res.should.have.status(400);
           res.should.be.json;
           res.body.status.should.equal('error');
-          res.body.message.should.be.equal('Email field is invalid.');
+          res.body.message.should.be.equal('Email is invalid.');
           done();
         });
     });
@@ -101,10 +104,10 @@ describe('Users API', () => {
           .post('/users')
           .send({ email: 'test@test.com', name: 'Test 2' })
           .end((err, res) => {
-            res.should.have.status(400);
+            res.should.have.status(409);
             res.should.be.json;
             res.body.status.should.equal('error')
-            res.body.message.should.be.equal('Email already registered.');
+            res.body.message.should.be.equal('Email is in use.');
             done();
           });
       });
@@ -117,7 +120,7 @@ describe('Users API', () => {
           res.should.have.status(400);
           res.should.be.json;
           res.body.status.should.equal('error')
-          res.body.message.should.be.equal('Name field is required.');
+          res.body.message.should.be.equal('Name is required.');
           done();
         });
     });
