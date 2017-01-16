@@ -9,9 +9,20 @@ describe('Express app', () => {
   it('handles a GET request to /', (done) => {
     chai.request(app)
       .get('/')
-      .end((err, response) => {
-        response.body.message.should.equal('Connected!');
+      .end((err, res) => {
+        res.body.message.should.equal('Connected!');
         done();
+      });
+  });
+  xit('returns an error for invalid routes', (done) => {
+    chai.request(app)
+      .get('/something/completely/random')
+      .end((err, res) => {
+        // console.log(res)
+        res.should.have.status(404)
+        res.should.be.json
+        res.body.status.should.equal('error')
+        res.body.message.should.be.equal('The requested resource does not exist.')
       });
   });
 });

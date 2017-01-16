@@ -177,10 +177,12 @@ describe('Users API', () => {
     });
     it('returns a 404 status for invalid ids', (done) => {
       chai.request(app)
-        .get('/users/100')
+        .get('/users/invalid')
         .end((err, res) => {
           res.should.have.status(404)
           res.should.be.json
+          res.body.status.should.equal('error')
+          res.body.message.should.be.equal('The requested resource does not exist.')
           done()
         })
     });
