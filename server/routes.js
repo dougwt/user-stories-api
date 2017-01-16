@@ -6,7 +6,6 @@ const Response = require('./response')
 
 // Param middleware to automatically return 404 for invalid user ID
 routes.param('userId', (req, res, next, value) => {
-  // const user = data.users.find(m => m.id === (value * 1))
   User.findById(value)
     .then((user) => {
       req['user'] = user
@@ -15,15 +14,6 @@ routes.param('userId', (req, res, next, value) => {
     .catch((err) => {
       res.status(404).send(Response.error('The requested resource does not exist.'))
     })
-
-  // if (user) {
-  //   req['user'] = user
-  //   next()
-  // } else {
-  //   res.status(404).json({
-  //     "message": "The requested resource does not exist"
-  //   })
-  // }
 })
 
 routes.route('/users')
