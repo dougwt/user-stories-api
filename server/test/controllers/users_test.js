@@ -1,4 +1,3 @@
-const assert = require('assert');
 const mongoose = require('mongoose');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
@@ -62,7 +61,7 @@ describe('Users API', () => {
           .end((err, res) => {
             User.count().then(newCount => {
               res.body.status.should.equal('success');
-              assert(count + 1 === newCount);
+              newCount.should.equal(count + 1);
               done();
             });
           });
@@ -80,7 +79,7 @@ describe('Users API', () => {
           done();
         });
     });
-    xit('returns an error when an invalid email is provided', (done) => {
+    it('returns an error when an invalid email is provided', (done) => {
       chai.request(app)
         .post('/users')
         .send({ email: 'test', name: 'Test' })
@@ -88,7 +87,7 @@ describe('Users API', () => {
           res.should.have.status(400);
           res.should.be.json;
           res.body.status.should.equal('error');
-          res.body.message.should.be.equal('Email field is required.');
+          res.body.message.should.be.equal('Email field is invalid.');
           done();
         });
     });
