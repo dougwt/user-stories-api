@@ -8,7 +8,7 @@ import Response from './response'
 module.exports = {
 
   findById(req, res, next) {
-    const userId = req.params.id;
+    const userId = req.params.userId;
 
     User.findById(userId)
       .then((user) => res.status(200).send(Response.success(user)))
