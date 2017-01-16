@@ -54,7 +54,18 @@ module.exports = {
   },
 
   update(req, res, next) {
+    const userId = req.params.userId;
+    const userProps = req.body;
 
+    User.findOneAndUpdate(userId, userProps)
+      .then((user) => {
+        // console.log('updating record...')
+        // console.log(user)
+        res.location('https://api.mycodebytes.com/v1/users/'+ user._id).status(204).send(Response.success(user))
+      })
+      .catch((err) => {
+        next(err);
+      });
   },
 
   delete(req, res, next) {

@@ -61,6 +61,7 @@ describe('Users API', () => {
           .end((err, res) => {
             User.count().then(newCount => {
               res.should.have.status(201);
+              res.should.be.json;
               res.headers.should.have.property('location');
               res.headers.location.startsWith('https://api.mycodebytes.com/v1/users/');
               res.body.status.should.equal('success');
@@ -129,6 +130,7 @@ describe('Users API', () => {
         .post('/users')
         .send({ email: 'TEST@TEST.COM', name: 'Test' })
         .end((err, res) => {
+          res.should.be.json;
           res.body.status.should.equal('success')
           res.body.data.email.should.be.equal('test@test.com');
           done();
@@ -139,6 +141,7 @@ describe('Users API', () => {
         .post('/users')
         .send({ email: 'test@test.com', name: 'Test' })
         .end((err, res) => {
+          res.should.be.json;
           res.body.status.should.equal('success')
           res.body.data.creation_date.should.not.be.null;
           done();
@@ -171,6 +174,7 @@ describe('Users API', () => {
             res.body.data._id.should.equal(user.id)
             res.body.data.email.should.equal('test@test.com')
             res.body.data.name.should.equal('Test')
+            res.body.status.should.equal('success')
             done()
           });
       });
@@ -189,25 +193,34 @@ describe('Users API', () => {
   })
 
   describe('PUT /users/:id', (done) => {
-    // xit('should update a SINGLE user on /users/:id PUT', function(done) {
-    //   chai.request(server)
-    //     .post('/users')
-    //     .end(function(err, res){
-    //       res.should.have.status(204)
-    //       res.should.be.json
-    //       res.body.should.have.property('location')
-    //       done()
-    //     })
-    // })
-    // xit('should return error status on invalid /users/:id PUT', function(done) {
-    //   chai.request(server)
-    //     .post('/users')
-    //     .end(function(err, res){
-    //       res.should.have.status(404)
-    //       res.should.be.json
-    //       done()
-    //     })
-    // })
+    it('updates a SINGLE user on /users/:id PUT', function(done) {
+      const user = new User({
+        email: 'test1@test.com',
+        name: 'Test 1'
+      });
+      user.save().then(() => {
+        chai.request(app)
+          .put(`/users/${user._id}`)
+          .send({ email: 'test2@test.com', name: 'Test 2' })
+          .end(function(err, res){
+            res.should.have.status(204)
+            res.headers.should.have.property('location')
+            res.headers.location.startsWith('https://api.mycodebytes.com/v1/users/');
+            Object.keys(res.body).length.should.equal(0)
+            res.body.constructor.should.equal(Object)
+            done()
+          })
+      })
+    })
+    xit('returns error status on invalid /users/:id PUT', function(done) {
+      chai.request(app)
+        .put('/users')
+        .end(function(err, res){
+          res.should.have.status(404)
+          res.should.be.json
+          done()
+        })
+    })
     xit('returns an error when an email is not provided', (done) => {
 
     });
@@ -223,24 +236,24 @@ describe('Users API', () => {
   })
 
   describe('DELETE /users/:id', (done) => {
-    //   xit('should delete a SINGLE user on /users/:id DELETE', function(done) {
-    //     chai.request(server)
-    //       .post('/users')
-    //       .end(function(err, res){
-    //         res.should.have.status(204)
-    //         res.should.be.json
-    //         done()
-    //       })
-    //   })
-    //   xit('should return error status on invalid /users/:id DELETE', function(done) {
-    //     chai.request(server)
-    //       .post('/users')
-    //       .end(function(err, res){
-    //         res.should.have.status(404)
-    //         res.should.be.json
-    //         done()
-    //       })
-    //   })
+      xit('should delete a SINGLE user on /users/:id DELETE', function(done) {
+        chai.request(app)
+          .post('/users')
+          .end(function(err, res){
+            res.should.have.status(204)
+            res.should.be.json
+            done()
+          })
+      })
+      xit('should return error status on invalid /users/:id DELETE', function(done) {
+        chai.request(app)
+          .post('/users')
+          .end(function(err, res){
+            res.should.have.status(404)
+            res.should.be.json
+            done()
+          })
+      })
     xit('deletes a SINGLE user', (done) => {
 
     });
