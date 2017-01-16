@@ -212,12 +212,14 @@ describe('Users API', () => {
           })
       })
     })
-    xit('returns error status on invalid /users/:id PUT', function(done) {
+    it('returns error status on invalid /users/:id PUT', function(done) {
       chai.request(app)
-        .put('/users')
+        .put('/users/invalid')
         .end(function(err, res){
           res.should.have.status(404)
           res.should.be.json
+          res.body.status.should.equal('error')
+          res.body.message.should.be.equal('The requested resource does not exist.')
           done()
         })
     })
