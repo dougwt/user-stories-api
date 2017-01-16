@@ -14,15 +14,15 @@ describe('Express app', () => {
         done();
       });
   });
-  xit('returns an error for invalid routes', (done) => {
+  it('returns an error for invalid routes', (done) => {
     chai.request(app)
       .get('/something/completely/random')
       .end((err, res) => {
-        // console.log(res)
         res.should.have.status(404)
         res.should.be.json
         res.body.status.should.equal('error')
         res.body.message.should.be.equal('The requested resource does not exist.')
+        done();
       });
   });
 });
