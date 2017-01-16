@@ -252,23 +252,39 @@ describe('Users API', () => {
           })
       })
     });
-    // it('doesn\'t allow ids to be modified', (done) => {
-    //   const user = new User({
-    //     email: 'test1@test.com',
-    //     name: 'Test 1'
-    //   });
-    //   user.save().then(() => {
-    //     chai.request(app)
-    //       .put(`/users/${user._id}`)
-    //       .send({ _id: mongoose.Types.ObjectId() })
-    //       .end((err, res) => {
-    //         console.log(err)
-    //       })
-    //   })
-    // });
+    it('doesn\'t allow ids to be modified', (done) => {
+      const user = new User({
+        email: 'test1@test.com',
+        name: 'Test 1'
+      });
+      user.save().then(() => {
+        chai.request(app)
+          .put(`/users/${user._id}`)
+          .send({ _id: mongoose.Types.ObjectId() })
+          .end((err, res) => {
+            // console.log(err)
+            res.should.have.status(403)
+            res.should.be.json
+            res.body.status.should.equal('error')
+            res.body.message.should.be.equal('This action is forbidden.')
+            done()
+          })
+      })
+    });
     it('returns error status on invalid /users/:id PUT', (done) => {
       chai.request(app)
         .put('/users/invalid')
+        .end((err, res) => {
+          res.should.have.status(404)
+          res.should.be.json
+          res.body.status.should.equal('error')
+          res.body.message.should.be.equal('The requested resource does not exist.')
+          done()
+        })
+    })
+    it('returns error status on non-existent /users/:id PUT', (done) => {
+      chai.request(app)
+        .put(`/users/${mongoose.Types.ObjectId()}`)
         .end((err, res) => {
           res.should.have.status(404)
           res.should.be.json
@@ -311,6 +327,9 @@ describe('Users API', () => {
 
     });
     xit('returns a 404 status for invalid ids', (done) => {
+
+    });
+    xit('returns a 404 status for non-existent ids', (done) => {
 
     });
   })
