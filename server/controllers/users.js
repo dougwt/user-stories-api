@@ -58,14 +58,20 @@ module.exports = {
   update(req, res, next) {
     const userId = req.params.userId;
     const userProps = req.body;
-
     User.findOneAndUpdate(userId, userProps)
       .then((user) => {
-        // console.log('updating record...')
-        // console.log(user)
-        res.location('https://api.mycodebytes.com/v1/users/'+ user._id).status(204).send(Response.success(user))
+        if (user) {
+          return res.location('https://api.mycodebytes.com/v1/users/'+ user._id).status(204).send(Response.success(user))
+        }
+        var err = new Error();
+        err.status = 404;
+        next(err);
       })
       .catch((err) => {
+        if(err.codeName === 'ImmutableField') {
+          res.status(403).send(Response.error('This action is forbidden.'));
+          next();
+        }
         next(err);
       });
   },
