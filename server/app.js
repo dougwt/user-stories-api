@@ -18,7 +18,12 @@ if (process.env.NODE_ENV !== 'test') {
 app.use(bodyParser.json({ type: '*/*' }));
 app.use('/', routes);
 
+// Handle express errors
 app.use((err, req, res, next) => {
+  if (res.headersSent) {
+    return next(err)
+  }
+  console.log(err)
   res.status(422).send({ error: err.message });
 })
 

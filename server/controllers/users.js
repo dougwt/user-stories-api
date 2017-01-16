@@ -1,5 +1,5 @@
 import User from '../models/user';
-import Response from './response'
+import Response from '../response'
 
 // const formatResponse(text) {
 //   return
@@ -12,7 +12,14 @@ module.exports = {
 
     User.findById(userId)
       .then((user) => res.status(200).send(Response.success(user)))
-      .catch(next);
+      .catch((err) => {
+        if (err.message.startsWith('Cast to ObjectId failed')) {
+          res.status(404).send(Response.error('The requested resource does not exist.'))
+          next();
+        } else {
+          next(err);
+        }
+      });
   },
 
   findAll(req, res, next) {
