@@ -151,29 +151,34 @@ describe('Users API', () => {
   //////////////////////////////////////////////////////////
 
   describe('GET /users/:id', (done) => {
-    xit('lists a SINGLE user', (done) => {
-      chai.request(app)
-        .get('/users/2')
-        .end(function(err, res){
-          res.should.have.status(200)
-          res.should.be.json
-          res.body.data.should.be.a('object')
-          res.body.data.should.have.property('id');
-          res.body.data.should.have.property('email')
-          res.body.data.should.have.property('name')
-          res.body.data.should.have.property('creation_date')
-          res.body.data.id.should.equal(2)
-          res.body.data.email.should.equal('ada@example.com')
-          res.body.data.name.should.equal('Ada Lovelace')
-          res.body.data.creation_date.should.equal('1815-12-10T08:00:00.000Z')
-          done()
-        })
-
+    it('lists a SINGLE user', (done) => {
+      const user = new User({
+        email: 'test@test.com',
+        name: 'Test'
+      });
+      user.save().then(() => {
+        chai.request(app)
+          .get(`/users/${user._id}`)
+          .end((err, res) => {
+            res.should.have.status(200)
+            res.should.be.json
+            res.body.should.have.property('data')
+            res.body.data.should.be.a('object')
+            res.body.data.should.have.property('_id');
+            res.body.data.should.have.property('email')
+            res.body.data.should.have.property('name')
+            res.body.data.should.have.property('creation_date')
+            res.body.data._id.should.equal(user.id)
+            res.body.data.email.should.equal('test@test.com')
+            res.body.data.name.should.equal('Test')
+            done()
+          });
+      });
     });
-    xit('returns a 404 status for invalid ids', (done) => {
-      chai.request(server)
+    it('returns a 404 status for invalid ids', (done) => {
+      chai.request(app)
         .get('/users/100')
-        .end(function(err, res){
+        .end((err, res) => {
           res.should.have.status(404)
           res.should.be.json
           done()

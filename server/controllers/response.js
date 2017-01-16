@@ -10,7 +10,7 @@ module.exports = {
 
   // There was a problem with the data submitted, or some pre-condition
   // of the API call wasn't satisfied
-  fail() {
+  fail(data) {
     return {
       status: 'fail',
       data: data
