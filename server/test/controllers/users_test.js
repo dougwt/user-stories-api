@@ -190,10 +190,21 @@ describe('Users API', () => {
           done()
         })
     });
+    it('returns a 404 status for non-existent ids', (done) => {
+      chai.request(app)
+        .get(`/users/${mongoose.Types.ObjectId()}`)
+        .end((err, res) => {
+          res.should.have.status(404)
+          res.should.be.json
+          res.body.status.should.equal('error')
+          res.body.message.should.be.equal('The requested resource does not exist.')
+          done()
+        })
+    })
   })
 
   describe('PUT /users/:id', (done) => {
-    it('updates a SINGLE user on /users/:id PUT', function(done) {
+    it('updates a SINGLE user on /users/:id PUT', (done) => {
       const user = new User({
         email: 'test1@test.com',
         name: 'Test 1'
@@ -202,20 +213,63 @@ describe('Users API', () => {
         chai.request(app)
           .put(`/users/${user._id}`)
           .send({ email: 'test2@test.com', name: 'Test 2' })
-          .end(function(err, res){
+          .end((err, res) => {
             res.should.have.status(204)
             res.headers.should.have.property('location')
             res.headers.location.startsWith('https://api.mycodebytes.com/v1/users/');
             Object.keys(res.body).length.should.equal(0)
             res.body.constructor.should.equal(Object)
-            done()
+            User.findById(user._id)
+              .then((user) => {
+                user.email.should.equal('test2@test.com')
+                user.name.should.equal('Test 2')
+                done()
+              })
           })
       })
     })
-    it('returns error status on invalid /users/:id PUT', function(done) {
+    it('only updates provided fields', (done) => {
+      const user = new User({
+        email: 'test1@test.com',
+        name: 'Test 1'
+      });
+      user.save().then(() => {
+        chai.request(app)
+          .put(`/users/${user._id}`)
+          .send({ name: 'Test 2' })
+          .end((err, res) => {
+            res.should.have.status(204)
+            res.headers.should.have.property('location')
+            res.headers.location.startsWith('https://api.mycodebytes.com/v1/users/');
+            Object.keys(res.body).length.should.equal(0)
+            res.body.constructor.should.equal(Object)
+            User.findById(user._id)
+              .then((user) => {
+                user.email.should.equal('test1@test.com')
+                user.name.should.equal('Test 2')
+                done()
+              })
+          })
+      })
+    });
+    // it('doesn\'t allow ids to be modified', (done) => {
+    //   const user = new User({
+    //     email: 'test1@test.com',
+    //     name: 'Test 1'
+    //   });
+    //   user.save().then(() => {
+    //     chai.request(app)
+    //       .put(`/users/${user._id}`)
+    //       .send({ _id: mongoose.Types.ObjectId() })
+    //       .end((err, res) => {
+    //         console.log(err)
+    //       })
+    //   })
+    // });
+    it('returns error status on invalid /users/:id PUT', (done) => {
       chai.request(app)
         .put('/users/invalid')
-        .end(function(err, res){
+        .end((err, res) => {
           res.should.have.status(404)
           res.should.be.json
           res.body.status.should.equal('error')
@@ -223,9 +277,6 @@ describe('Users API', () => {
           done()
         })
     })
-    xit('returns an error when an email is not provided', (done) => {
-
-    });
     xit('returns an error when an invalid email is provided', (done) => {
 
     });
@@ -238,19 +289,19 @@ describe('Users API', () => {
   })
 
   describe('DELETE /users/:id', (done) => {
-      xit('should delete a SINGLE user on /users/:id DELETE', function(done) {
+      xit('should delete a SINGLE user on /users/:id DELETE', (done) => {
         chai.request(app)
           .post('/users')
-          .end(function(err, res){
+          .end((err, res) => {
             res.should.have.status(204)
             res.should.be.json
             done()
           })
       })
-      xit('should return error status on invalid /users/:id DELETE', function(done) {
+      xit('should return error status on invalid /users/:id DELETE', (done) => {
         chai.request(app)
           .post('/users')
-          .end(function(err, res){
+          .end((err, res) => {
             res.should.have.status(404)
             res.should.be.json
             done()

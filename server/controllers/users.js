@@ -11,14 +11,16 @@ module.exports = {
     const userId = req.params.userId;
 
     User.findById(userId)
-      .then((user) => res.status(200).send(Response.success(user)))
-      .catch((err) => {
-        if (err.message.startsWith('Cast to ObjectId failed')) {
-          res.status(404).send(Response.error('The requested resource does not exist.'))
-          next();
-        } else {
-          next(err);
+      .then((user) => {
+        if (user) {
+          return res.status(200).send(Response.success(user))
         }
+        var err = new Error();
+        err.status = 404;
+        next(err);
+      })
+      .catch((err) => {
+        next(err)
       });
   },
 
