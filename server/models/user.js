@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import uniqueValidator from 'mongoose-unique-validator';
 
 const Schema = mongoose.Schema;
 
@@ -19,6 +20,7 @@ const userSchema = new Schema({
     default: Date.now
   }
 });
+userSchema.plugin(uniqueValidator);
 
 // Create the model class
 const ModelClass = mongoose.model('user', userSchema);

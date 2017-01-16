@@ -26,11 +26,12 @@ describe('Users API', () => {
           .end((err, res) => {
             res.should.have.status(200);
             res.should.be.json;
-            res.body.should.be.a('array');
-            res.body.length.should.be.gte(1);
-            res.body[0].should.have.property('email');
-            res.body[0].should.have.property('name');
-            res.body[0].should.have.property('creation_date');
+            res.body.status.should.equal('success')
+            res.body.data.should.be.a('array');
+            res.body.data.length.should.be.gte(1);
+            res.body.data[0].should.have.property('email');
+            res.body.data[0].should.have.property('name');
+            res.body.data[0].should.have.property('creation_date');
             done();
           })
       });
@@ -43,8 +44,9 @@ describe('Users API', () => {
             users.length.should.be.equal(0)
             res.should.have.status(200);
             res.should.be.json;
-            res.body.should.be.a('array');
-            res.body.length.should.equal(0);
+            res.body.status.should.equal('success')
+            res.body.data.should.be.a('array');
+            res.body.data.length.should.equal(0);
             done();
           });
       });
@@ -59,6 +61,7 @@ describe('Users API', () => {
           .send({ email: 'test@test.com', name: 'Test' })
           .end((err, res) => {
             User.count().then(newCount => {
+              res.body.status.should.equal('success');
               assert(count + 1 === newCount);
               done();
             });
@@ -72,12 +75,40 @@ describe('Users API', () => {
         .end((err, res) => {
           res.should.have.status(400);
           res.should.be.json;
-          res.body.error.should.be.equal('Email field is required.');
+          res.body.status.should.equal('error');
+          res.body.message.should.be.equal('Email field is required.');
           done();
         });
     });
     xit('returns an error when an invalid email is provided', (done) => {
-
+      chai.request(app)
+        .post('/users')
+        .send({ email: 'test', name: 'Test' })
+        .end((err, res) => {
+          res.should.have.status(400);
+          res.should.be.json;
+          res.body.status.should.equal('error');
+          res.body.message.should.be.equal('Email field is required.');
+          done();
+        });
+    });
+    it('returns an error when a duplicate email is provided', (done) => {
+      const user = new User({
+        email: 'test@test.com',
+        name: 'Test 1'
+      });
+      user.save().then(() => {
+        chai.request(app)
+          .post('/users')
+          .send({ email: 'test@test.com', name: 'Test 2' })
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.should.be.json;
+            res.body.status.should.equal('error')
+            res.body.message.should.be.equal('Email already registered.');
+            done();
+          });
+      });
     });
     it('returns an error when a name is not provided', (done) => {
       chai.request(app)
@@ -86,7 +117,8 @@ describe('Users API', () => {
         .end((err, res) => {
           res.should.have.status(400);
           res.should.be.json;
-          res.body.error.should.be.equal('Name field is required.');
+          res.body.status.should.equal('error')
+          res.body.message.should.be.equal('Name field is required.');
           done();
         });
     });
@@ -95,7 +127,8 @@ describe('Users API', () => {
         .post('/users')
         .send({ email: 'TEST@TEST.COM', name: 'Test' })
         .end((err, res) => {
-          res.body.email.should.be.equal('test@test.com');
+          res.body.status.should.equal('success')
+          res.body.data.email.should.be.equal('test@test.com');
           done();
         });
     });
@@ -104,7 +137,8 @@ describe('Users API', () => {
         .post('/users')
         .send({ email: 'test@test.com', name: 'Test' })
         .end((err, res) => {
-          res.body.creation_date.should.not.be.null;
+          res.body.status.should.equal('success')
+          res.body.data.creation_date.should.not.be.null;
           done();
         });
     });
@@ -121,15 +155,15 @@ describe('Users API', () => {
         .end(function(err, res){
           res.should.have.status(200)
           res.should.be.json
-          res.body.should.be.a('object')
-          res.body.should.have.property('id');
-          res.body.should.have.property('email')
-          res.body.should.have.property('name')
-          res.body.should.have.property('creation_date')
-          res.body.id.should.equal(2)
-          res.body.email.should.equal('ada@example.com')
-          res.body.name.should.equal('Ada Lovelace')
-          res.body.creation_date.should.equal('1815-12-10T08:00:00.000Z')
+          res.body.data.should.be.a('object')
+          res.body.data.should.have.property('id');
+          res.body.data.should.have.property('email')
+          res.body.data.should.have.property('name')
+          res.body.data.should.have.property('creation_date')
+          res.body.data.id.should.equal(2)
+          res.body.data.email.should.equal('ada@example.com')
+          res.body.data.name.should.equal('Ada Lovelace')
+          res.body.data.creation_date.should.equal('1815-12-10T08:00:00.000Z')
           done()
         })
 
