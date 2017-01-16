@@ -33,6 +33,9 @@ module.exports = {
         } else if (err.errors.email && err.errors.email.name === 'ValidatorError' && err.errors.email.message.startsWith('Error, expected `email` to be unique.')) {
           res.status(400).send(Response.error('Email already registered.'))
           next();
+        } else if (err.errors.email && err.errors.email.name === 'ValidatorError' && err.errors.email.message.startsWith('Validator failed for path `email`')) {
+          res.status(400).send(Response.error('Email field is invalid.'))
+          next();
         } else if (err.errors.name && err.errors.name.name === 'ValidatorError' && err.errors.name.message === 'Path `name` is required.') {
           res.status(400).send(Response.error('Name field is required.'))
           next();
