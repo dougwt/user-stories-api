@@ -32,6 +32,7 @@ app.use((err, req, res, next) => {
     console.log(err)
     return next(err);
   }
+  // TODO: Generate standard responses from here using err.status?
   if(err.status === 404) {
     res.status(404).send(Response.error('The requested resource does not exist.'));
     next()
