@@ -293,11 +293,27 @@ describe('Users API', () => {
           done()
         })
     })
-    xit('returns an error when an invalid email is provided', (done) => {
-
-    });
-    xit('returns an error when a name is not provided', (done) => {
-
+    it('returns an error when an invalid email is provided', (done) => {
+      const user = new User({
+        email: 'test1@test.com',
+        name: 'Test 1'
+      });
+      user.save().then(() => {
+        chai.request(app)
+          .put(`/users/${user._id}`)
+          .send({ email: 'test2' })
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.should.be.json;
+            res.body.status.should.equal('error');
+            res.body.message.should.be.equal('Email is invalid.');
+            User.findById(user._id)
+              .then((user) => {
+                user.email.should.equal('test1@test.com')
+                done()
+              })
+          })
+      })
     });
     xit('does not modify the original creation_date', (done) => {
 

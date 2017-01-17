@@ -58,7 +58,7 @@ module.exports = {
   update(req, res, next) {
     const userId = req.params.userId;
     const userProps = req.body;
-    User.findOneAndUpdate(userId, userProps)
+    User.findOneAndUpdate(userId, userProps, { runValidators: true, context: 'query' })
       .then((user) => {
         if (user) {
           return res.location('https://api.mycodebytes.com/v1/users/'+ user._id).status(204).send(Response.success(user))
@@ -70,6 +70,9 @@ module.exports = {
       .catch((err) => {
         if(err.codeName === 'ImmutableField') {
           res.status(403).send(Response.error('This action is forbidden.'));
+          next();
+        } else if (err.errors && err.errors.email && err.errors.email.name === 'ValidatorError' && err.errors.email.message.startsWith('Validator failed for path `email`')) {
+          res.status(400).send(Response.error('Email is invalid.'));
           next();
         }
         next(err);
