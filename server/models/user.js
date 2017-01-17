@@ -17,11 +17,10 @@ const userSchema = new Schema({
   name: {
     type: String,
     required: true
-  },
-  creation_date: {
-    type: Date,
-    default: Date.now
   }
+},
+{
+  timestamps: { createdAt: '_createdAt', updatedAt: '_updatedAt' }
 });
 userSchema.plugin(uniqueValidator);
 

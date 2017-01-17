@@ -30,7 +30,7 @@ describe('Users API', () => {
             res.body.data.length.should.be.gte(1);
             res.body.data[0].should.have.property('email');
             res.body.data[0].should.have.property('name');
-            res.body.data[0].should.have.property('creation_date');
+            res.body.data[0].should.have.property('_createdAt');
             done();
           })
       });
@@ -143,7 +143,7 @@ describe('Users API', () => {
         .end((err, res) => {
           res.should.be.json;
           res.body.status.should.equal('success')
-          res.body.data.creation_date.should.not.be.null;
+          res.body.data._createdAt.should.not.be.null;
           done();
         });
     });
@@ -170,7 +170,7 @@ describe('Users API', () => {
             res.body.data.should.have.property('_id');
             res.body.data.should.have.property('email')
             res.body.data.should.have.property('name')
-            res.body.data.should.have.property('creation_date')
+            res.body.data.should.have.property('_createdAt')
             res.body.data._id.should.equal(user.id)
             res.body.data.email.should.equal('test@test.com')
             res.body.data.name.should.equal('Test')
@@ -252,7 +252,7 @@ describe('Users API', () => {
           })
       })
     });
-    it('doesn\'t allow ids to be modified', (done) => {
+    it('does not modify the original id', (done) => {
       const user = new User({
         email: 'test1@test.com',
         name: 'Test 1'
@@ -314,9 +314,6 @@ describe('Users API', () => {
               })
           })
       })
-    });
-    xit('does not modify the original creation_date', (done) => {
-
     });
   })
 
