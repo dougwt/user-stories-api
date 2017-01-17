@@ -81,7 +81,12 @@ module.exports = {
 
     User.findOneAndRemove(userId)
       .then((user) => {
-        return res.status(204).send(Response.success(user))
+        if (user) {
+          return res.status(204).send(Response.success(user))
+        }
+        var err = new Error();
+        err.status = 404;
+        next(err);
       })
   }
 
