@@ -1,10 +1,6 @@
 import User from '../models/user';
 import Response from '../response'
 
-// const formatResponse(text) {
-//   return
-// }
-
 module.exports = {
 
   findById(req, res, next) {
@@ -32,11 +28,6 @@ module.exports = {
 
   create(req, res, next) {
     const userProps = req.body;
-    // if (userProps.creation_date) {
-    //   var err = new Error();
-    //   err.codeName === 'ImmutableField'
-    //   next()
-    // }
 
     User.create(userProps)
       // TODO: replace hardcoded URI prefix
@@ -63,6 +54,7 @@ module.exports = {
   update(req, res, next) {
     const userId = req.params.userId;
     const userProps = req.body;
+
     User.findOneAndUpdate(userId, userProps, { runValidators: true, context: 'query' })
       .then((user) => {
         if (user) {
@@ -85,7 +77,12 @@ module.exports = {
   },
 
   delete(req, res, next) {
+    const userId = req.params.userId;
 
+    User.findOneAndRemove(userId)
+      .then((user) => {
+        return res.status(204).send(Response.success(user))
+      })
   }
 
 };

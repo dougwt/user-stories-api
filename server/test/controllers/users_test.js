@@ -318,18 +318,28 @@ describe('Users API', () => {
   })
 
   describe('DELETE /users/:id', (done) => {
-      xit('should delete a SINGLE user on /users/:id DELETE', (done) => {
-        chai.request(app)
-          .post('/users')
-          .end((err, res) => {
-            res.should.have.status(204)
-            res.should.be.json
-            done()
-          })
+      it('should delete a SINGLE user on /users/:id DELETE', (done) => {
+        const user1 = new User({
+          email: 'test@test.com',
+          name: 'Test'
+        });
+        user1.save().then(() => {
+          chai.request(app)
+            .delete(`/users/${user1._id}`)
+            .end((err, res) => {
+              Object.keys(res.body).length.should.equal(0)
+              res.body.constructor.should.equal(Object)
+              User.findById(user1._id)
+                .then((user2) => {
+                  chai.expect(user2 === null)
+                  done()
+                })
+            })
+        })
       })
       xit('should return error status on invalid /users/:id DELETE', (done) => {
         chai.request(app)
-          .post('/users')
+          .delete('/users')
           .end((err, res) => {
             res.should.have.status(404)
             res.should.be.json
