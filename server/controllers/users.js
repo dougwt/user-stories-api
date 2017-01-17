@@ -73,7 +73,7 @@ module.exports = {
         next(err);
       })
       .catch((err) => {
-        if(err.codeName === 'ImmutableField') {
+        if(err.codeName === 'ImmutableField' || (err.name === 'MongoError' && err.message === 'exception: Mod on _id not allowed')) {
           res.status(403).send(Response.error('This action is forbidden.'));
           next();
         } else if (err.errors && err.errors.email && err.errors.email.name === 'ValidatorError' && err.errors.email.message.startsWith('Validator failed for path `email`')) {

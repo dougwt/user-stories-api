@@ -37,7 +37,12 @@ app.use((err, req, res, next) => {
     res.status(404).send(Response.error('The requested resource does not exist.'));
     next()
   }
-  res.status(500).send(Response.error(err.message));
+  else {
+    console.log('It happened!')
+    console.log(err)
+    res.status(500).send(Response.error(err.message));
+  }
+
 });
 
 // module.exports = http.createServer(app)
