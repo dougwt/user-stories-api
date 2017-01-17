@@ -32,6 +32,11 @@ module.exports = {
 
   create(req, res, next) {
     const userProps = req.body;
+    // if (userProps.creation_date) {
+    //   var err = new Error();
+    //   err.codeName === 'ImmutableField'
+    //   next()
+    // }
 
     User.create(userProps)
       // TODO: replace hardcoded URI prefix
