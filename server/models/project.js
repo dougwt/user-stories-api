@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import roleSchema from './role');
+import roleSchema from './role';
 import uniqueValidator from 'mongoose-unique-validator';
 
 const Schema = mongoose.Schema;
