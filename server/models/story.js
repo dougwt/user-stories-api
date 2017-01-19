@@ -19,4 +19,7 @@ const storySchema = new Schema({
 {
   timestamps: { createdAt: '_createdAt', updatedAt: '_updatedAt' }
 });
+
+// storySchema.index({ desire: 1, benefit: 1}, { unique: true });
+
 module.exports = storySchema;

@@ -42,7 +42,12 @@ describe('Project model', () => {
       });
     });
   });
-  xit('fails validation if slug is formatted incorrectly', (done) => {
+  it('fails validation if slug is formatted incorrectly', (done) => {
+    var p = new Project({ name: 'Test', slug:'test-' });
 
+    p.validate((err) => {
+      err.errors.slug.should.exist;
+      done();
+    });
   });
 });
