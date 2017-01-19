@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 
-before(done => {
+// Use ES6 Promise
+mongoose.Promise = global.Promise;
+
+before((done) => {
   mongoose.connect('mongodb://localhost/user_stories_test');
   mongoose.connection
     .once('open', () => done())
@@ -9,9 +12,12 @@ before(done => {
     });
 });
 
-beforeEach(done => {
-  const { users } = mongoose.connection.collections;
-  users.drop()
-    .then(() => done())
-    .catch(() => done());
+beforeEach((done) => {
+  const { users, projects } = mongoose.connection.collections;
+  users.drop(() => {
+    projects.drop(() => {
+      // Ready to run the next test
+      done();
+    });
+  });
 })

@@ -52,7 +52,7 @@ describe('Users API', () => {
     });
   })
 
-  describe('POST /users', (done) => {
+  describe('POST /users', () => {
     it('creates a new user', (done) => {
       User.count().then(count => {
         chai.request(app)
@@ -153,7 +153,7 @@ describe('Users API', () => {
   //  /users/:id
   //////////////////////////////////////////////////////////
 
-  describe('GET /users/:id', (done) => {
+  describe('GET /users/:id', () => {
     it('lists a SINGLE user', (done) => {
       const user = new User({
         email: 'test@test.com',
@@ -203,7 +203,7 @@ describe('Users API', () => {
     })
   })
 
-  describe('PUT /users/:id', (done) => {
+  describe('PUT /users/:id', () => {
     it('updates a SINGLE user on /users/:id PUT', (done) => {
       const user = new User({
         email: 'test1@test.com',
@@ -317,7 +317,7 @@ describe('Users API', () => {
     });
   })
 
-  describe('DELETE /users/:id', (done) => {
+  describe('DELETE /users/:id', () => {
     it('deletes a SINGLE user', (done) => {
       const user1 = new User({
         email: 'test@test.com',

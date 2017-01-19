@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import storySchema from './story');
+import storySchema from './story';
 
 const Schema = mongoose.Schema;
 
