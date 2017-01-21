@@ -1,5 +1,6 @@
 const routes = require('express').Router()
 import UsersController from './controllers/users';
+import ProjectsController from './controllers/projects';
 const mongoose = require('mongoose');
 const User = mongoose.model('user');
 const Response = require('./response')
@@ -24,6 +25,10 @@ routes.route('/users/:userId')
   .get(UsersController.findById)
   .put(UsersController.update)
   .delete(UsersController.delete)
+
+routes.route('/projects')
+  .get(ProjectsController.findAll)
+
 
 // TODO: Do I need to make separate calls for put and delete, etc?
 // or is there a way for me to otherwise manage handling for invalid routes?
