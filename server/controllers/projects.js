@@ -79,6 +79,15 @@ module.exports = {
   delete(req, res, next) {
     const projectId = req.params.projectId;
 
+    Project.findOneAndRemove(projectId)
+      .then((project) => {
+        if (project) {
+          return res.status(204).send(Response.success(project))
+        }
+        var err = new Error();
+        err.status = 404;
+        next(err);
+      })
   }
 
 };
