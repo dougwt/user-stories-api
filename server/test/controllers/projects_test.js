@@ -165,7 +165,7 @@ describe('Projects API', () => {
   //  /projects/:id
   //////////////////////////////////////////////////////////
 
-  describe('GET /projects/:id', (done) => {
+  describe('GET /projects/:id', () => {
     it('lists a SINGLE project', (done) => {
       const project = new Project({
         name: 'Test',
@@ -217,7 +217,7 @@ describe('Projects API', () => {
     })
   })
 
-  describe('PUT /projects/:id', (done) => {
+  describe('PUT /projects/:id', () => {
     it('updates a SINGLE project', (done) => {
       const project = new Project({
         name: 'Test 1',
@@ -330,7 +330,7 @@ describe('Projects API', () => {
     })
   })
 
-  describe('DELETE /projects/:id', (done) => {
+  describe('DELETE /projects/:id', () => {
     it('deletes a SINGLE project', (done) => {
       const project1 = new Project({
         name: 'Test',
