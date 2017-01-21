@@ -28,6 +28,7 @@ routes.route('/users/:userId')
 
 routes.route('/projects')
   .get(ProjectsController.findAll)
+  .post(ProjectsController.create)
 
 
 // TODO: Do I need to make separate calls for put and delete, etc?
