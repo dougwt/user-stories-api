@@ -14,11 +14,41 @@ describe('Projects API', () => {
   //////////////////////////////////////////////////////////
 
   describe('GET /projects', () => {
-    xit('lists ALL projects', () => {
-
+    it('lists ALL projects', (done) => {
+      const project = new Project({
+        name: 'Test',
+        slug: 'test'
+      });
+      project.save().then(() => {
+        chai.request(app)
+          .get('/projects')
+          .end((err, res) => {
+            res.should.have.status(200);
+            res.should.be.json;
+            res.body.status.should.equal('success')
+            res.body.data.should.be.a('array');
+            res.body.data.length.should.be.gte(1);
+            res.body.data[0].should.have.property('name');
+            res.body.data[0].should.have.property('slug');
+            res.body.data[0].should.have.property('_createdAt');
+            done();
+          })
+      });
     });
-    xit('returns an empty list when the collection is empty', () => {
-
+    it('returns an empty list when the collection is empty', (done) => {
+      Project.find({}).then((projects) => {
+        chai.request(app)
+          .get('/projects')
+          .end((err, res) => {
+            projects.length.should.be.equal(0)
+            res.should.have.status(200);
+            res.should.be.json;
+            res.body.status.should.equal('success')
+            res.body.data.should.be.a('array');
+            res.body.data.length.should.equal(0);
+            done();
+          });
+      });
     });
   })
 
