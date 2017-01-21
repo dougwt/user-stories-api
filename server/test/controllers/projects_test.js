@@ -7,7 +7,7 @@ const Project = mongoose.model('project');
 
 chai.use(chaiHttp)
 
-describe.only('Projects API', () => {
+describe('Projects API', () => {
 
   //////////////////////////////////////////////////////////
   //  /projects
@@ -331,14 +331,46 @@ describe.only('Projects API', () => {
   })
 
   describe('DELETE /projects/:id', (done) => {
-    xit('deletes a SINGLE project', (done) => {
-
+    it('deletes a SINGLE project', (done) => {
+      const project1 = new Project({
+        name: 'Test',
+        slug: 'test'
+      });
+      project1.save().then(() => {
+        chai.request(app)
+          .delete(`/projects/${project1._id}`)
+          .end((err, res) => {
+            Object.keys(res.body).length.should.equal(0)
+            res.body.constructor.should.equal(Object)
+            Project.findById(project1._id)
+              .then((project2) => {
+                chai.expect(project2 === null)
+                done()
+              })
+          })
+      })
     });
-    xit('returns a 404 status for invalid ids', (done) => {
-
+    it('returns a 404 status for invalid ids', (done) => {
+      chai.request(app)
+        .delete('/projects/invalid')
+        .end((err, res) => {
+          res.should.have.status(404)
+          res.should.be.json
+          res.body.status.should.equal('error')
+          res.body.message.should.be.equal('The requested resource does not exist.')
+          done()
+        })
     });
-    xit('returns a 404 status for non-existent ids', (done) => {
-
+    it('returns a 404 status for non-existent ids', (done) => {
+      chai.request(app)
+        .delete(`/projects/${mongoose.Types.ObjectId()}`)
+        .end((err, res) => {
+          res.should.have.status(404)
+          res.should.be.json
+          res.body.status.should.equal('error')
+          res.body.message.should.be.equal('The requested resource does not exist.')
+          done()
+        })
     });
   })
 
