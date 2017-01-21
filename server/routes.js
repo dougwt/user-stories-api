@@ -1,6 +1,7 @@
 const routes = require('express').Router()
 import UsersController from './controllers/users';
 import ProjectsController from './controllers/projects';
+import RolesController from './controllers/roles';
 const mongoose = require('mongoose');
 const User = mongoose.model('user');
 const Project = mongoose.model('project');
@@ -45,6 +46,9 @@ routes.route('/projects/:projectId')
   .get(ProjectsController.findById)
   .put(ProjectsController.update)
   .delete(ProjectsController.delete)
+
+routes.route('/projects/:projectId/roles')
+  .get(RolesController.findAll)
 
 
 // TODO: Do I need to make separate calls for put and delete, etc?
