@@ -7,7 +7,7 @@ const Project = mongoose.model('project');
 
 chai.use(chaiHttp)
 
-describe.only('Projects API', () => {
+describe('Projects API', () => {
 
   //////////////////////////////////////////////////////////
   //  /projects
@@ -166,14 +166,54 @@ describe.only('Projects API', () => {
   //////////////////////////////////////////////////////////
 
   describe('GET /projects/:id', (done) => {
-    xit('lists a SINGLE project', (done) => {
-
+    it('lists a SINGLE project', (done) => {
+      const project = new Project({
+        name: 'Test',
+        slug: 'test'
+      });
+      project.save().then(() => {
+        chai.request(app)
+          .get(`/projects/${project._id}`)
+          .end((err, res) => {
+            res.should.have.status(200)
+            res.should.be.json
+            res.body.should.have.property('data')
+            res.body.data.should.be.a('object')
+            res.body.data.should.have.property('_id');
+            res.body.data.should.have.property('name')
+            res.body.data.should.have.property('slug')
+            res.body.data.should.have.property('roles')
+            res.body.data.should.have.property('owner')
+            res.body.data.should.have.property('_createdAt')
+            res.body.data._id.should.equal(project.id)
+            res.body.data.name.should.equal('Test')
+            res.body.data.slug.should.equal('test')
+            res.body.status.should.equal('success')
+            done()
+          });
+      });
     })
-    xit('returns a 404 status for invalid ids', (done) => {
-
+    it('returns a 404 status for invalid ids', (done) => {
+      chai.request(app)
+        .get('/projects/invalid')
+        .end((err, res) => {
+          res.should.have.status(404)
+          res.should.be.json
+          res.body.status.should.equal('error')
+          res.body.message.should.be.equal('The requested resource does not exist.')
+          done()
+        })
     })
-    xit('returns a 404 status for non-existent ids', (done) => {
-
+    it('returns a 404 status for non-existent ids', (done) => {
+      chai.request(app)
+        .get(`/projects/${mongoose.Types.ObjectId()}`)
+        .end((err, res) => {
+          res.should.have.status(404)
+          res.should.be.json
+          res.body.status.should.equal('error')
+          res.body.message.should.be.equal('The requested resource does not exist.')
+          done()
+        })
     })
   })
 

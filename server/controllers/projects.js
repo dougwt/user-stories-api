@@ -6,6 +6,18 @@ module.exports = {
   findById(req, res, next) {
     const projectId = req.params.projectId;
 
+    Project.findById(projectId)
+      .then((project) => {
+        if (project) {
+          return res.status(200).send(Response.success(project))
+        }
+        var err = new Error();
+        err.status = 404;
+        next(err);
+      })
+      .catch((err) => {
+        next(err)
+      });
   },
 
   findAll(req, res, next) {

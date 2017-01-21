@@ -3,6 +3,7 @@ import UsersController from './controllers/users';
 import ProjectsController from './controllers/projects';
 const mongoose = require('mongoose');
 const User = mongoose.model('user');
+const Project = mongoose.model('project');
 const Response = require('./response')
 
 // Param middleware to automatically return 404 for invalid user ID
@@ -10,6 +11,16 @@ routes.param('userId', (req, res, next, value) => {
   User.findById(value)
     .then((user) => {
       req['user'] = user
+      next()
+    })
+    .catch((err) => {
+      res.status(404).send(Response.error('The requested resource does not exist.'))
+    })
+})
+routes.param('projectId', (req, res, next, value) => {
+  Project.findById(value)
+    .then((project) => {
+      req['project'] = project
       next()
     })
     .catch((err) => {
@@ -29,6 +40,9 @@ routes.route('/users/:userId')
 routes.route('/projects')
   .get(ProjectsController.findAll)
   .post(ProjectsController.create)
+
+routes.route('/projects/:projectId')
+  .get(ProjectsController.findById)
 
 
 // TODO: Do I need to make separate calls for put and delete, etc?
