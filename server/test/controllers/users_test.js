@@ -262,7 +262,6 @@ describe('Users API', () => {
           .put(`/users/${user._id}`)
           .send({ _id: mongoose.Types.ObjectId() })
           .end((err, res) => {
-            // console.log(err)
             res.should.have.status(403)
             res.should.be.json
             res.body.status.should.equal('error')

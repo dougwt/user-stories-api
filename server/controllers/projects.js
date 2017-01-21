@@ -55,6 +55,25 @@ module.exports = {
     const projectId = req.params.projectId;
     const projectProps = req.body;
 
+    Project.findOneAndUpdate(projectId, projectProps, { runValidators: true, context: 'query' })
+      .then((project) => {
+        if (project) {
+          return res.location('https://api.mycodebytes.com/v1/projects/'+ project._id).status(204).send(Response.success(project))
+        }
+        var err = new Error();
+        err.status = 404;
+        next(err);
+      })
+      .catch((err) => {
+        if(err.codeName === 'ImmutableField' || (err.name === 'MongoError' && err.message === 'exception: Mod on _id not allowed')) {
+          res.status(403).send(Response.error('This action is forbidden.'));
+          next();
+        } else if (err.errors && err.errors.slug && err.errors.slug.name === 'ValidatorError' && err.errors.slug.message.startsWith('Validator failed for path `slug`')) {
+          res.status(400).send(Response.error('Slug is invalid.'));
+          next();
+        }
+        next(err);
+      });
   },
 
   delete(req, res, next) {

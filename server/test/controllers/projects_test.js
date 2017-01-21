@@ -7,7 +7,7 @@ const Project = mongoose.model('project');
 
 chai.use(chaiHttp)
 
-describe('Projects API', () => {
+describe.only('Projects API', () => {
 
   //////////////////////////////////////////////////////////
   //  /projects
@@ -218,23 +218,115 @@ describe('Projects API', () => {
   })
 
   describe('PUT /projects/:id', (done) => {
-    xit('updates a SINGLE project', (done) => {
-
+    it('updates a SINGLE project', (done) => {
+      const project = new Project({
+        name: 'Test 1',
+        slug: 'test-1'
+      });
+      project.save().then(() => {
+        chai.request(app)
+          .put(`/projects/${project._id}`)
+          .send({ name: 'Test 2', slug: 'test-2' })
+          .end((err, res) => {
+            res.should.have.status(204)
+            res.headers.should.have.property('location')
+            res.headers.location.startsWith('https://api.mycodebytes.com/v1/projects/');
+            Object.keys(res.body).length.should.equal(0)
+            res.body.constructor.should.equal(Object)
+            Project.findById(project._id)
+              .then((project) => {
+                project.name.should.equal('Test 2')
+                project.slug.should.equal('test-2')
+                done()
+              })
+          })
+      })
     });
-    xit('only updates provided fields', (done) => {
-
+    it('only updates provided fields', (done) => {
+      const project = new Project({
+        name: 'Test 1',
+        slug: 'test-1'
+      });
+      project.save().then(() => {
+        chai.request(app)
+          .put(`/projects/${project._id}`)
+          .send({ name: 'Test 2' })
+          .end((err, res) => {
+            res.should.have.status(204)
+            res.headers.should.have.property('location')
+            res.headers.location.startsWith('https://api.mycodebytes.com/v1/projects/');
+            Object.keys(res.body).length.should.equal(0)
+            res.body.constructor.should.equal(Object)
+            Project.findById(project._id)
+              .then((project) => {
+                project.name.should.equal('Test 2')
+                project.slug.should.equal('test-1')
+                done()
+              })
+          })
+      })
     })
-    xit('does not modify the original id', (done) => {
-
+    it('does not modify the original id', (done) => {
+      const project = new Project({
+        name: 'Test 1',
+        slug: 'test-1'
+      });
+      project.save().then(() => {
+        chai.request(app)
+          .put(`/projects/${project._id}`)
+          .send({ _id: mongoose.Types.ObjectId() })
+          .end((err, res) => {
+            res.should.have.status(403)
+            res.should.be.json
+            res.body.status.should.equal('error')
+            res.body.message.should.be.equal('This action is forbidden.')
+            done()
+          })
+      })
     })
-    xit('returns error status for invalid ids', (done) => {
-
+    it('returns error status for invalid ids', (done) => {
+      chai.request(app)
+        .put('/projects/invalid')
+        .end((err, res) => {
+          res.should.have.status(404)
+          res.should.be.json
+          res.body.status.should.equal('error')
+          res.body.message.should.be.equal('The requested resource does not exist.')
+          done()
+        })
     })
-    xit('returns error status for non-existent ids', (done) => {
-
+    it('returns error status for non-existent ids', (done) => {
+      chai.request(app)
+        .put(`/projects/${mongoose.Types.ObjectId()}`)
+        .end((err, res) => {
+          res.should.have.status(404)
+          res.should.be.json
+          res.body.status.should.equal('error')
+          res.body.message.should.be.equal('The requested resource does not exist.')
+          done()
+        })
     })
-    xit('returns an error when an invalid slug is provided', (done) => {
-
+    it('returns an error when an invalid slug is provided', (done) => {
+      const project = new Project({
+        name: 'Test 1',
+        slug: 'test-1'
+      });
+      project.save().then(() => {
+        chai.request(app)
+          .put(`/projects/${project._id}`)
+          .send({ slug: 'test-' })
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.should.be.json;
+            res.body.status.should.equal('error');
+            res.body.message.should.be.equal('Slug is invalid.');
+            Project.findById(project._id)
+              .then((project) => {
+                project.slug.should.equal('test-1')
+                done()
+              })
+          })
+      })
     })
   })
 
