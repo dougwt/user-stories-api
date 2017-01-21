@@ -43,6 +43,7 @@ routes.route('/projects')
 
 routes.route('/projects/:projectId')
   .get(ProjectsController.findById)
+  .put(ProjectsController.update)
 
 
 // TODO: Do I need to make separate calls for put and delete, etc?
