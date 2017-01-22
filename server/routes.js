@@ -49,6 +49,7 @@ routes.route('/projects/:projectId')
 
 routes.route('/projects/:projectId/roles')
   .get(RolesController.findAll)
+  .post(RolesController.create)
 
 
 // TODO: Do I need to make separate calls for put and delete, etc?

@@ -59,14 +59,59 @@ describe('Roles API', () => {
   })
 
   describe('POST /projects/:id/roles', () => {
-    xit('creates a new role', (done) => {
+    let project;
 
+    beforeEach((done) => {
+      project = new Project({
+        name: 'Test Project',
+        slug: 'test-project',
+        roles: []
+      });
+      project.save().then(() => {
+        done()
+      })
+    })
+
+    it('creates a new role', (done) => {
+      const count = project.roles.length;
+      chai.request(app)
+        .post(`/projects/${project._id}/roles`)
+        .send({ name: 'Test', slug: 'test' })
+        .end((err, res) => {
+          Project.findById(project.id).then(project => {
+            const newCount = project.roles.length
+            res.should.have.status(201);
+            res.should.be.json;
+            res.headers.should.have.property('location');
+            res.headers.location.startsWith(`https://api.mycodebytes.com/v1/projects/${project._id}/roles`);
+            res.body.status.should.equal('success');
+            newCount.should.equal(count + 1);
+            done();
+          });
+        });
     });
-    xit('returns an error when a name is not provided', (done) => {
-
+    it('returns an error when a name is not provided', (done) => {
+      chai.request(app)
+        .post(`/projects/${project._id}/roles`)
+        .send({ slug: 'test' })
+        .end((err, res) => {
+          res.should.have.status(400);
+          res.should.be.json;
+          res.body.status.should.equal('error');
+          res.body.message.should.be.equal('Name is required.');
+          done();
+        });
     });
-    xit('automatically assigns a creation_date', (done) => {
-
+    it('automatically assigns a creation_date', (done) => {
+      chai.request(app)
+        .post(`/projects/${project._id}/roles`)
+        .send({ name: 'Test', slug: 'test' })
+        .end((err, res) => {
+          res.should.be.json;
+          res.body.status.should.equal('success')
+          res.body.data[0]._createdAt.should.not.be.null;
+          done();
+        });
     });
   })
 
