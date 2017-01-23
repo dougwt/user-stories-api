@@ -11,7 +11,8 @@
     "start": "nf start -p 3000",
     "server": "API_PORT=3001 NODE_ENV=dev ./node_modules/.bin/nodemon server/index.js --exec babel-node",
     "test": "NODE_ENV=test mocha --compilers js:babel-core/register --recursive ./server/test",
-    "test:watch": "NODE_ENV=test ./node_modules/.bin/nodemon --exec 'mocha --compilers js:babel-core/register --recursive ./server/test'"
+    "test:watch": "NODE_ENV=test ./node_modules/.bin/nodemon --exec 'mocha --compilers js:babel-core/register --recursive ./server/test'",
+    "test-travis": "NODE_ENV=test istanbul cover _mocha -- --compilers js:babel-core/register --recursive ./server/test"
   },
   "devDependencies": {
     "babel-cli": "^6.18.0",
@@ -19,7 +20,9 @@
     "babel-preset-latest": "^6.16.0",
     "chai": "^3.5.0",
     "chai-http": "^3.0.0",
+    "coveralls": "^2.11.15",
     "foreman": "^2.0.0",
+    "istanbul": "^1.1.0-alpha.1",
     "mocha": "*",
     "nodemon": "^1.11.0"
   },
