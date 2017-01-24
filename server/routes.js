@@ -33,7 +33,7 @@ routes.param('roleId', (req, res, next, value) => {
 
   Project.find({ "_id": projectId, "roles._id": value })
     .then((project) => {
-      req['project'] = project
+      req['role'] = req['project'].roles.id(value)
       next()
     })
     .catch((err) => {
@@ -63,6 +63,7 @@ routes.route('/projects/:projectId/roles')
   .post(RolesController.create)
 routes.route('/projects/:projectId/roles/:roleId')
   .put(RolesController.update)
+  .delete(RolesController.delete)
 
 // TODO: Do I need to make separate calls for put and delete, etc?
 // or is there a way for me to otherwise manage handling for invalid routes?

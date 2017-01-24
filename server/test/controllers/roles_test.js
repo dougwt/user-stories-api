@@ -190,14 +190,61 @@ describe('Roles API', () => {
   })
 
   describe('DELETE /projects/:id/roles/:id', () => {
-    xit('deletes a SINGLE role', (done) => {
-
+    it('deletes a SINGLE role', (done) => {
+      const project1 = new Project({
+        name: 'Test',
+        slug: 'test',
+        roles: [{ name: 'Test 1' }]
+      });
+      project1.save().then(() => {
+        chai.request(app)
+          .delete(`/projects/${project1._id}/roles/${project1.roles[0]._id}`)
+          .end((err, res) => {
+            Object.keys(res.body).length.should.equal(0)
+            res.body.constructor.should.equal(Object)
+            Project.findById(project1._id)
+              .then((project2) => {
+                project2.roles.length.should.equal(0)
+                done()
+              })
+          })
+      })
     });
-    xit('returns an error for invalid ids', (done) => {
-
+    it('returns an error for invalid ids', (done) => {
+      const project1 = new Project({
+        name: 'Test',
+        slug: 'test',
+        roles: [{ name: 'Test 1' }]
+      });
+      project1.save().then(() => {
+        chai.request(app)
+          .delete(`/projects/${project1._id}/roles/invalid`)
+          .end((err, res) => {
+            res.should.have.status(404)
+            res.should.be.json
+            res.body.status.should.equal('error')
+            res.body.message.should.be.equal('The requested resource does not exist.')
+            done()
+          })
+      })
     });
-    xit('returns an error for non-existent ids', (done) => {
-
+    it('returns an error for non-existent ids', (done) => {
+      const project1 = new Project({
+        name: 'Test',
+        slug: 'test',
+        roles: [{ name: 'Test 1' }]
+      });
+      project1.save().then(() => {
+        chai.request(app)
+          .delete(`/projects/${project1._id}/roles/${mongoose.Types.ObjectId()}`)
+          .end((err, res) => {
+            res.should.have.status(404)
+            res.should.be.json
+            res.body.status.should.equal('error')
+            res.body.message.should.be.equal('The requested resource does not exist.')
+            done()
+          })
+      })
     });
   })
 
