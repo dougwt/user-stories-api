@@ -10,10 +10,11 @@ module.exports = {
       .then((project) => {
         if (project) {
           return res.status(200).send(Response.success(project))
+        } else {
+          var err = new Error();
+          err.status = 404;
+          next(err);
         }
-        var err = new Error();
-        err.status = 404;
-        next(err);
       })
       .catch((err) => {
         next(err)
@@ -59,10 +60,11 @@ module.exports = {
       .then((project) => {
         if (project) {
           return res.location('https://api.mycodebytes.com/v1/projects/'+ project._id).status(204).send(Response.success(project))
+        } else {
+          var err = new Error();
+          err.status = 404;
+          next(err);
         }
-        var err = new Error();
-        err.status = 404;
-        next(err);
       })
       .catch((err) => {
         if(err.codeName === 'ImmutableField' || (err.name === 'MongoError' && err.message === 'exception: Mod on _id not allowed')) {
@@ -83,10 +85,11 @@ module.exports = {
       .then((project) => {
         if (project) {
           return res.status(204).send(Response.success(project))
+        } else {
+          var err = new Error();
+          err.status = 404;
+          next(err);
         }
-        var err = new Error();
-        err.status = 404;
-        next(err);
       })
   }
 
