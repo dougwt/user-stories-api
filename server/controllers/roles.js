@@ -12,12 +12,6 @@ function renameNestedProps(roleProps, prefix) {
 
 module.exports = {
 
-  findById(req, res, next) {
-    const projectId = req.params.projectId;
-    const roleId = req.params.roleId;
-
-  },
-
   findAll(req, res, next) {
     const projectId = req.params.projectId;
 
@@ -87,9 +81,9 @@ module.exports = {
     const role = project.roles.id(roleId)
 
     if (role === null) {
-          var err = new Error();
-          err.status = 404;
-          next(err);
+      var err = new Error();
+      err.status = 404;
+      next(err);
     }
 
     role.remove();

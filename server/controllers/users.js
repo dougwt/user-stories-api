@@ -5,19 +5,15 @@ module.exports = {
 
   findById(req, res, next) {
     const userId = req.params.userId;
+    const user = req['user']
 
-    User.findById(userId)
-      .then((user) => {
-        if (user) {
-          return res.status(200).send(Response.success(user))
-        }
-        var err = new Error();
-        err.status = 404;
-        next(err);
-      })
-      .catch((err) => {
-        next(err)
-      });
+    if (user) {
+      return res.status(200).send(Response.success(user))
+    } else {
+      var err = new Error();
+      err.status = 404;
+      next(err);
+    }
   },
 
   findAll(req, res, next) {
@@ -83,10 +79,11 @@ module.exports = {
       .then((user) => {
         if (user) {
           return res.status(204).send(Response.success(user))
+        } else {
+          var err = new Error();
+          err.status = 404;
+          next(err);
         }
-        var err = new Error();
-        err.status = 404;
-        next(err);
       })
   }
 
