@@ -59,26 +59,26 @@ describe('Roles API', () => {
   })
 
   describe('POST /projects/:id/roles', () => {
-    let project;
+    let p1;
 
     beforeEach((done) => {
-      project = new Project({
+      p1 = new Project({
         name: 'Test Project',
         slug: 'test-project',
         roles: []
       });
-      project.save().then(() => {
+      p1.save().then(() => {
         done()
       })
     })
 
     it('creates a new role', (done) => {
-      const count = project.roles.length;
+      const count = p1.roles.length;
       chai.request(app)
-        .post(`/projects/${project._id}/roles`)
+        .post(`/projects/${p1._id}/roles`)
         .send({ name: 'Test', slug: 'test' })
         .end((err, res) => {
-          Project.findById(project.id).then(project => {
+          Project.findById(p1.id).then(project => {
             const newCount = project.roles.length
             res.should.have.status(201);
             res.should.be.json;
@@ -92,7 +92,7 @@ describe('Roles API', () => {
     });
     it('returns an error when a name is not provided', (done) => {
       chai.request(app)
-        .post(`/projects/${project._id}/roles`)
+        .post(`/projects/${p1._id}/roles`)
         .send({ slug: 'test' })
         .end((err, res) => {
           res.should.have.status(400);
@@ -104,7 +104,7 @@ describe('Roles API', () => {
     });
     it('automatically assigns a creation_date', (done) => {
       chai.request(app)
-        .post(`/projects/${project._id}/roles`)
+        .post(`/projects/${p1._id}/roles`)
         .send({ name: 'Test', slug: 'test' })
         .end((err, res) => {
           res.should.be.json;
@@ -120,20 +120,72 @@ describe('Roles API', () => {
   //////////////////////////////////////////////////////////
 
   describe('PUT /projects/:id/roles/:id', () => {
-    xit('updates a SINGLE role', (done) => {
+    let p1;
 
+    beforeEach((done) => {
+      p1 = new Project({
+        name: 'Test Project',
+        slug: 'test-project',
+        roles: [{ name: 'Test 1' }]
+      });
+      p1.save().then(() => {
+        done()
+      })
     });
-    xit('only updates provided fields', (done) => {
 
+    it('updates a SINGLE role', (done) => {
+      chai.request(app)
+        .put(`/projects/${p1._id}/roles/${p1.roles[0]._id}`)
+        .send({ name: 'Test 2' })
+        .end((err, res) => {
+          res.should.have.status(204)
+          res.headers.should.have.property('location')
+          res.headers.location.startsWith('https://api.mycodebytes.com/v1/projects/');
+          Object.keys(res.body).length.should.equal(0)
+          res.body.constructor.should.equal(Object)
+          Project.findById(p1._id)
+            .then((project) => {
+              project.roles[0].name.should.equal('Test 2')
+              done()
+            })
+        })
     });
-    xit('does not modify the original id', (done) => {
-
+    // xit('only updates provided fields', (done) => {
+    //
+    // });
+    it('does not modify the original id', (done) => {
+      chai.request(app)
+        .put(`/projects/${p1._id}/roles/${p1.roles[0]._id}`)
+        .send({ _id: mongoose.Types.ObjectId() })
+        .end((err, res) => {
+          res.should.have.status(403)
+          res.should.be.json
+          res.body.status.should.equal('error')
+          res.body.message.should.be.equal('This action is forbidden.')
+          done()
+        })
     });
-    xit('returns an error for invalid ids', (done) => {
-
+    it('returns an error for invalid ids', (done) => {
+      chai.request(app)
+        .put(`/projects/${p1._id}/roles/invalid`)
+        .end((err, res) => {
+          res.should.have.status(404)
+          res.should.be.json
+          res.body.status.should.equal('error')
+          res.body.message.should.be.equal('The requested resource does not exist.')
+          done()
+        })
     });
-    xit('returns an error for non-existent ids', (done) => {
-
+    it('returns an error for non-existent ids', (done) => {
+      chai.request(app)
+        .put(`/projects/${p1._id}/roles/${mongoose.Types.ObjectId()}`)
+        .end((err, res) => {
+          res.should.have.status(404)
+          res.should.be.json
+          res.body.status.should.equal('error')
+          res.body.message.should.be.equal('The requested resource does not exist.')
+          done()
+        })
     });
   })
 
