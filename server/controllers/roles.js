@@ -83,6 +83,22 @@ module.exports = {
     const projectId = req.params.projectId;
     const roleId = req.params.roleId;
 
+    const project = req['project']
+    const role = project.roles.id(roleId)
+
+    if (role === null) {
+          var err = new Error();
+          err.status = 404;
+          next(err);
+    }
+
+    role.remove();
+    project.save((err) => {
+      if (err) {
+        next(err);
+      }
+      return res.status(204).send(Response.success(project))
+    });
   }
 
 };
