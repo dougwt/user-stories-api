@@ -38,8 +38,6 @@ app.use((err, req, res, next) => {
     next()
   }
   else {
-    console.log('It happened!')
-    console.log(err)
     res.status(500).send(Response.error(err.message));
   }
 

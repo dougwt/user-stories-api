@@ -28,11 +28,23 @@ routes.param('projectId', (req, res, next, value) => {
       res.status(404).send(Response.error('The requested resource does not exist.'))
     })
 })
+routes.param('roleId', (req, res, next, value) => {
+  const projectId = req.params.projectId;
+
+  Project.find({ "_id": projectId, "roles._id": value })
+    .then((project) => {
+      req['project'] = project
+      next()
+    })
+    .catch((err) => {
+      res.status(404).send(Response.error('The requested resource does not exist.'))
+    })
+})
+
 
 routes.route('/users')
   .get(UsersController.findAll)
   .post(UsersController.create)
-
 routes.route('/users/:userId')
   .get(UsersController.findById)
   .put(UsersController.update)
@@ -41,7 +53,6 @@ routes.route('/users/:userId')
 routes.route('/projects')
   .get(ProjectsController.findAll)
   .post(ProjectsController.create)
-
 routes.route('/projects/:projectId')
   .get(ProjectsController.findById)
   .put(ProjectsController.update)
@@ -50,7 +61,8 @@ routes.route('/projects/:projectId')
 routes.route('/projects/:projectId/roles')
   .get(RolesController.findAll)
   .post(RolesController.create)
-
+routes.route('/projects/:projectId/roles/:roleId')
+  .put(RolesController.update)
 
 // TODO: Do I need to make separate calls for put and delete, etc?
 // or is there a way for me to otherwise manage handling for invalid routes?
