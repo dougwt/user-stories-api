@@ -23,24 +23,21 @@ module.exports = {
   create(req, res, next) {
     const projectId = req.params.projectId;
     const roleProps = req.body;
+    const project = req['project']
 
-    Project.findById(projectId)
-      // TODO: replace hardcoded URI prefix
-      .then((project) => {
-        project.roles.push(roleProps);
-        project.save((err) => {
-          if (err) {
-            if (err.errors['roles.0.name'] && err.errors['roles.0.name'].name && err.errors['roles.0.name'].name === 'ValidatorError' && err.errors['roles.0.name'].message === 'Path `name` is required.') {
-              res.status(400).send(Response.error('Name is required.'))
-              next();
-            } else {
-             next(err);
-            }
-          } else {
-            return res.location('https://api.mycodebytes.com/v1/projects/'+ project.id).status(201).send(Response.success(project.roles));
-          }
-        });
-      })
+    project.roles.push(roleProps);
+    project.save((err) => {
+      if (err) {
+        if (err.errors['roles.0.name'] && err.errors['roles.0.name'].name && err.errors['roles.0.name'].name === 'ValidatorError' && err.errors['roles.0.name'].message === 'Path `name` is required.') {
+          res.status(400).send(Response.error('Name is required.'))
+          next();
+        } else {
+         next(err);
+        }
+      } else {
+        return res.location('https://api.mycodebytes.com/v1/projects/'+ project.id).status(201).send(Response.success(project.roles));
+      }
+    });
   },
 
   update(req, res, next) {
