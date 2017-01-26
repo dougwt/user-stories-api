@@ -190,61 +190,58 @@ describe('Roles API', () => {
   })
 
   describe('DELETE /projects/:id/roles/:id', () => {
-    it('deletes a SINGLE role', (done) => {
-      const project1 = new Project({
-        name: 'Test',
-        slug: 'test',
+    let p1;
+    let projectId;
+    let roleId;
+
+    beforeEach((done) => {
+      p1 = new Project({
+        name: 'Test Project',
+        slug: 'test-project',
         roles: [{ name: 'Test 1' }]
       });
-      project1.save().then(() => {
-        chai.request(app)
-          .delete(`/projects/${project1._id}/roles/${project1.roles[0]._id}`)
-          .end((err, res) => {
-            Object.keys(res.body).length.should.equal(0)
-            res.body.constructor.should.equal(Object)
-            Project.findById(project1._id)
-              .then((project2) => {
-                project2.roles.length.should.equal(0)
-                done()
-              })
-          })
+      p1.save().then(() => {
+        projectId = p1._id;
+        roleId = p1.roles[0]._id;
+        done()
       })
+    })
+
+    it('deletes a SINGLE role', (done) => {
+      chai.request(app)
+        .delete(`/projects/${projectId}/roles/${roleId}`)
+        .end((err, res) => {
+          res.should.have.status(204)
+          Object.keys(res.body).length.should.equal(0)
+          res.body.constructor.should.equal(Object)
+          Project.findById(projectId)
+            .then((project2) => {
+              project2.roles.length.should.equal(0)
+              done()
+            })
+        })
     });
     it('returns an error for invalid ids', (done) => {
-      const project1 = new Project({
-        name: 'Test',
-        slug: 'test',
-        roles: [{ name: 'Test 1' }]
-      });
-      project1.save().then(() => {
-        chai.request(app)
-          .delete(`/projects/${project1._id}/roles/invalid`)
-          .end((err, res) => {
-            res.should.have.status(404)
-            res.should.be.json
-            res.body.status.should.equal('error')
-            res.body.message.should.be.equal('The requested resource does not exist.')
-            done()
-          })
-      })
+      chai.request(app)
+        .delete(`/projects/${projectId}/roles/invalid`)
+        .end((err, res) => {
+          res.should.have.status(404)
+          res.should.be.json
+          res.body.status.should.equal('error')
+          res.body.message.should.be.equal('The requested resource does not exist.')
+          done()
+        })
     });
     it('returns an error for non-existent ids', (done) => {
-      const project1 = new Project({
-        name: 'Test',
-        slug: 'test',
-        roles: [{ name: 'Test 1' }]
-      });
-      project1.save().then(() => {
-        chai.request(app)
-          .delete(`/projects/${project1._id}/roles/${mongoose.Types.ObjectId()}`)
-          .end((err, res) => {
-            res.should.have.status(404)
-            res.should.be.json
-            res.body.status.should.equal('error')
-            res.body.message.should.be.equal('The requested resource does not exist.')
-            done()
-          })
-      })
+      chai.request(app)
+        .delete(`/projects/${projectId}/roles/${mongoose.Types.ObjectId()}`)
+        .end((err, res) => {
+          res.should.have.status(404)
+          res.should.be.json
+          res.body.status.should.equal('error')
+          res.body.message.should.be.equal('The requested resource does not exist.')
+          done()
+        })
     });
   })
 
