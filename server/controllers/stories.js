@@ -50,34 +50,31 @@ module.exports = {
     const storyId = req.params.storyId;
     const storyProps = req.body;
 
-    // // if (roleProps.hasOwnProperty('_id')) {
-    // //   res.status(403).send(Response.error('This action is forbidden.'));
-    // //   next();
-    // //   return;
-    // // }
-    //
-    // // TODO: replace hardcoded URI prefix
-    // const renamedProps = renameNestedProps(storyProps, 'roles.$.stories.')
-    // console.log(renamedProps)
-    //
-    // Project.findOneAndUpdate(
-    //   { "_id": projectId, "roles._id": roleId, "roles.stories._id": storyId },
-    //   { $set: renamedProps },
-    //   { runValidators: true, context: 'query' }
-    // )
-    //   .then((project) => {
-    //     console.log(project.roles[0])
-    //     if (project) {
-    //       return res.location('https://api.mycodebytes.com/v1/projects/'+ project._id).status(204).send(Response.success(project))
-    //     }
-    //     // var err = new Error();
-    //     // err.status = 404;
-    //     // next(err);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err)
-    //     next(err);
-    //   });
+    if (storyProps.hasOwnProperty('_id')) {
+      res.status(403).send(Response.error('This action is forbidden.'));
+      next();
+      return;
+    }
+
+    // TODO: replace hardcoded URI prefix
+    const renamedProps = renameNestedProps(storyProps, 'stories.$.')
+
+    Project.findOneAndUpdate(
+      { "_id": projectId, "stories._id": storyId },
+      { $set: renamedProps },
+      { runValidators: true, context: 'query' }
+    )
+      .then((project) => {
+        if (project) {
+          return res.location('https://api.mycodebytes.com/v1/projects/'+ project._id).status(204).send(Response.success(project))
+        }
+        var err = new Error();
+        err.status = 404;
+        next(err);
+      })
+      .catch((err) => {
+        next(err);
+      });
   },
 
   delete(req, res, next) {

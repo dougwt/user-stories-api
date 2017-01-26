@@ -144,12 +144,9 @@ describe('Stories API', () => {
       p1 = new Project({
         name: 'Test Project',
         slug: 'test-project',
-        roles: [{
-          name: 'Tester',
-          stories: [{
-            desire: 'find errors',
-            benefit: 'they can be fixed'
-          }]
+        stories: [{
+          desire: 'find errors',
+          benefit: 'they can be fixed'
         }]
       });
       p1.save().then(() => {
@@ -157,14 +154,9 @@ describe('Stories API', () => {
       })
     })
 
-    xit('updates a SINGLE story', (done) => {
+    it('updates a SINGLE story', (done) => {
       const projectId = p1._id;
-      const roleId = p1.roles[0]._id;
-      const storyId = p1.roles[0].stories[0]._id;
-
-      // console.log('projectId:', projectId);
-      // console.log('roleId:', roleId);
-      // console.log('storyId:', storyId);
+      const storyId = p1.stories[0]._id;
 
       chai.request(app)
         .put(`/projects/${projectId}/stories/${storyId}`)
@@ -176,24 +168,74 @@ describe('Stories API', () => {
           res.headers.location.startsWith('https://api.mycodebytes.com/v1/projects/');
           Object.keys(res.body).length.should.equal(0)
           res.body.constructor.should.equal(Object)
-          Project.findById(p1._id)
+          Project.findById(projectId)
             .then((project) => {
-              project.roles[0].stories[0].desire.should.equal('find all the errors')
+              project.stories[0].desire.should.equal('find all the errors')
               done()
             })
         })
     });
-    xit('only updates provided fields', (done) => {
+    it('only updates provided fields', (done) => {
+      const projectId = p1._id;
+      const storyId = p1.stories[0]._id;
 
+      chai.request(app)
+        .put(`/projects/${projectId}/stories/${storyId}`)
+        .send({ desire: 'find all the errors' })
+        .end((err, res) => {
+          res.should.have.status(204)
+          res.headers.should.have.property('location')
+          res.headers.location.startsWith('https://api.mycodebytes.com/v1/projects/');
+          Object.keys(res.body).length.should.equal(0)
+          res.body.constructor.should.equal(Object)
+          Project.findById(projectId)
+            .then((project) => {
+              project.stories[0].desire.should.equal('find all the errors')
+              project.stories[0].benefit.should.equal('they can be fixed')
+              done()
+            })
+        })
     });
-    xit('does not modify the original id', (done) => {
+    it('does not modify the original id', (done) => {
+      const projectId = p1._id;
+      const storyId = p1.stories[0]._id;
 
+      chai.request(app)
+        .put(`/projects/${projectId}/stories/${storyId}`)
+        .send({ _id: mongoose.Types.ObjectId() })
+        .end((err, res) => {
+          res.should.have.status(403)
+          res.should.be.json
+          res.body.status.should.equal('error')
+          res.body.message.should.be.equal('This action is forbidden.')
+          done()
+        })
     });
-    xit('returns an error for invalid ids', (done) => {
+    it('returns an error for invalid ids', (done) => {
+      const projectId = p1._id;
 
+      chai.request(app)
+        .put(`/projects/${projectId}/stories/invalid`)
+        .end((err, res) => {
+          res.should.have.status(404)
+          res.should.be.json
+          res.body.status.should.equal('error')
+          res.body.message.should.be.equal('The requested resource does not exist.')
+          done()
+        })
     });
-    xit('returns an error for non-existent ids', (done) => {
+    it('returns an error for non-existent ids', (done) => {
+      const projectId = p1._id;
 
+      chai.request(app)
+        .put(`/projects/${projectId}/stories/${mongoose.Types.ObjectId()}`)
+        .end((err, res) => {
+          res.should.have.status(404)
+          res.should.be.json
+          res.body.status.should.equal('error')
+          res.body.message.should.be.equal('The requested resource does not exist.')
+          done()
+        })
     });
   })
 

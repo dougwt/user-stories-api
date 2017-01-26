@@ -41,18 +41,18 @@ routes.param('roleId', (req, res, next, value) => {
       res.status(404).send(Response.error('The requested resource does not exist.'))
     })
 })
-// routes.param('projectId', (req, res, next, value) => {
-//   const projectId = req.params.projectId;
-//
-//   Project.find({ "_id": projectId, "roles._id": value })
-//     .then((project) => {
-//       req['role'] = req['project'].roles.id(value)
-//       next()
-//     })
-//     .catch((err) => {
-//       res.status(404).send(Response.error('The requested resource does not exist.'))
-//     })
-// })
+routes.param('storyId', (req, res, next, value) => {
+  const projectId = req.params.projectId;
+
+  Project.find({ "_id": projectId, "stories._id": value })
+    .then((project) => {
+      req['story'] = req['project'].stories.id(value)
+      next()
+    })
+    .catch((err) => {
+      res.status(404).send(Response.error('The requested resource does not exist.'))
+    })
+})
 
 
 routes.route('/users')
