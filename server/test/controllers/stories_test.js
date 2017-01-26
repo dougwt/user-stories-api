@@ -139,6 +139,8 @@ describe('Stories API', () => {
 
   describe('PUT /projects/:id/stories/:id', () => {
     let p1;
+    let projectId;
+    let storyId;
 
     beforeEach((done) => {
       p1 = new Project({
@@ -150,14 +152,13 @@ describe('Stories API', () => {
         }]
       });
       p1.save().then(() => {
+        projectId = p1._id;
+        storyId = p1.stories[0]._id;
         done()
       })
     })
 
     it('updates a SINGLE story', (done) => {
-      const projectId = p1._id;
-      const storyId = p1.stories[0]._id;
-
       chai.request(app)
         .put(`/projects/${projectId}/stories/${storyId}`)
         .send({ desire: 'find all the errors' })
@@ -176,9 +177,6 @@ describe('Stories API', () => {
         })
     });
     it('only updates provided fields', (done) => {
-      const projectId = p1._id;
-      const storyId = p1.stories[0]._id;
-
       chai.request(app)
         .put(`/projects/${projectId}/stories/${storyId}`)
         .send({ desire: 'find all the errors' })
@@ -197,9 +195,6 @@ describe('Stories API', () => {
         })
     });
     it('does not modify the original id', (done) => {
-      const projectId = p1._id;
-      const storyId = p1.stories[0]._id;
-
       chai.request(app)
         .put(`/projects/${projectId}/stories/${storyId}`)
         .send({ _id: mongoose.Types.ObjectId() })
@@ -212,8 +207,6 @@ describe('Stories API', () => {
         })
     });
     it('returns an error for invalid ids', (done) => {
-      const projectId = p1._id;
-
       chai.request(app)
         .put(`/projects/${projectId}/stories/invalid`)
         .end((err, res) => {
@@ -225,8 +218,6 @@ describe('Stories API', () => {
         })
     });
     it('returns an error for non-existent ids', (done) => {
-      const projectId = p1._id;
-
       chai.request(app)
         .put(`/projects/${projectId}/stories/${mongoose.Types.ObjectId()}`)
         .end((err, res) => {
@@ -240,14 +231,61 @@ describe('Stories API', () => {
   })
 
   describe('DELETE /projects/:id/stories/:id', () => {
-    xit('deletes a SINGLE story', (done) => {
+    let p1;
+    let projectId;
+    let storyId;
 
+    beforeEach((done) => {
+      p1 = new Project({
+        name: 'Test Project',
+        slug: 'test-project',
+        stories: [{
+          desire: 'find errors',
+          benefit: 'they can be fixed'
+        }]
+      });
+      p1.save().then(() => {
+        projectId = p1._id;
+        storyId = p1.stories[0]._id;
+        done()
+      })
+    })
+
+    it('deletes a SINGLE story', (done) => {
+      chai.request(app)
+        .delete(`/projects/${projectId}/stories/${storyId}`)
+        .end((err, res) => {
+          res.should.have.status(204)
+          Object.keys(res.body).length.should.equal(0)
+          res.body.constructor.should.equal(Object)
+          Project.findById(projectId)
+            .then((p2) => {
+              p2.stories.length.should.equal(0)
+              done()
+            })
+        })
     });
-    xit('returns an error for invalid ids', (done) => {
-
+    it('returns an error for invalid ids', (done) => {
+      chai.request(app)
+        .delete(`/projects/${projectId}/stories/invalid`)
+        .end((err, res) => {
+          res.should.have.status(404)
+          res.should.be.json
+          res.body.status.should.equal('error')
+          res.body.message.should.be.equal('The requested resource does not exist.')
+          done()
+        })
     });
-    xit('returns an error for non-existent ids', (done) => {
-
+    it('returns an error for non-existent ids', (done) => {
+      chai.request(app)
+        .delete(`/projects/${projectId}/stories/${mongoose.Types.ObjectId()}`)
+        .end((err, res) => {
+          res.should.have.status(404)
+          res.should.be.json
+          res.body.status.should.equal('error')
+          res.body.message.should.be.equal('The requested resource does not exist.')
+          done()
+        })
     });
   })
 
