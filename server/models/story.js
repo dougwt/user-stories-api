@@ -3,6 +3,11 @@ import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 const storySchema = new Schema({
+  role: {
+    type: Schema.Types.ObjectId,
+    ref: 'role',
+    default: null
+  },
   desire: {
     type: String,
     required: true
@@ -11,10 +16,11 @@ const storySchema = new Schema({
     type: String,
     required: true
   },
-  author: [{
+  author: {
     type: Schema.Types.ObjectId,
-    ref: 'user'
-  }]
+    ref: 'user',
+    default: null
+  }
 },
 {
   timestamps: { createdAt: '_createdAt', updatedAt: '_updatedAt' }

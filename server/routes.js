@@ -78,9 +78,11 @@ routes.route('/projects/:projectId/roles/:roleId')
   .put(RolesController.update)
   .delete(RolesController.delete)
 
-routes.route('/projects/:projectId/roles/:roleId/stories')
+routes.route('/projects/:projectId/stories')
   .get(StoriesController.findAll)
   .post(StoriesController.create)
+routes.route('/projects/:projectId/stories/:storyId')
+  .put(StoriesController.update)
 
 // TODO: Do I need to make separate calls for put and delete, etc?
 // or is there a way for me to otherwise manage handling for invalid routes?

@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import roleSchema from './role';
+import storySchema from './story';
 import uniqueValidator from 'mongoose-unique-validator';
 
 const Schema = mongoose.Schema;
@@ -18,10 +19,12 @@ const projectSchema = new Schema({
     validate: (slug) => /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)
   },
   roles: [roleSchema],
-  owner: [{
+  stories: [storySchema],
+  owner: {
     type: Schema.Types.ObjectId,
-    ref: 'user'
-  }]
+    ref: 'user',
+    default: null
+  }
 },
 {
   timestamps: { createdAt: '_createdAt', updatedAt: '_updatedAt' }
