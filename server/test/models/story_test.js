@@ -12,14 +12,11 @@ describe('Story schema', () => {
     var p = new Project({
       name: 'Test',
       slug:'test',
-      roles: [{
-        name: 'test',
-        stories: [{ benefit: 'test' }]
-      }]
+      stories: [{ benefit: 'test' }]
     });
 
     p.validate((err) => {
-      err.errors['roles.0.stories.0.desire'].should.exist;
+      err.errors['stories.0.desire'].should.exist;
       done();
     });
   });
@@ -27,14 +24,11 @@ describe('Story schema', () => {
     var p = new Project({
       name: 'Test',
       slug:'test',
-      roles: [{
-        name: 'test',
-        stories: [{ desire: 'test' }]
-      }]
+      stories: [{ desire: 'test' }]
     });
 
     p.validate((err) => {
-      err.errors['roles.0.stories.0.benefit'].should.exist;
+      err.errors['stories.0.benefit'].should.exist;
       done();
     });
   });
@@ -42,7 +36,7 @@ describe('Story schema', () => {
     var p = new Project({
       name: 'Test',
       slug:'test',
-      roles: [{ name: 'test', stories: [{ desire: 'test', benefit: 'test' }] }]
+      stories: [{ desire: 'test', benefit: 'test' }]
     });
 
     p.validate((err) => {
