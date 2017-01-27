@@ -1,6 +1,6 @@
 # PUT users/:id
 
-Insert a short description.
+Sets some values that Users are able to set under the “Account” tab of their settings page. Only the parameters specified will be updated.
 
 ## Resource URL
 
@@ -14,36 +14,16 @@ Insert a short description.
 
 **Optional**
 
-- `email`
-- `name`
-
+*   `email`
+*   `name`
 
 ## Success Response
 
-**Code:** `200 OK`
-
-**Content:**
-
-```json
-{
-  "status": "success",
-  "data": [
-    {
-      "_id": "587d6b137a3d2b1605071259",
-      "updatedAt": "2017-01-17T00:53:39.634Z",
-      "createdAt": "2017-01-17T00:53:39.634Z",
-      "email": "test@test.com",
-      "name": "Test",
-      "creation_date": "2017-01-17T00:53:39.606Z",
-      "__v": 0
-    }
-  ]
-}
-```
+**Code:** `204 No Content`
 
 ## Error Response:
 
-**Code:** `400 Not Found`
+**Code:** `400 Bad Request`
 
 **Content:**
 
@@ -54,6 +34,8 @@ Insert a short description.
 }
 
 ```
+
+OR
 
 **Code:** `403 Forbidden`
 

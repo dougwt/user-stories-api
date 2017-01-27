@@ -1,6 +1,6 @@
 # DELETE users/:id
 
-Insert a short description.
+Permanently delete a User.
 
 ## Resource URL
 

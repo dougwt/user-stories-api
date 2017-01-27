@@ -10,9 +10,21 @@ Insert a short description.
 
 `GET`
 
+## URL Params
+
+**Optional**
+
+*   `skip=[integer]`
+*   `limit=[integer]`
+
 ## Data Params
 
-None
+**Required**
+
+*   `email`
+*   `name`
+
+### Required:
 
 ## Success Response
 

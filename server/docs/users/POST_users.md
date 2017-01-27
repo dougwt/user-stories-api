@@ -1,6 +1,6 @@
 # POST users
 
-Insert a short description.
+Create a new User.
 
 ## Resource URL
 
@@ -14,8 +14,8 @@ Insert a short description.
 
 **Required**
 
-- `email`
-- `name`
+-   `email`
+-   `name`
 
 ## Success Response
 
@@ -27,19 +27,18 @@ Insert a short description.
 {
   "status": "success",
   "data": {
-    "__v": 0,
-    "_updatedAt": "2017-01-27T04:59:38.472Z",
-    "_createdAt": "2017-01-27T04:59:38.472Z",
-    "email": "test@example.com",
-    "name": "Test",
-    "_id": "588ad3bad0c97bdad5d079af"
+    "_id": "588b0b53bcb4baeeeff2d1da",
+    "_createdAt": "2017-01-27T08:56:52.013Z",
+    "_updatedAt": "2017-01-27T08:56:52.013Z",
+    "email": "grace@example.com",
+    "name": "Grace Murray"
   }
 }
 ```
 
 ## Error Response:
 
-**Code:** `400 Conflict`
+**Code:** `400 Bad Request`
 
 **Content:**
 
@@ -52,7 +51,7 @@ Insert a short description.
 
 OR
 
-**Code:** `400 Conflict`
+**Code:** `400 Bad Request`
 
 **Content:**
 
@@ -65,7 +64,7 @@ OR
 
 OR
 
-**Code:** `400 Conflict`
+**Code:** `400 Bad Request`
 
 **Content:**
 
