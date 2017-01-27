@@ -18,10 +18,10 @@
 
 ## Roles
 
-*   GET projects/:id/roles
-*   POST projects/:id/roles
-*   PUT projects/:id/roles/:id
-*   DELETE projects/:id/roles/:id
+*   [GET projects/:id/roles](roles/GET_roles.md)
+*   [POST projects/:id/roles](roles/POST_roles.md)
+*   [PUT projects/:id/roles/:id](roles/PUT_roles_id.md)
+*   [DELETE projects/:id/roles/:id](roles/DELETE_roles_id.md)
 
 ## Stories
 
