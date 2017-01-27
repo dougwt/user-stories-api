@@ -1,6 +1,6 @@
 # GET users/:id
 
-Insert a short description.
+Returns a single User, specified by the id parameter.
 
 ## Resource URL
 
@@ -20,12 +20,11 @@ Insert a short description.
 {
   "status": "success",
   "data": {
-    "_id": "588ad409d0c97bdad5d079b1",
-    "_updatedAt": "2017-01-27T05:00:57.576Z",
-    "_createdAt": "2017-01-27T05:00:57.576Z",
-    "email": "test@example123.com",
-    "name": "Test",
-    "__v": 0
+    "_id": "588b0b53bcb4baeeeff2d1da",
+    "_createdAt": "2017-01-27T08:56:52.013Z",
+    "_updatedAt": "2017-01-27T08:56:52.013Z",
+    "email": "grace@example.com",
+    "name": "Grace Murray"
   }
 }
 ```
