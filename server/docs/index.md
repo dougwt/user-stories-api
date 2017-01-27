@@ -10,11 +10,11 @@
 
 ## Projects
 
-*   GET projects
-*   POST projects
-*   GET projects/:id
-*   PUT projects/:id
-*   DELETE projects/:id
+*   [GET projects](projects/GET_projects.md)
+*   [POST projects](projects/POST_projects.md)
+*   [GET projects/:id](projects/GET_projects_id.md)
+*   [PUT projects/:id](projects/PUT_projects_id.md)
+*   [DELETE projects/:id](projects/DELETE_projects_id.md)
 
 ## Roles
 
