@@ -14,8 +14,8 @@ Create a new User.
 
 **Required**
 
--   `email`
--   `name`
+*   `email`
+*   `name`
 
 ## Success Response
 
