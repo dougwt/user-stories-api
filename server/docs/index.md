@@ -25,7 +25,7 @@
 
 ## Stories
 
-*   GET projects/:id/stories
-*   POST projects/:id/stories
-*   PUT projects/:id/stories/:id
-*   DELETE projects/:id/stories/:id
+*   [GET projects/:id/stories](stories/GET_stories.md)
+*   [POST projects/:id/stories](stories/POST_stories.md)
+*   [PUT projects/:id/stories/:id](stories/PUT_stories_id.md)
+*   [DELETE projects/:id/stories/:id](stories/DELETE_stories_id.md)
