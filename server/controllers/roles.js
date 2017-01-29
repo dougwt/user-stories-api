@@ -15,9 +15,16 @@ module.exports = {
   findAll(req, res, next) {
     const projectId = req.params.projectId;
 
+    const sortFunc = function(a, b) {
+      return b._createdAt - a._createdAt;
+    };
+
     Project.findById(projectId)
-      .then((projects) => res.status(200).send(Response.success(projects.roles)))
-      .catch(next);
+      .then((project) => res.status(200).send(Response.success(project.roles.sort(sortFunc))))
+      .catch((err) => {
+        console.log('detected error:', err)
+        return next(err)
+      });
   },
 
   create(req, res, next) {

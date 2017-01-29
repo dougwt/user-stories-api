@@ -23,6 +23,7 @@ module.exports = {
 
   findAll(req, res, next) {
     Project.find({})
+      .sort({ _createdAt: -1 })
       .then((projects) => res.status(200).send(Response.success(projects)))
       .catch(next);
   },

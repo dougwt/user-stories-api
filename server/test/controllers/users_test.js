@@ -35,6 +35,45 @@ describe('Users API', () => {
           })
       });
     });
+    it('lists ALL users sorted by descending creation dates', (done) => {
+      const u1 = new User({
+        email: 'test1@test.com',
+        name: 'Test 1'
+      });
+      const u2 = new User({
+        email: 'test2@test.com',
+        name: 'Test 2'
+      });
+      const u3 = new User({
+        email: 'test3@test.com',
+        name: 'Test 3'
+      });
+      const { users } = mongoose.connection.collections;
+      users.drop(() => {
+        u1.save(() => {
+          u2.save(() => {
+            u3.save(() => {
+              chai.request(app)
+                .get('/users')
+                .end((err, res) => {
+                  res.should.have.status(200);
+                  res.should.be.json;
+                  res.body.status.should.equal('success')
+                  res.body.data.should.be.a('array');
+                  res.body.data.length.should.equal(3);
+                  res.body.data[0].should.have.property('email');
+                  res.body.data[0].should.have.property('name');
+                  res.body.data[0].should.have.property('_createdAt');
+                  res.body.data[0].email.should.equal('test3@test.com');
+                  res.body.data[1].email.should.equal('test2@test.com');
+                  res.body.data[2].email.should.equal('test1@test.com');
+                  done();
+                })
+            });
+          });
+        });
+      });
+    });
     it('returns an empty list when the collection is empty', (done) => {
       User.find({}).then((users) => {
         chai.request(app)
