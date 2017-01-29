@@ -56,7 +56,7 @@ module.exports = {
     const projectId = req.params.projectId;
     const projectProps = req.body;
 
-    Project.findOneAndUpdate(projectId, projectProps, { runValidators: true, context: 'query' })
+    Project.findByIdAndUpdate(projectId, projectProps, { runValidators: true, context: 'query' })
       .then((project) => {
         if (project) {
           return res.location('https://api.mycodebytes.com/v1/projects/'+ project._id).status(204).send(Response.success(project))
@@ -81,7 +81,7 @@ module.exports = {
   delete(req, res, next) {
     const projectId = req.params.projectId;
 
-    Project.findOneAndRemove(projectId)
+    Project.findByIdAndRemove(projectId)
       .then((project) => {
         if (project) {
           return res.status(204).send(Response.success(project))

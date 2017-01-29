@@ -138,7 +138,7 @@ describe('Stories API', () => {
   //////////////////////////////////////////////////////////
 
   describe('PUT /projects/:id/stories/:id', () => {
-    let p1;
+    let p1, p2, p3;
     let projectId;
     let storyId;
 
@@ -151,10 +151,24 @@ describe('Stories API', () => {
           benefit: 'they can be fixed'
         }]
       });
-      p1.save().then(() => {
-        projectId = p1._id;
-        storyId = p1.stories[0]._id;
-        done()
+      p2 = new Project({
+        name: 'Test Project B',
+        slug: 'test-project-b',
+        roles: [{ name: 'Test  A' }, {name: 'Test B'}]
+      });
+      p3 = new Project({
+        name: 'Test Project C',
+        slug: 'test-project-c',
+        roles: [{ name: 'Test  7' }, {name: 'Test X'}]
+      });
+      p1.save(() => {
+        p2.save(() => {
+          p3.save(() => {
+            projectId = p1._id;
+            storyId = p1.stories[0]._id;
+            done()
+          })
+        })
       })
     })
 
@@ -231,7 +245,7 @@ describe('Stories API', () => {
   })
 
   describe('DELETE /projects/:id/stories/:id', () => {
-    let p1;
+    let p1, p2, p3;
     let projectId;
     let storyId;
 
@@ -244,10 +258,24 @@ describe('Stories API', () => {
           benefit: 'they can be fixed'
         }]
       });
-      p1.save().then(() => {
-        projectId = p1._id;
-        storyId = p1.stories[0]._id;
-        done()
+      p2 = new Project({
+        name: 'Test Project B',
+        slug: 'test-project-b',
+        roles: [{ name: 'Test  A' }, {name: 'Test B'}]
+      });
+      p3 = new Project({
+        name: 'Test Project C',
+        slug: 'test-project-c',
+        roles: [{ name: 'Test  7' }, {name: 'Test X'}]
+      });
+      p1.save(() => {
+        p2.save(() => {
+          p3.save(() => {
+            projectId = p1._id;
+            storyId = p1.stories[0]._id;
+            done()
+          })
+        })
       })
     })
 

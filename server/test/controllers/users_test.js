@@ -204,6 +204,24 @@ describe('Users API', () => {
   })
 
   describe('PUT /users/:id', () => {
+    let u1, u2;
+
+    beforeEach((done) => {
+      u1 = new User({
+        email: 'testA@test.com',
+        name: 'Test A'
+      });
+      u2 = new User({
+        email: 'testB@test.com',
+        name: 'Test B'
+      });
+      u1.save(() => {
+        u2.save(() => {
+          done()
+        })
+      })
+    })
+
     it('updates a SINGLE user on /users/:id PUT', (done) => {
       const user = new User({
         email: 'test1@test.com',
@@ -317,6 +335,24 @@ describe('Users API', () => {
   })
 
   describe('DELETE /users/:id', () => {
+    let u1, u2;
+
+    beforeEach((done) => {
+      u1 = new User({
+        email: 'testA@test.com',
+        name: 'Test A'
+      });
+      u2 = new User({
+        email: 'testB@test.com',
+        name: 'Test B'
+      });
+      u1.save(() => {
+        u2.save(() => {
+          done()
+        })
+      })
+    })
+
     it('deletes a SINGLE user', (done) => {
       const user1 = new User({
         email: 'test@test.com',
