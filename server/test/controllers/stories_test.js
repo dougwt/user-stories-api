@@ -42,6 +42,43 @@ describe('Stories API', () => {
           })
       });
     });
+    it('lists ALL stories sorted by descending creation dates', (done) => {
+      const p1 = new Project({
+        name: 'Test Project',
+        slug: 'test-project',
+        roles: [{ name: 'Tester' }],
+        stories: [{
+          desire: 'find errors',
+          benefit: 'they can be fixed'
+        }]
+      });
+      const s2 = { desire: 'story 2 desire', benefit: 'story 2 benefit' };
+      const s3 = { desire: 'story 3 desire', benefit: 'story 3 benefit' };
+      p1.save().then(() => {
+        p1.stories.push(s2);
+        p1.save().then(() => {
+          p1.stories.push(s3);
+          p1.save().then(() => {
+            chai.request(app)
+              .get(`/projects/${p1._id}/stories`)
+              .end((err, res) => {
+                res.should.have.status(200);
+                res.should.be.json;
+                res.body.status.should.equal('success')
+                res.body.data.should.be.a('array');
+                res.body.data.length.should.equal(3);
+                res.body.data[0].should.have.property('desire');
+                res.body.data[0].should.have.property('benefit');
+                res.body.data[0].should.have.property('_createdAt');
+                res.body.data[0].desire.should.equal('story 3 desire');
+                res.body.data[1].desire.should.equal('story 2 desire');
+                res.body.data[2].desire.should.equal('find errors');
+                done();
+              })
+          })
+        })
+      })
+    });
     it('returns an empty list when the collection is empty', (done) => {
       const p1 = new Project({
         name: 'Test Project',

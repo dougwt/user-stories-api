@@ -35,6 +35,45 @@ describe('Projects API', () => {
           })
       });
     });
+    it('lists ALL projects sorted by descending creation dates', (done) => {
+      const u1 = new Project({
+        name: 'Test 1',
+        slug: 'test-1'
+      });
+      const u2 = new Project({
+        name: 'Test 2',
+        slug: 'test-2'
+      });
+      const u3 = new Project({
+        name: 'Test 3',
+        slug: 'test-3'
+      });
+      const { projects } = mongoose.connection.collections;
+      projects.drop(() => {
+        u1.save(() => {
+          u2.save(() => {
+            u3.save(() => {
+              chai.request(app)
+                .get('/projects')
+                .end((err, res) => {
+                  res.should.have.status(200);
+                  res.should.be.json;
+                  res.body.status.should.equal('success')
+                  res.body.data.should.be.a('array');
+                  res.body.data.length.should.equal(3);
+                  res.body.data[0].should.have.property('name');
+                  res.body.data[0].should.have.property('slug');
+                  res.body.data[0].should.have.property('_createdAt');
+                  res.body.data[0].name.should.equal('Test 3');
+                  res.body.data[1].name.should.equal('Test 2');
+                  res.body.data[2].name.should.equal('Test 1');
+                  done();
+                })
+            });
+          });
+        });
+      });
+    });
     it('returns an empty list when the collection is empty', (done) => {
       Project.find({}).then((projects) => {
         chai.request(app)

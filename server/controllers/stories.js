@@ -15,9 +15,16 @@ module.exports = {
   findAll(req, res, next) {
     const projectId = req.params.projectId;
 
+    const sortFunc = function(a, b) {
+      return b._createdAt - a._createdAt;
+    };
+
     Project.findById(projectId)
-      .then((project) => res.status(200).send(Response.success(project.stories)))
-      .catch(next);
+      .then((project) => res.status(200).send(Response.success(project.stories.sort(sortFunc))))
+      .catch((err) => {
+        console.log('detected error:', err)
+        return next(err)
+      });
   },
 
   create(req, res, next) {
@@ -36,7 +43,8 @@ module.exports = {
           res.status(400).send(Response.error('Benefit is required.'))
           next();
         } else {
-         next(err);
+          console.log('detected error:', err)
+          next(err);
         }
       } else {
         return res.location('https://api.mycodebytes.com/v1/projects/'+ projectId).status(201).send(Response.success(project.stories));

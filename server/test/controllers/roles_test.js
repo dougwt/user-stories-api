@@ -36,6 +36,38 @@ describe('Roles API', () => {
           })
       });
     });
+    it('lists ALL roles sorted by descending creation dates', (done) => {
+      const project = new Project({
+        name: 'Test Project',
+        slug: 'test-project',
+        roles: [{ name: 'Test 1' }]
+      });
+      const r2 = { name: 'Test 2' };
+      const r3 = { name: 'Test 3' };
+      project.save().then(() => {
+        project.roles.push(r2);
+        project.save().then(() => {
+          project.roles.push(r3);
+          project.save().then(() => {
+            chai.request(app)
+              .get(`/projects/${project._id}/roles`)
+              .end((err, res) => {
+                res.should.have.status(200);
+                res.should.be.json;
+                res.body.status.should.equal('success')
+                res.body.data.should.be.a('array');
+                res.body.data.length.should.equal(3);
+                res.body.data[0].should.have.property('name');
+                res.body.data[0].should.have.property('_createdAt');
+                res.body.data[0].name.should.equal('Test 3');
+                res.body.data[1].name.should.equal('Test 2');
+                res.body.data[2].name.should.equal('Test 1');
+                done();
+              })
+          })
+        })
+      })
+    });
     it('returns an empty list when the collection is empty', (done) => {
       const project = new Project({
         name: 'Test Project',

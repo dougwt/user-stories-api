@@ -18,6 +18,7 @@ module.exports = {
 
   findAll(req, res, next) {
     User.find({})
+      .sort({ _createdAt: -1 })
       .then((users) => res.status(200).send(Response.success(users)))
       .catch(next);
   },
