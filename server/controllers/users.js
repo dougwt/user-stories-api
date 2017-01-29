@@ -50,15 +50,15 @@ module.exports = {
   update(req, res, next) {
     const userId = req.params.userId;
     const userProps = req.body;
-
-    User.findOneAndUpdate(userId, userProps, { runValidators: true, context: 'query' })
+    User.findByIdAndUpdate(userId, userProps, { runValidators: true, context: 'query' })
       .then((user) => {
         if (user) {
           return res.location('https://api.mycodebytes.com/v1/users/'+ user._id).status(204).send(Response.success(user))
+        } else {
+          var err = new Error();
+          err.status = 404;
+          next(err);
         }
-        var err = new Error();
-        err.status = 404;
-        next(err);
       })
       .catch((err) => {
         if(err.codeName === 'ImmutableField' || (err.name === 'MongoError' && err.message === 'exception: Mod on _id not allowed')) {
@@ -75,7 +75,7 @@ module.exports = {
   delete(req, res, next) {
     const userId = req.params.userId;
 
-    User.findOneAndRemove(userId)
+    User.findByIdAndRemove(userId)
       .then((user) => {
         if (user) {
           return res.status(204).send(Response.success(user))

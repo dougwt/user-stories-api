@@ -218,6 +218,24 @@ describe('Projects API', () => {
   })
 
   describe('PUT /projects/:id', () => {
+    let p1, p2;
+
+    beforeEach((done) => {
+      p1 = new Project({
+        name: 'Test Project A',
+        slug: 'test-project-a',
+      });
+      p2 = new Project({
+        name: 'Test Project B',
+        slug: 'test-project-b',
+      });
+      p1.save(() => {
+        p2.save(() => {
+          done()
+        })
+      })
+    })
+
     it('updates a SINGLE project', (done) => {
       const project = new Project({
         name: 'Test 1',
@@ -331,6 +349,24 @@ describe('Projects API', () => {
   })
 
   describe('DELETE /projects/:id', () => {
+    let p1, p2;
+
+    beforeEach((done) => {
+      p1 = new Project({
+        name: 'Test Project A',
+        slug: 'test-project-a',
+      });
+      p2 = new Project({
+        name: 'Test Project B',
+        slug: 'test-project-b',
+      });
+      p1.save(() => {
+        p2.save(() => {
+          done()
+        })
+      })
+    })
+
     it('deletes a SINGLE project', (done) => {
       const project1 = new Project({
         name: 'Test',
