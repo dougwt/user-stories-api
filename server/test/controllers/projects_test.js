@@ -346,6 +346,28 @@ describe('Projects API', () => {
           })
       })
     })
+    it('returns an error when a duplicate slug is provided', (done) => {
+      const project = new Project({
+        name: 'Test 1',
+        slug: 'test-1'
+      });
+      project.save().then(() => {
+        chai.request(app)
+          .put(`/projects/${project._id}`)
+          .send({ slug: 'test-project-a' })
+          .end((err, res) => {
+            res.should.have.status(409);
+            res.should.be.json;
+            res.body.status.should.equal('error');
+            res.body.message.should.be.equal('Slug is in use.');
+            Project.findById(project._id)
+              .then((project) => {
+                project.slug.should.equal('test-1')
+                done()
+              })
+          })
+      })
+    })
   })
 
   describe('DELETE /projects/:id', () => {
