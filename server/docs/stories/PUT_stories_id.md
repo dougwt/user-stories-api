@@ -1,6 +1,6 @@
 # PUT stories/:id
 
-Sets some values that Users are able to set under the “Settings” tab of their project page. Only the parameters specified will be updated.
+Update a single Story, specified by the id parameter. Only the parameters specified will be updated.
 
 ## Resource URL
 

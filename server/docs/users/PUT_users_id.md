@@ -1,6 +1,6 @@
 # PUT users/:id
 
-Sets some values that Users are able to set under the “Account” tab of their settings page. Only the parameters specified will be updated.
+Update a single User, specified by the id parameter. Only the parameters specified will be updated.
 
 ## Resource URL
 
