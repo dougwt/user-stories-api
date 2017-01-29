@@ -70,6 +70,9 @@ module.exports = {
         if(err.codeName === 'ImmutableField' || (err.name === 'MongoError' && err.message === 'exception: Mod on _id not allowed')) {
           res.status(403).send(Response.error('This action is forbidden.'));
           next();
+        } else if (err.errors.slug && err.errors.slug.name === 'ValidatorError' && err.errors.slug.message.startsWith('Error, expected `slug` to be unique.')) {
+          res.status(409).send(Response.error('Slug is in use.'))
+          next();
         } else if (err.errors && err.errors.slug && err.errors.slug.name === 'ValidatorError' && err.errors.slug.message.startsWith('Validator failed for path `slug`')) {
           res.status(400).send(Response.error('Slug is invalid.'));
           next();
