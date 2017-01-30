@@ -24,6 +24,8 @@ module.exports = {
   findAll(req, res, next) {
     Project.find({})
       .sort({ _createdAt: -1 })
+      .skip(parseInt(req.query.skip))
+      .limit(parseInt(req.query.limit))
       .then((projects) => res.status(200).send(Response.success(projects)))
       .catch(next);
   },

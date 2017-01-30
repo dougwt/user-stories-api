@@ -89,6 +89,136 @@ describe('Users API', () => {
           });
       });
     });
+    it('supports use of only the skip param', (done) => {
+      const u1 = new User({
+        email: 'test1@test.com',
+        name: 'Test 1'
+      });
+      const u2 = new User({
+        email: 'test2@test.com',
+        name: 'Test 2'
+      });
+      const u3 = new User({
+        email: 'test3@test.com',
+        name: 'Test 3'
+      });
+      const u4 = new User({
+        email: 'test4@test.com',
+        name: 'Test 4'
+      });
+      const { users } = mongoose.connection.collections;
+      users.drop(() => {
+        u1.save(() => {
+          u2.save(() => {
+            u3.save(() => {
+              u3.save(() => {
+                u4.save(() => {
+                  chai.request(app)
+                    .get('/users?skip=2')
+                    .end((err, res) => {
+                      res.should.have.status(200);
+                      res.should.be.json;
+                      res.body.status.should.equal('success')
+                      res.body.data.should.be.a('array');
+                      res.body.data.length.should.be.equal(2);
+                      res.body.data[0].email.should.equal('test2@test.com');
+                      res.body.data[1].email.should.equal('test1@test.com');
+                      done();
+                    })
+                })
+              })
+            })
+          })
+        })
+      })
+    });
+    it('supports use of only the limit param', (done) => {
+      const u1 = new User({
+        email: 'test1@test.com',
+        name: 'Test 1'
+      });
+      const u2 = new User({
+        email: 'test2@test.com',
+        name: 'Test 2'
+      });
+      const u3 = new User({
+        email: 'test3@test.com',
+        name: 'Test 3'
+      });
+      const u4 = new User({
+        email: 'test4@test.com',
+        name: 'Test 4'
+      });
+      const { users } = mongoose.connection.collections;
+      users.drop(() => {
+        u1.save(() => {
+          u2.save(() => {
+            u3.save(() => {
+              u3.save(() => {
+                u4.save(() => {
+                  chai.request(app)
+                    .get('/users?limit=3')
+                    .end((err, res) => {
+                      res.should.have.status(200);
+                      res.should.be.json;
+                      res.body.status.should.equal('success')
+                      res.body.data.should.be.a('array');
+                      res.body.data.length.should.be.equal(3);
+                      res.body.data[0].email.should.equal('test4@test.com');
+                      res.body.data[1].email.should.equal('test3@test.com');
+                      res.body.data[2].email.should.equal('test2@test.com');
+                      done();
+                    })
+                })
+              })
+            })
+          })
+        })
+      });
+    });
+    it('supports use of both the skip and limit params', (done) => {
+      const u1 = new User({
+        email: 'test1@test.com',
+        name: 'Test 1'
+      });
+      const u2 = new User({
+        email: 'test2@test.com',
+        name: 'Test 2'
+      });
+      const u3 = new User({
+        email: 'test3@test.com',
+        name: 'Test 3'
+      });
+      const u4 = new User({
+        email: 'test4@test.com',
+        name: 'Test 4'
+      });
+      const { users } = mongoose.connection.collections;
+      users.drop(() => {
+        u1.save(() => {
+          u2.save(() => {
+            u3.save(() => {
+              u3.save(() => {
+                u4.save(() => {
+                  chai.request(app)
+                    .get('/users?skip=1&limit=2')
+                    .end((err, res) => {
+                      res.should.have.status(200);
+                      res.should.be.json;
+                      res.body.status.should.equal('success')
+                      res.body.data.should.be.a('array');
+                      res.body.data.length.should.be.equal(2);
+                      res.body.data[0].email.should.equal('test3@test.com');
+                      res.body.data[1].email.should.equal('test2@test.com');
+                      done();
+                    })
+                })
+              })
+            })
+          })
+        })
+      });
+    });
   })
 
   describe('POST /users', () => {

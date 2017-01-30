@@ -99,6 +99,121 @@ describe('Stories API', () => {
           })
       });
     });
+    it('supports use of only the skip param', (done) => {
+      const p1 = new Project({
+        name: 'Test Project',
+        slug: 'test-project',
+        roles: [{ name: 'Tester' }],
+        stories: [{
+          desire: 'find errors',
+          benefit: 'they can be fixed'
+        }]
+      });
+      const s2 = { desire: 'story 2 desire', benefit: 'story 2 benefit' };
+      const s3 = { desire: 'story 3 desire', benefit: 'story 3 benefit' };
+      const s4 = { desire: 'story 4 desire', benefit: 'story 4 benefit' };
+      const { users } = mongoose.connection.collections;
+      p1.save(() => {
+        p1.stories.push(s2);
+        p1.save(() => {
+          p1.stories.push(s3);
+          p1.save(() => {
+            p1.stories.push(s4);
+            p1.save(() => {
+              chai.request(app)
+                .get(`/projects/${p1._id}/stories?skip=2`)
+                .end((err, res) => {
+                  res.should.have.status(200);
+                  res.should.be.json;
+                  res.body.status.should.equal('success')
+                  res.body.data.should.be.a('array');
+                  res.body.data.length.should.be.equal(2);
+                  res.body.data[0].desire.should.equal('story 2 desire');
+                  res.body.data[1].desire.should.equal('find errors');
+                  done();
+                })
+            })
+          })
+        })
+      })
+    });
+    it('supports use of only the limit param', (done) => {
+      const p1 = new Project({
+        name: 'Test Project',
+        slug: 'test-project',
+        roles: [{ name: 'Tester' }],
+        stories: [{
+          desire: 'find errors',
+          benefit: 'they can be fixed'
+        }]
+      });
+      const s2 = { desire: 'story 2 desire', benefit: 'story 2 benefit' };
+      const s3 = { desire: 'story 3 desire', benefit: 'story 3 benefit' };
+      const s4 = { desire: 'story 4 desire', benefit: 'story 4 benefit' };
+      const { users } = mongoose.connection.collections;
+      p1.save(() => {
+        p1.stories.push(s2);
+        p1.save(() => {
+          p1.stories.push(s3);
+          p1.save(() => {
+            p1.stories.push(s4);
+            p1.save(() => {
+              chai.request(app)
+                .get(`/projects/${p1._id}/stories?limit=3`)
+                .end((err, res) => {
+                  res.should.have.status(200);
+                  res.should.be.json;
+                  res.body.status.should.equal('success')
+                  res.body.data.should.be.a('array');
+                  res.body.data.length.should.be.equal(3);
+                  res.body.data[0].desire.should.equal('story 4 desire');
+                  res.body.data[1].desire.should.equal('story 3 desire');
+                  res.body.data[2].desire.should.equal('story 2 desire');
+                  done();
+                })
+            })
+          })
+        })
+      })
+    });
+    it('supports use of both the skip and limit params', (done) => {
+      const p1 = new Project({
+        name: 'Test Project',
+        slug: 'test-project',
+        roles: [{ name: 'Tester' }],
+        stories: [{
+          desire: 'find errors',
+          benefit: 'they can be fixed'
+        }]
+      });
+      const s2 = { desire: 'story 2 desire', benefit: 'story 2 benefit' };
+      const s3 = { desire: 'story 3 desire', benefit: 'story 3 benefit' };
+      const s4 = { desire: 'story 4 desire', benefit: 'story 4 benefit' };
+      const { users } = mongoose.connection.collections;
+      p1.save(() => {
+        p1.stories.push(s2);
+        p1.save(() => {
+          p1.stories.push(s3);
+          p1.save(() => {
+            p1.stories.push(s4);
+            p1.save(() => {
+              chai.request(app)
+                .get(`/projects/${p1._id}/stories?skip=1&limit=2`)
+                .end((err, res) => {
+                  res.should.have.status(200);
+                  res.should.be.json;
+                  res.body.status.should.equal('success')
+                  res.body.data.should.be.a('array');
+                  res.body.data.length.should.be.equal(2);
+                  res.body.data[0].desire.should.equal('story 3 desire');
+                  res.body.data[1].desire.should.equal('story 2 desire');
+                  done();
+                })
+            })
+          })
+        })
+      })
+    });
   })
 
   describe('POST /projects/:id/stories', () => {

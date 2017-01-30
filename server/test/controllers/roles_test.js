@@ -88,6 +88,109 @@ describe('Roles API', () => {
           });
       });
     });
+    it('supports use of only the skip param', (done) => {
+      const p1 = new Project({
+        name: 'Test Project',
+        slug: 'test-project',
+        roles: [{ name: 'Test 1' }]
+      });
+      const r2 = { name: 'Test 2' };
+      const r3 = { name: 'Test 3' };
+      const r4 = { name: 'Test 4' };
+      const { users } = mongoose.connection.collections;
+      p1.save(() => {
+        p1.roles.push(r2);
+        p1.save(() => {
+          p1.roles.push(r3);
+          p1.save(() => {
+            p1.roles.push(r4);
+            p1.save(() => {
+              chai.request(app)
+                .get(`/projects/${p1._id}/roles?skip=2`)
+                .end((err, res) => {
+                  res.should.have.status(200);
+                  res.should.be.json;
+                  res.body.status.should.equal('success')
+                  res.body.data.should.be.a('array');
+                  res.body.data.length.should.be.equal(2);
+                  res.body.data[0].name.should.equal('Test 2');
+                  res.body.data[1].name.should.equal('Test 1');
+                  done();
+                })
+            })
+          })
+        })
+      })
+    });
+    it('supports use of only the limit param', (done) => {
+      const p1 = new Project({
+        name: 'Test Project',
+        slug: 'test-project',
+        roles: [{ name: 'Test 1' }]
+      });
+      const r2 = { name: 'Test 2' };
+      const r3 = { name: 'Test 3' };
+      const r4 = { name: 'Test 4' };
+      const { users } = mongoose.connection.collections;
+      p1.save(() => {
+        p1.roles.push(r2);
+        p1.save(() => {
+          p1.roles.push(r3);
+          p1.save(() => {
+            p1.roles.push(r4);
+            p1.save(() => {
+              chai.request(app)
+                .get(`/projects/${p1._id}/roles?limit=3`)
+                .end((err, res) => {
+                  res.should.have.status(200);
+                  res.should.be.json;
+                  res.body.status.should.equal('success')
+                  res.body.data.should.be.a('array');
+                  res.body.data.length.should.be.equal(3);
+                  res.body.data[0].name.should.equal('Test 4');
+                  res.body.data[1].name.should.equal('Test 3');
+                  res.body.data[2].name.should.equal('Test 2');
+                  done();
+                })
+            })
+          })
+        })
+      })
+    });
+    it('supports use of both the skip and limit params', (done) => {
+      const p1 = new Project({
+        name: 'Test Project',
+        slug: 'test-project',
+        roles: [{ name: 'Test 1' }]
+      });
+      const r2 = { name: 'Test 2' };
+      const r3 = { name: 'Test 3' };
+      const r4 = { name: 'Test 4' };
+      const { users } = mongoose.connection.collections;
+      p1.save(() => {
+        p1.roles.push(r2);
+        p1.save(() => {
+          p1.roles.push(r3);
+          p1.save(() => {
+            p1.roles.push(r4);
+            p1.save(() => {
+              chai.request(app)
+                .get(`/projects/${p1._id}/roles?skip=1&limit=2`)
+                .end((err, res) => {
+                  res.should.have.status(200);
+                  res.should.be.json;
+                  res.body.status.should.equal('success')
+                  res.body.data.should.be.a('array');
+                  res.body.data.length.should.be.equal(2);
+                  res.body.data[0].name.should.equal('Test 3');
+                  res.body.data[1].name.should.equal('Test 2');
+                  done();
+                })
+            })
+          })
+        })
+      })
+    });
   })
 
   describe('POST /projects/:id/roles', () => {

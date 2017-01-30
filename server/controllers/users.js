@@ -19,8 +19,13 @@ module.exports = {
   findAll(req, res, next) {
     User.find({})
       .sort({ _createdAt: -1 })
+      .skip(parseInt(req.query.skip))
+      .limit(parseInt(req.query.limit))
       .then((users) => res.status(200).send(Response.success(users)))
-      .catch(next);
+      .catch((err) => {
+        console.log('detected error:', err)
+        next(err)
+      });
   },
 
   create(req, res, next) {
