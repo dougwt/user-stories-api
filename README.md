@@ -1,5 +1,18 @@
 # user-stories-react
 
-A React app for curating user stories
+A React web app for curating project user stories.
 
-[API Documentation](server/docs/index.md)
+This source repo contains the React web client and
+corresponding Node/Express API server powering [MyUserStories.com](http://myuserstories.com).
+
+## Documentation
+
+*   [API Documentation](server/docs/index.md)
+
+## License
+
+TBD
+
+## Acknowledgements
+
+TBD

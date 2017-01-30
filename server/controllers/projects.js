@@ -62,6 +62,7 @@ module.exports = {
     Project.findByIdAndUpdate(projectId, projectProps, { runValidators: true, context: 'query' })
       .then((project) => {
         if (project) {
+          // TODO: replace hardcoded URI prefix
           return res.location('https://api.mycodebytes.com/v1/projects/'+ project._id).status(204).send(Response.success(project))
         } else {
           var err = new Error();

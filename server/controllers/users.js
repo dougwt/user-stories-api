@@ -59,6 +59,7 @@ module.exports = {
     User.findByIdAndUpdate(userId, userProps, { runValidators: true, context: 'query' })
       .then((user) => {
         if (user) {
+          // TODO: replace hardcoded URI prefix
           return res.location('https://api.mycodebytes.com/v1/users/'+ user._id).status(204).send(Response.success(user))
         } else {
           var err = new Error();

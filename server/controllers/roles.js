@@ -55,6 +55,7 @@ module.exports = {
          next(err);
         }
       } else {
+        // TODO: replace hardcoded URI prefix
         return res.location('https://api.mycodebytes.com/v1/projects/'+ project.id).status(201).send(Response.success(project.roles));
       }
     });
@@ -71,7 +72,6 @@ module.exports = {
       return;
     }
 
-    // TODO: replace hardcoded URI prefix
     Project.findOneAndUpdate(
       { "_id": projectId, "roles._id": roleId },
       { $set: renameNestedProps(roleProps, 'roles.$.') },
@@ -79,6 +79,7 @@ module.exports = {
     )
       .then((project) => {
         if (project) {
+          // TODO: replace hardcoded URI prefix
           return res.location('https://api.mycodebytes.com/v1/projects/'+ project._id).status(204).send(Response.success(project))
         }
         var err = new Error();
