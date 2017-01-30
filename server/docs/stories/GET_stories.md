@@ -1,6 +1,6 @@
 # GET stories
 
-Returns a collection of a Project's Stories.
+Returns a collection of the Project's 100 most recently created Stories.
 
 ## Resource URL
 
