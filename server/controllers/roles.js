@@ -23,7 +23,8 @@ module.exports = {
       .then((project) => {
             if (project) {
               const beginSlice = req.query.skip ? parseInt(req.query.skip) : 0;
-              const endSlice = req.query.limit ? parseInt(req.query.limit) + beginSlice : project.roles.length;
+              const limit = req.query.limit ? parseInt(req.query.limit) + beginSlice : project.roles.length
+              const endSlice = Math.min(limit, 100);
               const result = project.roles.sort(sortFunc).slice(beginSlice, endSlice);
               res.status(200).send(Response.success(result))
             } else {
