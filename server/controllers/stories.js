@@ -56,6 +56,7 @@ module.exports = {
           next(err);
         }
       } else {
+        // TODO: replace hardcoded URI prefix
         return res.location('https://api.mycodebytes.com/v1/projects/'+ projectId).status(201).send(Response.success(project.stories));
       }
     });
@@ -73,7 +74,6 @@ module.exports = {
       return;
     }
 
-    // TODO: replace hardcoded URI prefix
     const renamedProps = renameNestedProps(storyProps, 'stories.$.')
 
     Project.findOneAndUpdate(
@@ -83,6 +83,7 @@ module.exports = {
     )
       .then((project) => {
         if (project) {
+          // TODO: replace hardcoded URI prefix
           return res.location('https://api.mycodebytes.com/v1/projects/'+ project._id).status(204).send(Response.success(project))
         }
         var err = new Error();
