@@ -20,11 +20,19 @@ module.exports = {
     };
 
     Project.findById(projectId)
-      .then((project) => res.status(200).send(Response.success(project.stories.sort(sortFunc))))
-      .catch((err) => {
-        console.log('detected error:', err)
-        return next(err)
-      });
+      .then((project) => {
+            if (project) {
+              const beginSlice = req.query.skip ? parseInt(req.query.skip) : 0;
+              const endSlice = req.query.limit ? parseInt(req.query.limit) + beginSlice : project.stories.length;
+              const result = project.stories.sort(sortFunc).slice(beginSlice, endSlice);
+              res.status(200).send(Response.success(result))
+            } else {
+              var err = new Error();
+              err.status = 404;
+              next(err);
+            }
+        }
+      )
   },
 
   create(req, res, next) {

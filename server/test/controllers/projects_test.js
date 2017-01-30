@@ -89,6 +89,136 @@ describe('Projects API', () => {
           });
       });
     });
+    it('supports use of only the skip param', (done) => {
+      const p1 = new Project({
+        name: 'Test 1',
+        slug: 'test-1'
+      });
+      const p2 = new Project({
+        name: 'Test 2',
+        slug: 'test-2'
+      });
+      const p3 = new Project({
+        name: 'Test 3',
+        slug: 'test-3'
+      });
+      const p4 = new Project({
+        name: 'Test 4',
+        slug: 'test-4'
+      });
+      const { users } = mongoose.connection.collections;
+      users.drop(() => {
+        p1.save(() => {
+          p2.save(() => {
+            p3.save(() => {
+              p3.save(() => {
+                p4.save(() => {
+                  chai.request(app)
+                    .get('/projects?skip=2')
+                    .end((err, res) => {
+                      res.should.have.status(200);
+                      res.should.be.json;
+                      res.body.status.should.equal('success')
+                      res.body.data.should.be.a('array');
+                      res.body.data.length.should.be.equal(2);
+                      res.body.data[0].name.should.equal('Test 2');
+                      res.body.data[1].name.should.equal('Test 1');
+                      done();
+                    })
+                })
+              })
+            })
+          })
+        })
+      })
+    });
+    it('supports use of only the limit param', (done) => {
+      const p1 = new Project({
+        name: 'Test 1',
+        slug: 'test-1'
+      });
+      const p2 = new Project({
+        name: 'Test 2',
+        slug: 'test-2'
+      });
+      const p3 = new Project({
+        name: 'Test 3',
+        slug: 'test-3'
+      });
+      const p4 = new Project({
+        name: 'Test 4',
+        slug: 'test-4'
+      });
+      const { users } = mongoose.connection.collections;
+      users.drop(() => {
+        p1.save(() => {
+          p2.save(() => {
+            p3.save(() => {
+              p3.save(() => {
+                p4.save(() => {
+                  chai.request(app)
+                    .get('/projects?limit=3')
+                    .end((err, res) => {
+                      res.should.have.status(200);
+                      res.should.be.json;
+                      res.body.status.should.equal('success')
+                      res.body.data.should.be.a('array');
+                      res.body.data.length.should.be.equal(3);
+                      res.body.data[0].name.should.equal('Test 4');
+                      res.body.data[1].name.should.equal('Test 3');
+                      res.body.data[2].name.should.equal('Test 2');
+                      done();
+                    })
+                })
+              })
+            })
+          })
+        })
+      })
+    });
+    it('supports use of both the skip and limit params', (done) => {
+      const p1 = new Project({
+        name: 'Test 1',
+        slug: 'test-1'
+      });
+      const p2 = new Project({
+        name: 'Test 2',
+        slug: 'test-2'
+      });
+      const p3 = new Project({
+        name: 'Test 3',
+        slug: 'test-3'
+      });
+      const p4 = new Project({
+        name: 'Test 4',
+        slug: 'test-4'
+      });
+      const { users } = mongoose.connection.collections;
+      users.drop(() => {
+        p1.save(() => {
+          p2.save(() => {
+            p3.save(() => {
+              p3.save(() => {
+                p4.save(() => {
+                  chai.request(app)
+                    .get('/projects?skip=1&limit=2')
+                    .end((err, res) => {
+                      res.should.have.status(200);
+                      res.should.be.json;
+                      res.body.status.should.equal('success')
+                      res.body.data.should.be.a('array');
+                      res.body.data.length.should.be.equal(2);
+                      res.body.data[0].name.should.equal('Test 3');
+                      res.body.data[1].name.should.equal('Test 2');
+                      done();
+                    })
+                })
+              })
+            })
+          })
+        })
+      })
+    });
   })
 
   describe('POST /projects', () => {

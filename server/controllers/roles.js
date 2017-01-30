@@ -20,7 +20,19 @@ module.exports = {
     };
 
     Project.findById(projectId)
-      .then((project) => res.status(200).send(Response.success(project.roles.sort(sortFunc))))
+      .then((project) => {
+            if (project) {
+              const beginSlice = req.query.skip ? parseInt(req.query.skip) : 0;
+              const endSlice = req.query.limit ? parseInt(req.query.limit) + beginSlice : project.roles.length;
+              const result = project.roles.sort(sortFunc).slice(beginSlice, endSlice);
+              res.status(200).send(Response.success(result))
+            } else {
+              var err = new Error();
+              err.status = 404;
+              next(err);
+            }
+        }
+      )
       .catch((err) => {
         console.log('detected error:', err)
         return next(err)
