@@ -20,7 +20,7 @@ module.exports = {
     User.find({})
       .sort({ _createdAt: -1 })
       .skip(parseInt(req.query.skip))
-      .limit(parseInt(req.query.limit))
+      .limit(parseInt(req.query.limit ? req.query.limit : 100 + parseInt(req.query.skip)))
       .then((users) => res.status(200).send(Response.success(users)))
       .catch((err) => {
         console.log('detected error:', err)
