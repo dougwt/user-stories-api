@@ -1,7 +1,7 @@
 import express from 'express'
 // import http from 'http'
 import bodyParser from 'body-parser'
-// import morgan from 'morgan'
+import morgan from 'morgan'
 import mongoose from 'mongoose'
 import routes from './routes'
 import Response from './response'
@@ -15,7 +15,7 @@ if (process.env.NODE_ENV !== 'test') {
 };
 
 // App setup
-// app.use(morgan('combined'))
+app.use(morgan('combined'))
 app.use(bodyParser.json({ type: '*/*' }));
 app.use('/', routes);
 
