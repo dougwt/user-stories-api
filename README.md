@@ -19,13 +19,15 @@ If you would like to run a local instance of this app in developer mode, the eas
 
 3. Install the required JavaScript dependencies using npm:
 
-  `$ npm install`
+  **Server:** `$ npm install`
+
+  **Client:** `$ cd client && npm install`
 
 ### Running the app
 
 To quickly start up instances of the web client, api server, and mongodb with a single command:
 
-  `$ npm run start`
+  `$ npm start`
 
 ### Running the tests
 
