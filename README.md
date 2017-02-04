@@ -33,7 +33,7 @@ To quickly start up instances of the web client, api server, and mongodb with a 
 
 To run the included tests:
 
-  `$ npm run test`
+  `$ npm test`
 
 (Note: Requires mongodb to be running locally)
 
