@@ -3,6 +3,7 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import morgan from 'morgan'
 import mongoose from 'mongoose'
+import cors from 'cors'
 import routes from './routes'
 import Response from './response'
 
@@ -16,6 +17,7 @@ if (process.env.NODE_ENV !== 'test') {
 
 // App setup
 app.use(morgan('combined'))
+app.use(cors())
 app.use(bodyParser.json({ type: '*/*' }));
 app.use('/', routes);
 
