@@ -1,11 +1,10 @@
-# user-stories-react
+# user-stories-api
 
-[![Build Status](https://travis-ci.org/dougwt/user-stories-react.svg?branch=develop)](https://travis-ci.org/dougwt/user-stories-react) [![Coverage Status](https://coveralls.io/repos/github/dougwt/user-stories-react/badge.svg?branch=develop)](https://coveralls.io/github/dougwt/user-stories-react)
+[![Build Status](https://travis-ci.org/dougwt/user-stories-api.svg?branch=develop)](https://travis-ci.org/dougwt/user-stories-api) [![Coverage Status](https://coveralls.io/repos/github/dougwt/user-stories-api/badge.svg?branch=develop)](https://coveralls.io/github/dougwt/user-stories-api)
 
-A React web app for curating project user stories.
+A Node.js+Express API server for curating project user stories.
 
-This source repo contains the React web client and
-corresponding Node/Express API server powering [MyUserStories.com](https://myuserstories.com).
+This source repo contains the NodeJS+Express API server powering [MyUserStories.com](https://myuserstories.com).
 
 ## Getting Started
 
@@ -23,21 +22,49 @@ If you would like to run a local instance of this app in developer mode, the eas
 
 ### Running the app
 
-To quickly start up instances of the web client, api server, and mongodb with a single command:
+To quickly start up instances of the api server and mongodb with a single command:
 
-  `$ npm run start`
+  `$ npm start`
 
 ### Running the tests
 
 To run the included tests:
 
-  `$ npm run test`
+  `$ npm test`
 
 (Note: Requires mongodb to be running locally)
 
-## Documentation
+## API Documentation
 
-*   [API Documentation](server/docs/index.md)
+### Users
+
+*   [GET users](docs/users/GET_users.md)
+*   [POST users](docs/users/POST_users.md)
+*   [GET users/:id](docs/users/GET_users_id.md)
+*   [PUT users/:id](docs/users/PUT_users_id.md)
+*   [DELETE users/:id](docs/users/DELETE_users_id.md)
+
+### Projects
+
+*   [GET projects](docs/projects/GET_projects.md)
+*   [POST projects](docs/projects/POST_projects.md)
+*   [GET projects/:id](docs/projects/GET_projects_id.md)
+*   [PUT projects/:id](docs/projects/PUT_projects_id.md)
+*   [DELETE projects/:id](docs/projects/DELETE_projects_id.md)
+
+### Roles
+
+*   [GET projects/:id/roles](docs/roles/GET_roles.md)
+*   [POST projects/:id/roles](docs/roles/POST_roles.md)
+*   [PUT projects/:id/roles/:id](docs/roles/PUT_roles_id.md)
+*   [DELETE projects/:id/roles/:id](docs/roles/DELETE_roles_id.md)
+
+### Stories
+
+*   [GET projects/:id/stories](docs/stories/GET_stories.md)
+*   [POST projects/:id/stories](docs/stories/POST_stories.md)
+*   [PUT projects/:id/stories/:id](docs/stories/PUT_stories_id.md)
+*   [DELETE projects/:id/stories/:id](docs/stories/DELETE_stories_id.md)
 
 ## License
 
