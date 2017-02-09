@@ -11,8 +11,11 @@ const app = express();
 
 // DB setup
 mongoose.Promise = global.Promise;
+// TODO: Move this into a config variable
+export const MONGODB_CONNECTION = process.env.MONGODB_CONNECTION || 'localhost/user_stories';
 if (process.env.NODE_ENV !== 'test') {
-  mongoose.connect('mongodb://localhost/user_stories');
+  console.log(`Connecting to mongodb://${MONGODB_CONNECTION}`)
+  mongoose.connect(`mongodb://${MONGODB_CONNECTION}`);
 };
 
 // App setup
