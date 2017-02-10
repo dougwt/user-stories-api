@@ -17,10 +17,10 @@ if (NODE_ENV !== 'test') {
 };
 
 // App setup
-app.use(morgan('combined'))
-app.use(cors())
-app.use(bodyParser.json({ type: '*/*' }));
-app.use('/', routes);
+app.use(morgan('combined'))                  // Log incoming http requests
+app.use(cors())                              // Enable CORS for all routes
+app.use(bodyParser.json({ type: '*/*' }));   // Parse all http requests as json
+app.use('/', routes);                        // Load API routes
 
 // Handle express errors
 app.get('*', (req, res, next) => {
