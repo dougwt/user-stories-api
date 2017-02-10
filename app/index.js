@@ -6,14 +6,13 @@ import mongoose from 'mongoose'
 import cors from 'cors'
 import routes from './routes'
 import Response from './response'
+import { NODE_ENV, MONGODB_CONNECTION } from './config'
 
 const app = express();
 
 // DB setup
 mongoose.Promise = global.Promise;
-// TODO: Move this into a config variable
-export const MONGODB_CONNECTION = process.env.MONGODB_CONNECTION || 'localhost/user_stories';
-if (process.env.NODE_ENV !== 'test') {
+if (NODE_ENV !== 'test') {
   console.log(`Connecting to mongodb://${MONGODB_CONNECTION}`)
   mongoose.connect(`mongodb://${MONGODB_CONNECTION}`);
 };
