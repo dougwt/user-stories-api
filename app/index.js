@@ -1,5 +1,4 @@
 import express from 'express'
-// import http from 'http'
 import bodyParser from 'body-parser'
 import morgan from 'morgan'
 import mongoose from 'mongoose'
@@ -47,5 +46,4 @@ app.use((err, req, res, next) => {
 
 });
 
-// module.exports = http.createServer(app)
 module.exports = app;
