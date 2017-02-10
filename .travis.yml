@@ -3,6 +3,17 @@ node_js:
   - "node"
 services:
   - mongodb
-script: "npm run-script test-travis"
-after_script:
+script:
+  - "npm run-script test-travis"
+after_success:
   - "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
+  - eval `ssh-agent -s`
+  - chmod 600 .travis/deployment_id_dsa
+  - ssh-add .travis/deployment_id_dsa
+  # - git remote add deploy ssh://dougwt@dougwt.webfactional.com/home/dougwt/webapps/myuserstories_staging_api/user-stories-api.git
+  - git remote add staging ssh://dougwt@dougwt.webfactional.com/home/dougwt/webapps/myuserstories_staging_api/user-stories-api.git
+  - echo "Pushing '$TRAVIS_BRANCH' changes to https://staging.myuserstories.com"
+  - git push staging $TRAVIS_BRANCH --force
+  # - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && echo "Pushing 'master' changes to https://myuserstories.com" && git push deploy master
+before_script:
+  - echo -e "Host dougwt.webfactional.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
