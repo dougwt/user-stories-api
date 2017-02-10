@@ -22,9 +22,11 @@ If you would like to run a local instance of this app in developer mode, the eas
 
 ### Running the app
 
-To quickly start up instances of the api server and mongodb with a single command:
+To run the api server:
 
   `$ npm start`
+
+(Note: Requires mongodb to be running locally by default. MongoDB connection settings may be modified in [app/config.js](app/config.js).)
 
 ### Running the tests
 
@@ -32,7 +34,7 @@ To run the included tests:
 
   `$ npm test`
 
-(Note: Requires mongodb to be running locally)
+(Note: Requires mongodb to be running locally by default. MongoDB connection settings may be modified in [app/config.js](app/config.js).)
 
 ## API Documentation
 
