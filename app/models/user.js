@@ -1,7 +1,6 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
 
-const Schema = mongoose.Schema;
 mongoose.Promise = global.Promise;
 
 // Define our model
