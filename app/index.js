@@ -10,17 +10,19 @@ import { NODE_ENV, MONGODB_CONNECTION } from './config'
 const app = express();
 
 // DB setup
-mongoose.Promise = global.Promise;
+mongoose.Promise = global.Promise;          // Use ES6 Promise
 if (NODE_ENV !== 'test') {
   console.log(`Connecting to mongodb://${MONGODB_CONNECTION}`)
   mongoose.connect(`mongodb://${MONGODB_CONNECTION}`);
 };
 
 // App setup
-app.use(morgan('combined'))                  // Log incoming http requests
-app.use(cors())                              // Enable CORS for all routes
-app.use(bodyParser.json({ type: '*/*' }));   // Parse all http requests as json
-app.use('/', routes);                        // Load API routes
+if (NODE_ENV !== 'test') {
+  app.use(morgan('combined'))               // Log incoming http requests
+}
+app.use(cors())                             // Enable CORS for all routes
+app.use(bodyParser.json({ type: '*/*' }));  // Parse all http requests as json
+app.use('/', routes);                       // Load API routes
 
 // Handle express errors
 app.get('*', (req, res, next) => {
