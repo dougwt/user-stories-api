@@ -1,15 +1,24 @@
-const routes = require('express').Router()
+import passport from 'passport';
+import mongoose from 'mongoose';
+import AuthController from './controllers/authentication';
 import UsersController from './controllers/users';
 import ProjectsController from './controllers/projects';
 import RolesController from './controllers/roles';
 import StoriesController from './controllers/stories';
-const mongoose = require('mongoose');
+import passportService from './services/passport';
+import Response from './response';
+
+const router = require('express').Router();
+
 const User = mongoose.model('user');
 const Project = mongoose.model('project');
-const Response = require('./response')
+
+// Route handler middleware to require authentication
+const requireAuth = passport.authenticate('jwt', { session: false });
+const requireSignin = passport.authenticate('local', { session: false });
 
 // Param middleware to automatically return 404 for invalid user ID
-routes.param('userId', (req, res, next, value) => {
+router.param('userId', (req, res, next, value) => {
   User.findById(value)
     .then((user) => {
       req['user'] = user
@@ -19,7 +28,7 @@ routes.param('userId', (req, res, next, value) => {
       res.status(404).send(Response.error('The requested resource does not exist.'))
     })
 })
-routes.param('projectId', (req, res, next, value) => {
+router.param('projectId', (req, res, next, value) => {
   Project.findById(value)
     .then((project) => {
       req['project'] = project
@@ -29,7 +38,7 @@ routes.param('projectId', (req, res, next, value) => {
       res.status(404).send(Response.error('The requested resource does not exist.'))
     })
 })
-routes.param('roleId', (req, res, next, value) => {
+router.param('roleId', (req, res, next, value) => {
   const projectId = req.params.projectId;
 
   Project.find({ "_id": projectId, "roles._id": value })
@@ -41,7 +50,7 @@ routes.param('roleId', (req, res, next, value) => {
       res.status(404).send(Response.error('The requested resource does not exist.'))
     })
 })
-routes.param('storyId', (req, res, next, value) => {
+router.param('storyId', (req, res, next, value) => {
   const projectId = req.params.projectId;
 
   Project.find({ "_id": projectId, "stories._id": value })
@@ -54,44 +63,48 @@ routes.param('storyId', (req, res, next, value) => {
     })
 })
 
-
-routes.route('/users')
+router.route('/signup')
+  .post(AuthController.signup)
+  .get(requireAuth, (req, res) => {res.send({ success: true })})
+router.route('/signin')
+  .post(requireSignin, AuthController.signin)
+router.route('/users')
   .get(UsersController.findAll)
   .post(UsersController.create)
-routes.route('/users/:userId')
+router.route('/users/:userId')
   .get(UsersController.findById)
   .put(UsersController.update)
   .delete(UsersController.delete)
 
-routes.route('/projects')
+router.route('/projects')
   .get(ProjectsController.findAll)
   .post(ProjectsController.create)
-routes.route('/projects/:projectId')
+router.route('/projects/:projectId')
   .get(ProjectsController.findById)
   .put(ProjectsController.update)
   .delete(ProjectsController.delete)
 
-routes.route('/projects/:projectId/roles')
+router.route('/projects/:projectId/roles')
   .get(RolesController.findAll)
   .post(RolesController.create)
-routes.route('/projects/:projectId/roles/:roleId')
+router.route('/projects/:projectId/roles/:roleId')
   .put(RolesController.update)
   .delete(RolesController.delete)
 
-routes.route('/projects/:projectId/stories')
+router.route('/projects/:projectId/stories')
   .get(StoriesController.findAll)
   .post(StoriesController.create)
-routes.route('/projects/:projectId/stories/:storyId')
+router.route('/projects/:projectId/stories/:storyId')
   .put(StoriesController.update)
   .delete(StoriesController.delete)
 
 // TODO: Do I need to make separate calls for put and delete, etc?
 // or is there a way for me to otherwise manage handling for invalid routes?
-routes.get('/', (req, res, next) => {
+router.get('/', (req, res, next) => {
   res.status(200).send(Response.success('Connected!'))
   // res.status(404).json({
   //   "message": "The requested resource does not exist"
   // })
 })
 
-module.exports = routes
+module.exports = router;

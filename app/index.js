@@ -3,7 +3,7 @@ import bodyParser from 'body-parser'
 import morgan from 'morgan'
 import mongoose from 'mongoose'
 import cors from 'cors'
-import routes from './routes'
+import router from './router'
 import Response from './response'
 import { NODE_ENV, MONGODB_CONNECTION } from './config'
 
@@ -22,7 +22,7 @@ if (NODE_ENV !== 'test') {
 }
 app.use(cors())                             // Enable CORS for all routes
 app.use(bodyParser.json({ type: '*/*' }));  // Parse all http requests as json
-app.use('/', routes);                       // Load API routes
+app.use('/', router);                       // Load API router
 
 // Handle express errors
 app.get('*', (req, res, next) => {
