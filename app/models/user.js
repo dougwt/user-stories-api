@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
 
 const Schema = mongoose.Schema;
+mongoose.Promise = global.Promise;
 
 // Define our model
 const userSchema = new Schema({

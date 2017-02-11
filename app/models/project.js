@@ -4,6 +4,7 @@ import storySchema from './story';
 import uniqueValidator from 'mongoose-unique-validator';
 
 const Schema = mongoose.Schema;
+mongoose.Promise = global.Promise;
 
 // Define our model
 const projectSchema = new Schema({
