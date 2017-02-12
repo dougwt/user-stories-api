@@ -1,5 +1,10 @@
 # API Documentation
 
+## Auth
+
+*   [POST signin](auth/POST_signin.md)
+*   [POST signup](auth/POST_signup.md)
+
 ## Users
 
 *   [GET users](users/GET_users.md)

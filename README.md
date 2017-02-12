@@ -38,6 +38,11 @@ To run the included tests:
 
 ## API Documentation
 
+## Auth
+
+*   [POST signin](docs/auth/POST_signin.md)
+*   [POST signup](docs/auth/POST_signup.md)
+
 ### Users
 
 *   [GET users](docs/users/GET_users.md)
