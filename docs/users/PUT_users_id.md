@@ -21,6 +21,7 @@ Update a single User, specified by the id parameter. Only the parameters specifi
 **Optional**
 
 *   `email`
+*   `password`
 *   `name`
 
 ## Success Response
