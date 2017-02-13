@@ -10,6 +10,12 @@ Update a single User, specified by the id parameter. Only the parameters specifi
 
 `PUT`
 
+## Request Headers
+
+**Required**
+
+*   `authorization`: *a valid JSON Web Token authenticating an existing user*
+
 ## Data Params
 
 **Optional**

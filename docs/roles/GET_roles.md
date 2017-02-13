@@ -10,6 +10,12 @@ Returns a collection of the Project's 100 most recently created Roles.
 
 `GET`
 
+## Request Headers
+
+**Required**
+
+*   `authorization`: *a valid JSON Web Token authenticating an existing user*
+
 ## URL Params
 
 **Optional**

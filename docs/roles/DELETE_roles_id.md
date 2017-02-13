@@ -10,6 +10,12 @@ Permanently delete a Project's Role.
 
 `DELETE`
 
+## Request Headers
+
+**Required**
+
+*   `authorization`: *a valid JSON Web Token authenticating an existing user*
+
 ## Success Response
 
 **Code:** `204 No Content`

@@ -10,6 +10,12 @@ Returns a collection of the 100 most recently created Users.
 
 `GET`
 
+## Request Headers
+
+**Required**
+
+*   `authorization`: *a valid JSON Web Token authenticating an existing user with Administrator privileges*
+
 ## URL Params
 
 **Optional**

@@ -10,6 +10,12 @@ Update a single Story, specified by the id parameter. Only the parameters specif
 
 `PUT`
 
+## Request Headers
+
+**Required**
+
+*   `authorization`: *a valid JSON Web Token authenticating an existing user*
+
 ## Data Params
 
 **Optional**

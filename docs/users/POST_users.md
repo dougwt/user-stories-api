@@ -10,11 +10,18 @@ Create a new User.
 
 `POST`
 
+## Request Headers
+
+**Required**
+
+*   `authorization`: *a valid JSON Web Token authenticating an existing user with Administrator privileges*
+
 ## Data Params
 
 **Required**
 
 *   `email`
+*   `password`
 *   `name`
 
 ## Success Response
@@ -59,6 +66,19 @@ OR
 {
   "status": "error",
   "message": "Name is required."
+}
+```
+
+OR
+
+**Code:** `400 Bad Request`
+
+**Content:**
+
+```json
+{
+  "status": "error",
+  "message": "Password is required."
 }
 ```
 

@@ -10,6 +10,12 @@ Returns a collection of the 100 most recently created Projects.
 
 `GET`
 
+## Request Headers
+
+**Required**
+
+*   `authorization`: *a valid JSON Web Token authenticating an existing user*
+
 ## URL Params
 
 **Optional**

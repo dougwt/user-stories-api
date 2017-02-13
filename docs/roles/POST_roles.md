@@ -10,6 +10,12 @@ Create a new Role for a Project, specified by the id parameter..
 
 `POST`
 
+## Request Headers
+
+**Required**
+
+*   `authorization`: *a valid JSON Web Token authenticating an existing user*
+
 ## Data Params
 
 **Required**

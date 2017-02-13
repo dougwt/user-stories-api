@@ -10,6 +10,12 @@ Returns a single User, specified by the id parameter.
 
 `GET`
 
+## Request Headers
+
+**Required**
+
+*   `authorization`: *a valid JSON Web Token authenticating an existing user*
+
 ## Success Response
 
 **Code:** `200 OK`
