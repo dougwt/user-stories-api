@@ -42,7 +42,7 @@ Create a new Role for a Project, specified by the id parameter..
 }
 ```
 
-## Error Response:
+## Error Response
 
 **Code:** `400 Bad Request`
 
@@ -52,5 +52,18 @@ Create a new Role for a Project, specified by the id parameter..
 {
   "status": "error",
   "message": "Name is required."
+}
+```
+
+OR
+
+**Code:** `401 Unauthorized`
+
+**Content:**
+
+```json
+{
+  "status": "error",
+  "message": "You are unauthorized to make this request."
 }
 ```

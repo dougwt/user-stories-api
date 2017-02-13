@@ -29,7 +29,20 @@ Update a single Story, specified by the id parameter. Only the parameters specif
 
 **Code:** `204 No Content`
 
-## Error Response:
+## Error Response
+
+**Code:** `401 Unauthorized`
+
+**Content:**
+
+```json
+{
+  "status": "error",
+  "message": "You are unauthorized to make this request."
+}
+```
+
+OR
 
 **Code:** `403 Forbidden`
 

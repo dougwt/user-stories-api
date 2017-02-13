@@ -27,7 +27,7 @@ Update a single User, specified by the id parameter. Only the parameters specifi
 
 **Code:** `204 No Content`
 
-## Error Response:
+## Error Response
 
 **Code:** `400 Bad Request`
 
@@ -39,6 +39,19 @@ Update a single User, specified by the id parameter. Only the parameters specifi
   "message": "Email is invalid."
 }
 
+```
+
+OR
+
+**Code:** `401 Unauthorized`
+
+**Content:**
+
+```json
+{
+  "status": "error",
+  "message": "You are unauthorized to make this request."
+}
 ```
 
 OR

@@ -30,7 +30,7 @@ Update a single Project, specified by the id parameter. Only the parameters spec
 
 **Code:** `204 No Content`
 
-## Error Response:
+## Error Response
 
 **Code:** `400 Bad Request`
 
@@ -40,6 +40,19 @@ Update a single Project, specified by the id parameter. Only the parameters spec
 {
   "status": "error",
   "message": "Slug is invalid."
+}
+```
+
+OR
+
+**Code:** `401 Unauthorized`
+
+**Content:**
+
+```json
+{
+  "status": "error",
+  "message": "You are unauthorized to make this request."
 }
 ```
 

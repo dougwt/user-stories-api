@@ -48,3 +48,16 @@ Returns a collection of the Project's 100 most recently created Roles.
   ]
 }
 ```
+
+## Error Response
+
+**Code:** `401 Unauthorized`
+
+**Content:**
+
+```json
+{
+  "status": "error",
+  "message": "You are unauthorized to make this request."
+}
+```

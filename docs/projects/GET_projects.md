@@ -56,3 +56,16 @@ Returns a collection of the 100 most recently created Projects.
   ]
 }
 ```
+
+## Error Response
+
+**Code:** `401 Unauthorized`
+
+**Content:**
+
+```json
+{
+  "status": "error",
+  "message": "You are unauthorized to make this request."
+}
+```

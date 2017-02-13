@@ -51,7 +51,7 @@ Create a new Story for a Project, specified by the id parameter..
 }
 ```
 
-## Error Response:
+## Error Response
 
 **Code:** `400 Bad Request`
 
@@ -74,5 +74,18 @@ OR
 {
   "status": "error",
   "message": "Benefit is required."
+}
+```
+
+OR
+
+**Code:** `401 Unauthorized`
+
+**Content:**
+
+```json
+{
+  "status": "error",
+  "message": "You are unauthorized to make this request."
 }
 ```

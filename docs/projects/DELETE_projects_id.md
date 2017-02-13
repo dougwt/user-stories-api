@@ -20,7 +20,20 @@ Permanently delete a Project.
 
 **Code:** `204 No Content`
 
-## Error Response:
+## Error Response
+
+**Code:** `401 Unauthorized`
+
+**Content:**
+
+```json
+{
+  "status": "error",
+  "message": "You are unauthorized to make this request."
+}
+```
+
+OR
 
 **Code:** `404 Not Found`
 

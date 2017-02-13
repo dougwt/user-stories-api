@@ -43,7 +43,7 @@ Create a new User.
 }
 ```
 
-## Error Response:
+## Error Response
 
 **Code:** `400 Bad Request`
 
@@ -92,6 +92,19 @@ OR
 {
   "status": "error",
   "message": "Email is invalid."
+}
+```
+
+OR
+
+**Code:** `401 Unauthorized`
+
+**Content:**
+
+```json
+{
+  "status": "error",
+  "message": "You are unauthorized to make this request."
 }
 ```
 
