@@ -13,6 +13,11 @@
 *   [PUT users/:id](users/PUT_users_id.md)
 *   [DELETE users/:id](users/DELETE_users_id.md)
 
+## Admin
+
+*   [POST users/:id/admin](admin/POST_admin.md)
+*   [DELETE users/:id/admin](admin/DELETE_admin.md)
+
 ## Projects
 
 *   [GET projects](projects/GET_projects.md)

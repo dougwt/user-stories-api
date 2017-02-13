@@ -38,7 +38,7 @@ To run the included tests:
 
 ## API Documentation
 
-## Auth
+### Auth
 
 *   [POST signin](docs/auth/POST_signin.md)
 *   [POST signup](docs/auth/POST_signup.md)
@@ -50,6 +50,12 @@ To run the included tests:
 *   [GET users/:id](docs/users/GET_users_id.md)
 *   [PUT users/:id](docs/users/PUT_users_id.md)
 *   [DELETE users/:id](docs/users/DELETE_users_id.md)
+
+### Admin
+
+*   [POST users/:id/admin](docs/admin/POST_admin.md)
+*   [DELETE users/:id/admin](docs/admin/DELETE_admin.md)
+
 
 ### Projects
 
