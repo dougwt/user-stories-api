@@ -47,9 +47,9 @@ To run the included tests:
 
 *   [GET users](docs/users/GET_users.md)
 *   [POST users](docs/users/POST_users.md)
-*   [GET users/:id](docs/users/GET_users_id.md)
-*   [PUT users/:id](docs/users/PUT_users_id.md)
-*   [DELETE users/:id](docs/users/DELETE_users_id.md)
+*   [GET users/:id](docs/users/GET_users_id.md)†
+*   [PUT users/:id](docs/users/PUT_users_id.md)†
+*   [DELETE users/:id](docs/users/DELETE_users_id.md)†
 
 ### Admin
 
@@ -58,25 +58,27 @@ To run the included tests:
 
 ### Projects
 
-*   [GET projects](docs/projects/GET_projects.md)
-*   [POST projects](docs/projects/POST_projects.md)
-*   [GET projects/:id](docs/projects/GET_projects_id.md)
-*   [PUT projects/:id](docs/projects/PUT_projects_id.md)
-*   [DELETE projects/:id](docs/projects/DELETE_projects_id.md)
+*   [GET projects](docs/projects/GET_projects.md)†
+*   [POST projects](docs/projects/POST_projects.md)†
+*   [GET projects/:id](docs/projects/GET_projects_id.md)†
+*   [PUT projects/:id](docs/projects/PUT_projects_id.md)†
+*   [DELETE projects/:id](docs/projects/DELETE_projects_id.md)†
 
 ### Roles
 
-*   [GET projects/:id/roles](docs/roles/GET_roles.md)
-*   [POST projects/:id/roles](docs/roles/POST_roles.md)
-*   [PUT projects/:id/roles/:id](docs/roles/PUT_roles_id.md)
-*   [DELETE projects/:id/roles/:id](docs/roles/DELETE_roles_id.md)
+*   [GET projects/:id/roles](docs/roles/GET_roles.md)†
+*   [POST projects/:id/roles](docs/roles/POST_roles.md)†
+*   [PUT projects/:id/roles/:id](docs/roles/PUT_roles_id.md)†
+*   [DELETE projects/:id/roles/:id](docs/roles/DELETE_roles_id.md)†
 
 ### Stories
 
-*   [GET projects/:id/stories](docs/stories/GET_stories.md)
-*   [POST projects/:id/stories](docs/stories/POST_stories.md)
-*   [PUT projects/:id/stories/:id](docs/stories/PUT_stories_id.md)
-*   [DELETE projects/:id/stories/:id](docs/stories/DELETE_stories_id.md)
+*   [GET projects/:id/stories](docs/stories/GET_stories.md)†
+*   [POST projects/:id/stories](docs/stories/POST_stories.md)†
+*   [PUT projects/:id/stories/:id](docs/stories/PUT_stories_id.md)†
+*   [DELETE projects/:id/stories/:id](docs/stories/DELETE_stories_id.md)†
+
+†This protected route restricts access to resources owned by the authenticated user. Requests by non-administrators to resources owned by other users will result in a 401 Unauthorized error.
 
 ## Software License
 
