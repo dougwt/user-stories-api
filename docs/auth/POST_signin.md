@@ -71,19 +71,6 @@ OR
 
 OR
 
-**Code:** `409 Conflict`
-
-**Content:**
-
-```json
-{
-  "status": "error",
-  "message": "Email is in use."
-}
-```
-
-OR
-
 **Code:** `400 Bad Request`
 
 **Content:**
@@ -92,5 +79,18 @@ OR
 {
   "status": "error",
   "message": "Password is invalid."
+}
+```
+
+OR
+
+**Code:** `409 Conflict`
+
+**Content:**
+
+```json
+{
+  "status": "error",
+  "message": "Email is in use."
 }
 ```
