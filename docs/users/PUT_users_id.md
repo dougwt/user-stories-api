@@ -64,7 +64,7 @@ OR
 ```json
 {
   "status": "error",
-  "message": "This action is forbidden."
+  "message": "You do not have sufficient permissions to execute this operation."
 }
 ```
 

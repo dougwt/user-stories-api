@@ -69,3 +69,16 @@ Returns a collection of the 100 most recently created Projects.
   "message": "You are unauthorized to make this request."
 }
 ```
+
+OR
+
+**Code:** `403 Forbidden`
+
+**Content:**
+
+```json
+{
+  "status": "error",
+  "message": "You do not have sufficient permissions to execute this operation."
+}
+```

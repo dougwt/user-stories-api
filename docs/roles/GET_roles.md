@@ -61,3 +61,16 @@ Returns a collection of the Project's 100 most recently created Roles.
   "message": "You are unauthorized to make this request."
 }
 ```
+
+OR
+
+**Code:** `403 Forbidden`
+
+**Content:**
+
+```json
+{
+  "status": "error",
+  "message": "You do not have sufficient permissions to execute this operation."
+}
+```

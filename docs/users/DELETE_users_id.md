@@ -35,6 +35,19 @@ Permanently delete a User.
 
 OR
 
+**Code:** `403 Forbidden`
+
+**Content:**
+
+```json
+{
+  "status": "error",
+  "message": "You do not have sufficient permissions to execute this operation."
+}
+```
+
+OR
+
 **Code:** `404 Not Found`
 
 **Content:**

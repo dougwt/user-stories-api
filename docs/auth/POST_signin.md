@@ -58,39 +58,13 @@ OR
 
 OR
 
-**Code:** `400 Bad Request`
+**Code:** `401 Unauthorized`
 
 **Content:**
 
 ```json
 {
   "status": "error",
-  "message": "Email is invalid."
-}
-```
-
-OR
-
-**Code:** `400 Bad Request`
-
-**Content:**
-
-```json
-{
-  "status": "error",
-  "message": "Password is invalid."
-}
-```
-
-OR
-
-**Code:** `409 Conflict`
-
-**Content:**
-
-```json
-{
-  "status": "error",
-  "message": "Email is in use."
+  "message": "You are unauthorized to make this request."
 }
 ```
