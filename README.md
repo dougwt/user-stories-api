@@ -12,13 +12,13 @@ This source repo contains the NodeJS+Express API server powering [MyUserStories.
 
 If you would like to run a local instance of this app in developer mode, the easiest method is using [npm](https://docs.npmjs.com/getting-started/installing-node), the package manager included with Node.js.
 
-1. Install [Node.js](https://nodejs.org)
+1.  Install [Node.js](https://nodejs.org)
 
-2. Install [MongoDB](https://mongodb.com)
+2.  Install [MongoDB](https://mongodb.com)
 
-3. Install the required JavaScript dependencies using npm:
+3.  Install the required JavaScript dependencies using npm:
 
-  `$ npm install`
+    `$ npm install`
 
 ### Running the app
 
@@ -56,7 +56,6 @@ To run the included tests:
 *   [POST users/:id/admin](docs/admin/POST_admin.md)
 *   [DELETE users/:id/admin](docs/admin/DELETE_admin.md)
 
-
 ### Projects
 
 *   [GET projects](docs/projects/GET_projects.md)
@@ -85,7 +84,7 @@ user-stories-api is free software: you can redistribute it and/or modify it unde
 
 This software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License along with this code. If not, see http://www.gnu.org/licenses/.
+You should have received a copy of the GNU General Public License along with this code. If not, see <http://www.gnu.org/licenses/>.
 
 ## Acknowledgements
 
