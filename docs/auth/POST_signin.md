@@ -19,7 +19,7 @@ Return an authentication token for an existing User.
 
 ## Success Response
 
-**Code:** `201 Created`
+**Code:** `200 OK`
 
 **Content:**
 
