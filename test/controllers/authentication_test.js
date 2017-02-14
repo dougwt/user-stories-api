@@ -3,6 +3,7 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const should = chai.should();
 const app = require('../../app');
+const User = mongoose.model('user');
 
 chai.use(chaiHttp)
 
@@ -12,12 +13,48 @@ describe('Authentication API', () => {
   //  /signin
   //////////////////////////////////////////////////////////
 
-  describe('POST /signin', () => {
-    xit('returns an auth token when provided valid credentials', (done) => {
+  describe.only('POST /signin', () => {
+    let user;
 
+    beforeEach((done) => {
+      user = new User({
+        email: 'test@example.com',
+        password: 'pa55w0rd',
+        name: 'Test User',
+      });
+      user.save(() => done())
+    })
+
+    it('returns an auth token when provided valid credentials', (done) => {
+      chai.request(app)
+        .post('/signin')
+        .send({ email: 'test@example.com', password: 'pa55w0rd' })
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.should.be.json;
+          res.body.status.should.equal('success');
+          res.body.should.have.property('token');
+          const token = res.body.token;
+          chai.request(app)
+            .get('/auth_test')
+            .set('authorization', token)
+            .end((err, res) => {
+              res.should.have.status(200);
+              res.should.be.json;
+              res.body.success.should.equal(true);
+              done();
+            });
+        });
     });
-    xit('returns a 401 status when provided invalid credentials', (done) => {
-
+    it('returns a 401 status when provided invalid credentials', (done) => {
+      chai.request(app)
+        .post('/signin')
+        .send({ email: 'test@example.com', password: 'WrongPassword' })
+        .end((err, res) => {
+          res.should.have.status(401);
+          res.should.be.json;
+          res.body.status.should.equal('error');
+        });
     });
   });
 

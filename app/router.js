@@ -65,9 +65,10 @@ router.param('storyId', (req, res, next, value) => {
 
 router.route('/signup')
   .post(AuthController.signup)
-  .get(requireAuth, (req, res) => {res.send({ success: true })})
 router.route('/signin')
   .post(requireSignin, AuthController.signin)
+router.route('/auth_test')
+  .get(requireAuth, (req, res) => {res.send({ success: true })})
 router.route('/users')
   .get(UsersController.findAll)
   .post(UsersController.create)
