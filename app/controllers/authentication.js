@@ -32,7 +32,7 @@ module.exports = {
         if (err) { return next(err); }
 
         // Response to request indicating the user was created
-        res.location('https://api.mycodebytes.com/v1/users/'+ user.id).status(201).send(Response.success(tokenForUser(user)))
+        res.location('https://api.mycodebytes.com/v1/users/'+ user.id).status(201).send(Response.authenticated(tokenForUser(user)))
       })
     })
   },
@@ -40,7 +40,7 @@ module.exports = {
   signin(req, res, next) {
     // User has already had their email and password auth'd
     // we just need to give them a token
-    res.send(Response.success(tokenForUser(req.user)))
+    res.send(Response.authenticated(tokenForUser(req.user)))
   }
 
 }
