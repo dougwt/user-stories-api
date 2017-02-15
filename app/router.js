@@ -16,6 +16,13 @@ const Project = mongoose.model('project');
 // Route handler middleware to require authentication
 const requireAuth = passport.authenticate('jwt', { session: false });
 const requireSignin = (req, res, next) => {
+  if (!req.body.email) {
+    return res.status(400).send(Response.error('Email is required.'))
+  }
+  if(!req.body.password) {
+    return res.status(400).send(Response.error('Password is required.'))
+  }
+
   return passport.authenticate('local', { session: false },
     function(err, user, info) {
       if (err) { return next(err); }

@@ -58,6 +58,30 @@ describe('Authentication API', () => {
           done();
         });
     });
+    it('returns an error when an email is not provided', (done) => {
+      chai.request(app)
+        .post('/signin')
+        .send({ password: 'WrongPassword' })
+        .end((err, res) => {
+          res.should.have.status(400);
+          res.should.be.json;
+          res.body.status.should.equal('error');
+          res.body.message.should.be.equal('Email is required.');
+          done();
+        });
+    });
+    it('returns an error when a password is not provided', (done) => {
+      chai.request(app)
+        .post('/signin')
+        .send({ email: 'test@example.com' })
+        .end((err, res) => {
+          res.should.have.status(400);
+          res.should.be.json;
+          res.body.status.should.equal('error');
+          res.body.message.should.be.equal('Password is required.');
+          done();
+        });
+    });
   });
 
   //////////////////////////////////////////////////////////
