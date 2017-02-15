@@ -13,8 +13,14 @@ module.exports = {
   signup(req, res, next) {
     const { email, password, name } = req.body;
 
-    if (!email || !password || !name) {
-      return res.status(422).send(Response.error('You must provide email, password, and name.'))
+    if (!email) {
+      return res.status(400).send(Response.error('Email is required.'))
+    }
+    if (!password) {
+      return res.status(400).send(Response.error('Password is required.'))
+    }
+    if (!name) {
+      return res.status(400).send(Response.error('Name is required.'))
     }
 
     // See if a user with the given email exists
@@ -23,7 +29,7 @@ module.exports = {
 
       // If a user with the email does exist, return an error
       if (existingUser) {
-        return res.status(422).send(Response.error('Email is in use.'))
+        return res.status(409).send(Response.error('Email is in use.'))
       }
 
       // If a user with the email does NOT exist, create and save record

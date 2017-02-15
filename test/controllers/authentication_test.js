@@ -89,23 +89,119 @@ describe('Authentication API', () => {
   //////////////////////////////////////////////////////////
 
   describe('POST /signup', () => {
-    xit('returns an auth token when provided valid data', (done) => {
-
+    it('returns an auth token when provided valid data', (done) => {
+      chai.request(app)
+        .post('/signup')
+        .send({
+          email: 'test@example.com',
+          password: 'pa55w0rd',
+          name: 'Test User',
+        })
+        .end((err, res) => {
+          res.should.have.status(201);
+          res.should.be.json;
+          res.body.status.should.equal('success');
+          res.body.should.have.property('token');
+          const token = res.body.token;
+          chai.request(app)
+            .get('/auth_test')
+            .set('authorization', token)
+            .end((err, res) => {
+              res.should.have.status(200);
+              res.should.be.json;
+              res.body.success.should.equal(true);
+              done();
+            });
+        });
     });
-    xit('creates a new user', (done) => {
-
+    it('creates a new user', (done) => {
+      User.count().then(count => {
+        chai.request(app)
+          .post('/signup')
+          .send({
+            email: 'test@example.com',
+            password: 'pa55w0rd',
+            name: 'Test User',
+          })
+          .end((err, res) => {
+            res.should.have.status(201);
+            res.should.be.json;
+            res.body.status.should.equal('success');
+            res.body.should.have.property('token');
+            User.count().then(newCount => {
+              newCount.should.equal(count + 1);
+              done();
+            });
+          });
+      });
     });
-    xit('returns an error when an email is not provided ', (done) => {
-
+    it('returns an error when an email is not provided ', (done) => {
+      chai.request(app)
+        .post('/signup')
+        .send({
+          password: 'pa55w0rd',
+          name: 'Test User',
+        })
+        .end((err, res) => {
+          res.should.have.status(400);
+          res.should.be.json;
+          res.body.status.should.equal('error');
+          res.body.message.should.be.equal('Email is required.');
+          done();
+        });
     });
-    xit('returns an error when a password is not provided ', (done) => {
-
+    it('returns an error when a password is not provided ', (done) => {
+      chai.request(app)
+        .post('/signup')
+        .send({
+          email: 'test@example.com',
+          name: 'Test User',
+        })
+        .end((err, res) => {
+          res.should.have.status(400);
+          res.should.be.json;
+          res.body.status.should.equal('error');
+          res.body.message.should.be.equal('Password is required.');
+          done();
+        });
     });
-    xit('returns an error when a name is not provided ', (done) => {
-
+    it('returns an error when a name is not provided ', (done) => {
+      chai.request(app)
+        .post('/signup')
+        .send({
+          email: 'test@example.com',
+          password: 'pa55w0rd'
+        })
+        .end((err, res) => {
+          res.should.have.status(400);
+          res.should.be.json;
+          res.body.status.should.equal('error');
+          res.body.message.should.be.equal('Name is required.');
+          done();
+        });
     });
-    xit('returns an error when a duplicate email is provided', (done) => {
-
+    it('returns an error when a duplicate email is provided', (done) => {
+      const user = new User({
+        email: 'test@example.com',
+        password: 'password1',
+        name: 'Test User 1',
+      });
+      user.save(() => {
+        chai.request(app)
+          .post('/signup')
+          .send({
+            email: 'test@example.com',
+            password: 'password2',
+            name: 'Test User 2',
+          })
+          .end((err, res) => {
+            res.should.have.status(409);
+            res.should.be.json;
+            res.body.status.should.equal('error');
+            res.body.message.should.be.equal('Email is in use.');
+            done();
+          });
+      })
     });
   });
 
