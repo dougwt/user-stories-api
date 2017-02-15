@@ -13,7 +13,7 @@ describe('Authentication API', () => {
   //  /signin
   //////////////////////////////////////////////////////////
 
-  describe.only('POST /signin', () => {
+  describe('POST /signin', () => {
     let user;
 
     beforeEach((done) => {
@@ -54,8 +54,7 @@ describe('Authentication API', () => {
           res.should.have.status(401);
           res.should.be.json;
           res.body.status.should.equal('error');
-          // TODO: Update this message
-          res.body.message.should.be.equal('Unauthorized.');
+          res.body.message.should.be.equal('You are unauthorized to make this request.');
           done();
         });
     });

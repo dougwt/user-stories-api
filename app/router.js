@@ -19,7 +19,7 @@ const requireSignin = (req, res, next) => {
   return passport.authenticate('local', { session: false },
     function(err, user, info) {
       if (err) { return next(err); }
-      if (!user) { return res.status(401).send(Response.error('Unauthorized.')); }
+      if (!user) { return res.status(401).send(Response.error('You are unauthorized to make this request.')); }
       // req.logIn(user, function(err) {
       //   if (err) { return res.status(401).send({"ok": false}); }
       //   res.send(Response.authenticated(tokenForUser(req.user)))
@@ -28,7 +28,6 @@ const requireSignin = (req, res, next) => {
       return next();
     })(req, res, next);
 }
-
 
 // Param middleware to automatically return 404 for invalid user ID
 router.param('userId', (req, res, next, value) => {
