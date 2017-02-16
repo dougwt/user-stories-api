@@ -31,7 +31,15 @@ module.exports = {
   },
 
   create(req, res, next) {
-    const projectProps = req.body;
+    const { _id, id, name, slug, roles, stories, owner } = req.body;
+
+    const projectProps = {};
+    if (_id || id) { return res.status(403).send(Response.error('This action is forbidden.')); }
+    if (name) { projectProps['name'] = name };
+    if (slug) { projectProps['slug'] = slug };
+    if (roles) { projectProps['roles'] = roles };
+    if (stories) { projectProps['stories'] = stories };
+    if (owner) { projectProps['owner'] = owner };
 
     Project.create(projectProps)
       // TODO: replace hardcoded URI prefix
@@ -57,7 +65,15 @@ module.exports = {
 
   update(req, res, next) {
     const projectId = req.params.projectId;
-    const projectProps = req.body;
+    const { _id, id, name, slug, roles, stories, owner } = req.body;
+
+    const projectProps = {};
+    if (_id || id) { return res.status(403).send(Response.error('This action is forbidden.')); }
+    if (name) { projectProps['name'] = name };
+    if (slug) { projectProps['slug'] = slug };
+    if (roles) { projectProps['roles'] = roles };
+    if (stories) { projectProps['stories'] = stories };
+    if (owner) { projectProps['owner'] = owner };
 
     Project.findByIdAndUpdate(projectId, projectProps, { runValidators: true, context: 'query' })
       .then((project) => {

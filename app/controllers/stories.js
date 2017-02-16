@@ -39,8 +39,15 @@ module.exports = {
   create(req, res, next) {
     const projectId = req.params.projectId;
     const roleId = req.params.roleId;
-    const storyProps = req.body;
+    const { _id, id, role, desire, benefit, author } = req.body;
     const project = req['project']
+
+    const storyProps = {};
+    if (_id || id) { return res.status(403).send(Response.error('This action is forbidden.')); }
+    if (role) { storyProps['role'] = role };
+    if (desire) { storyProps['desire'] = desire };
+    if (benefit) { storyProps['benefit'] = benefit };
+    if (author) { storyProps['author'] = author };
 
     project.stories.push(storyProps);
     project.save((err) => {
@@ -66,13 +73,14 @@ module.exports = {
     const projectId = req.params.projectId;
     const roleId = req.params.roleId;
     const storyId = req.params.storyId;
-    const storyProps = req.body;
+    const { _id, id, role, desire, benefit, author } = req.body;
 
-    if (storyProps.hasOwnProperty('_id')) {
-      res.status(403).send(Response.error('This action is forbidden.'));
-      next();
-      return;
-    }
+    const storyProps = {};
+    if (_id || id) { return res.status(403).send(Response.error('This action is forbidden.')); }
+    if (role) { storyProps['role'] = role };
+    if (desire) { storyProps['desire'] = desire };
+    if (benefit) { storyProps['benefit'] = benefit };
+    if (author) { storyProps['author'] = author };
 
     const renamedProps = renameNestedProps(storyProps, 'stories.$.')
 

@@ -29,7 +29,14 @@ module.exports = {
   },
 
   create(req, res, next) {
-    const userProps = req.body;
+    const { _id, id, email, password, name } = req.body;
+
+    const userProps = {};
+    if (_id || id) { return res.status(403).send(Response.error('This action is forbidden.')); }
+    if (email) { userProps['email'] = email };
+    if (password) { userProps['password'] = password };
+    if (name) { userProps['name'] = name };
+
 
     User.create(userProps)
       // TODO: replace hardcoded URI prefix
@@ -58,7 +65,14 @@ module.exports = {
 
   update(req, res, next) {
     const userId = req.params.userId;
-    const userProps = req.body;
+    const { _id, id, email, password, name } = req.body;
+
+    const userProps = {};
+    if (_id || id) { return res.status(403).send(Response.error('This action is forbidden.')); }
+    if (email) { userProps['email'] = email };
+    if (password) { userProps['password'] = password };
+    if (name) { userProps['name'] = name };
+
     User.findByIdAndUpdate(userId, userProps, { runValidators: true, context: 'query' })
       .then((user) => {
         if (user) {
