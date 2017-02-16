@@ -351,6 +351,7 @@ describe('Users API', () => {
     it('lists a SINGLE user', (done) => {
       const user = new User({
         email: 'test@test.com',
+        password: 'password',
         name: 'Test'
       });
       user.save().then(() => {
@@ -403,10 +404,12 @@ describe('Users API', () => {
     beforeEach((done) => {
       u1 = new User({
         email: 'testA@test.com',
+        password: 'password',
         name: 'Test A'
       });
       u2 = new User({
         email: 'testB@test.com',
+        password: 'password',
         name: 'Test B'
       });
       u1.save(() => {
@@ -419,6 +422,7 @@ describe('Users API', () => {
     it('updates a SINGLE user on /users/:id PUT', (done) => {
       const user = new User({
         email: 'test1@test.com',
+        password: 'password',
         name: 'Test 1'
       });
       user.save().then(() => {
@@ -443,6 +447,7 @@ describe('Users API', () => {
     it('only updates provided fields', (done) => {
       const user = new User({
         email: 'test1@test.com',
+        password: 'password',
         name: 'Test 1'
       });
       user.save().then(() => {
@@ -467,6 +472,7 @@ describe('Users API', () => {
     it('does not modify the original id', (done) => {
       const user = new User({
         email: 'test1@test.com',
+        password: 'password',
         name: 'Test 1'
       });
       user.save().then(() => {
@@ -507,6 +513,7 @@ describe('Users API', () => {
     it('returns an error when an invalid email is provided', (done) => {
       const user = new User({
         email: 'test1@test.com',
+        password: 'password',
         name: 'Test 1'
       });
       user.save().then(() => {
@@ -534,10 +541,12 @@ describe('Users API', () => {
     beforeEach((done) => {
       u1 = new User({
         email: 'testA@test.com',
+        password: 'password',
         name: 'Test A'
       });
       u2 = new User({
         email: 'testB@test.com',
+        password: 'password',
         name: 'Test B'
       });
       u1.save(() => {
@@ -550,6 +559,7 @@ describe('Users API', () => {
     it('deletes a SINGLE user', (done) => {
       const user1 = new User({
         email: 'test@test.com',
+        password: 'password',
         name: 'Test'
       });
       user1.save().then(() => {
