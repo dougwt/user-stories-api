@@ -44,6 +44,9 @@ module.exports = {
         } else if (err.errors.email && err.errors.email.name === 'ValidatorError' && err.errors.email.message.startsWith('Validator failed for path `email`')) {
           res.status(400).send(Response.error('Email is invalid.'))
           next();
+        } else if (err.errors.password && err.errors.password.name === 'ValidatorError' && err.errors.password.message === 'Path `password` is required.') {
+          res.status(400).send(Response.error('Password is required.'))
+          next();
         } else if (err.errors.name && err.errors.name.name === 'ValidatorError' && err.errors.name.message === 'Path `name` is required.') {
           res.status(400).send(Response.error('Name is required.'))
           next();

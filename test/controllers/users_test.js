@@ -17,6 +17,7 @@ describe('Users API', () => {
     it('lists ALL users', (done) => {
       const user = new User({
         email: 'test@test.com',
+        password: 'password',
         name: 'Test'
       });
       user.save().then(() => {
@@ -38,14 +39,17 @@ describe('Users API', () => {
     it('lists ALL users sorted by descending creation dates', (done) => {
       const u1 = new User({
         email: 'test1@test.com',
+        password: 'password',
         name: 'Test 1'
       });
       const u2 = new User({
         email: 'test2@test.com',
+        password: 'password',
         name: 'Test 2'
       });
       const u3 = new User({
         email: 'test3@test.com',
+        password: 'password',
         name: 'Test 3'
       });
       const { users } = mongoose.connection.collections;
@@ -92,18 +96,22 @@ describe('Users API', () => {
     it('supports use of only the skip param', (done) => {
       const u1 = new User({
         email: 'test1@test.com',
+        password: 'password',
         name: 'Test 1'
       });
       const u2 = new User({
         email: 'test2@test.com',
+        password: 'password',
         name: 'Test 2'
       });
       const u3 = new User({
         email: 'test3@test.com',
+        password: 'password',
         name: 'Test 3'
       });
       const u4 = new User({
         email: 'test4@test.com',
+        password: 'password',
         name: 'Test 4'
       });
       const { users } = mongoose.connection.collections;
@@ -135,18 +143,22 @@ describe('Users API', () => {
     it('supports use of only the limit param', (done) => {
       const u1 = new User({
         email: 'test1@test.com',
+        password: 'password',
         name: 'Test 1'
       });
       const u2 = new User({
         email: 'test2@test.com',
+        password: 'password',
         name: 'Test 2'
       });
       const u3 = new User({
         email: 'test3@test.com',
+        password: 'password',
         name: 'Test 3'
       });
       const u4 = new User({
         email: 'test4@test.com',
+        password: 'password',
         name: 'Test 4'
       });
       const { users } = mongoose.connection.collections;
@@ -179,18 +191,22 @@ describe('Users API', () => {
     it('supports use of both the skip and limit params', (done) => {
       const u1 = new User({
         email: 'test1@test.com',
+        password: 'password',
         name: 'Test 1'
       });
       const u2 = new User({
         email: 'test2@test.com',
+        password: 'password',
         name: 'Test 2'
       });
       const u3 = new User({
         email: 'test3@test.com',
+        password: 'password',
         name: 'Test 3'
       });
       const u4 = new User({
         email: 'test4@test.com',
+        password: 'password',
         name: 'Test 4'
       });
       const { users } = mongoose.connection.collections;
@@ -226,7 +242,7 @@ describe('Users API', () => {
       User.count().then(count => {
         chai.request(app)
           .post('/users')
-          .send({ email: 'test@test.com', name: 'Test' })
+          .send({ email: 'test@test.com', password: 'password', name: 'Test' })
           .end((err, res) => {
             User.count().then(newCount => {
               res.should.have.status(201);
@@ -243,7 +259,7 @@ describe('Users API', () => {
     it('returns an error when an email is not provided', (done) => {
       chai.request(app)
         .post('/users')
-        .send({ name: 'Test' })
+        .send({ password: 'password', name: 'Test' })
         .end((err, res) => {
           res.should.have.status(400);
           res.should.be.json;
@@ -255,7 +271,7 @@ describe('Users API', () => {
     it('returns an error when an invalid email is provided', (done) => {
       chai.request(app)
         .post('/users')
-        .send({ email: 'test', name: 'Test' })
+        .send({ email: 'test', password: 'password', name: 'Test' })
         .end((err, res) => {
           res.should.have.status(400);
           res.should.be.json;
@@ -265,14 +281,11 @@ describe('Users API', () => {
         });
     });
     it('returns an error when a duplicate email is provided', (done) => {
-      const user = new User({
-        email: 'test@test.com',
-        name: 'Test 1'
-      });
+      const user = new User({ email: 'test@test.com', password: 'password', name: 'Test 1' });
       user.save().then(() => {
         chai.request(app)
           .post('/users')
-          .send({ email: 'test@test.com', name: 'Test 2' })
+          .send({ email: 'test@test.com', password: 'password', name: 'Test 2' })
           .end((err, res) => {
             res.should.have.status(409);
             res.should.be.json;
@@ -282,10 +295,22 @@ describe('Users API', () => {
           });
       });
     });
+    it('returns an error when a password is not provided', (done) => {
+      chai.request(app)
+        .post('/users')
+        .send({ email: 'test@test.com', name: 'Test' })
+        .end((err, res) => {
+          res.should.have.status(400);
+          res.should.be.json;
+          res.body.status.should.equal('error')
+          res.body.message.should.be.equal('Password is required.');
+          done();
+        });
+    });
     it('returns an error when a name is not provided', (done) => {
       chai.request(app)
         .post('/users')
-        .send({ email: 'test@test.com' })
+        .send({ email: 'test@test.com', password: 'password' })
         .end((err, res) => {
           res.should.have.status(400);
           res.should.be.json;
@@ -297,7 +322,7 @@ describe('Users API', () => {
     it('converts email addresses to lowercase', (done) => {
       chai.request(app)
         .post('/users')
-        .send({ email: 'TEST@TEST.COM', name: 'Test' })
+        .send({ email: 'TEST@TEST.COM', password: 'password', name: 'Test' })
         .end((err, res) => {
           res.should.be.json;
           res.body.status.should.equal('success')
@@ -308,7 +333,7 @@ describe('Users API', () => {
     it('automatically assigns a creation_date', (done) => {
       chai.request(app)
         .post('/users')
-        .send({ email: 'test@test.com', name: 'Test' })
+        .send({ email: 'test@test.com', password: 'password', name: 'Test' })
         .end((err, res) => {
           res.should.be.json;
           res.body.status.should.equal('success')
