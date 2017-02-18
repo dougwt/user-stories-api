@@ -42,7 +42,7 @@ module.exports = {
 
   create(req, res, next) {
     const projectId = req.params.projectId;
-    const project = req['project']
+    const project = req['requestedProject']
     const { _id, id, name } = req.body;
 
     const roleProps = {};
@@ -103,7 +103,7 @@ module.exports = {
     const projectId = req.params.projectId;
     const roleId = req.params.roleId;
 
-    const project = req['project']
+    const project = req['requestedProject']
     const role = project.roles.id(roleId)
 
     if (role === null) {

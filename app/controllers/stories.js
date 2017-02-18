@@ -40,7 +40,7 @@ module.exports = {
     const projectId = req.params.projectId;
     const roleId = req.params.roleId;
     const { _id, id, role, desire, benefit, author } = req.body;
-    const project = req['project']
+    const project = req['requestedProject']
 
     const storyProps = {};
     if (_id || id) { return res.status(403).send(Response.error('This action is forbidden.')); }
@@ -106,8 +106,8 @@ module.exports = {
   delete(req, res, next) {
     const projectId = req.params.projectId;
     const storyId = req.params.storyId;
-    const project = req['project']
-    const story = req['story']
+    const project = req['requestedProject']
+    const story = req['requestedStory']
 
     if (story === null) {
       var err = new Error();

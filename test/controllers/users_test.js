@@ -4,6 +4,7 @@ const chaiHttp = require('chai-http');
 const should = chai.should();
 const app = require('../../app');
 const User = mongoose.model('user');
+import { tokenForUser } from '../../app/controllers/authentication'
 
 chai.use(chaiHttp)
 
@@ -357,7 +358,9 @@ describe('Users API', () => {
       user.save().then(() => {
         chai.request(app)
           .get(`/users/${user._id}`)
+          .set('authorization', tokenForUser(user))
           .end((err, res) => {
+            // console.log(err);
             res.should.have.status(200)
             res.should.be.json
             res.body.should.have.property('data')
@@ -374,6 +377,32 @@ describe('Users API', () => {
           });
       });
     });
+    it('returns a 403 status for restricted ids', (done) => {
+      const u1 = new User({
+        email: 'testA@test.com',
+        password: 'password1',
+        name: 'Test A'
+      });
+      const u2 = new User({
+        email: 'testB@test.com',
+        password: 'password2',
+        name: 'Test B'
+      });
+      u1.save(() => {
+        u2.save(() => {
+          chai.request(app)
+            .get(`/users/${u1._id}`)
+            .set('authorization', tokenForUser(u2))
+            .end((err, res) => {
+              res.should.have.status(403)
+              res.should.be.json
+              res.body.status.should.equal('error')
+              res.body.message.should.be.equal('You do not have sufficient permissions to execute this operation.')
+              done()
+            });
+          });
+      });
+    });
     it('returns a 404 status for invalid ids', (done) => {
       chai.request(app)
         .get('/users/invalid')
@@ -386,15 +415,23 @@ describe('Users API', () => {
         })
     });
     it('returns a 404 status for non-existent ids', (done) => {
-      chai.request(app)
-        .get(`/users/${mongoose.Types.ObjectId()}`)
-        .end((err, res) => {
-          res.should.have.status(404)
-          res.should.be.json
-          res.body.status.should.equal('error')
-          res.body.message.should.be.equal('The requested resource does not exist.')
-          done()
-        })
+      const user = new User({
+        email: 'test@test.com',
+        password: 'password',
+        name: 'Test'
+      });
+      user.save().then(() => {
+        chai.request(app)
+          .get(`/users/${mongoose.Types.ObjectId()}`)
+          .set('authorization', tokenForUser(user))
+          .end((err, res) => {
+            res.should.have.status(404)
+            res.should.be.json
+            res.body.status.should.equal('error')
+            res.body.message.should.be.equal('The requested resource does not exist.')
+            done()
+          })
+      })
     })
   })
 

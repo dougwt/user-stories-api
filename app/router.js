@@ -32,15 +32,31 @@ const requireSignin = (req, res, next) => {
       //   res.send(Response.authenticated(tokenForUser(req.user)))
       // });
       req.user = user;
-      return next();
+      next();
     })(req, res, next);
+}
+const restrictToSelf = (req, res, next) => {
+  const requestedUser = req['requestedUser'];
+  const authenticatedUser = req.user;
+  // console.log('requestedUser', requestedUser._id)
+  // console.log('authenticatedUser', authenticatedUser._id)
+  // console.log(requestedUser.id !== authenticatedUser.id)
+  if (requestedUser && authenticatedUser && requestedUser.id !== authenticatedUser.id) {
+    return res.status(403).send(Response.error('You do not have sufficient permissions to execute this operation.'))
+  }
+  // console.log('next...')
+  next();
 }
 
 // Param middleware to automatically return 404 for invalid user ID
 router.param('userId', (req, res, next, value) => {
   User.findById(value)
     .then((user) => {
-      req['user'] = user
+      if (!user) {
+        return res.status(404).send(Response.error('The requested resource does not exist.'));
+      }
+
+      req['requestedUser'] = user
       next()
     })
     .catch((err) => {
@@ -50,7 +66,7 @@ router.param('userId', (req, res, next, value) => {
 router.param('projectId', (req, res, next, value) => {
   Project.findById(value)
     .then((project) => {
-      req['project'] = project
+      req['requestedProject'] = project
       next()
     })
     .catch((err) => {
@@ -62,7 +78,7 @@ router.param('roleId', (req, res, next, value) => {
 
   Project.find({ "_id": projectId, "roles._id": value })
     .then((project) => {
-      req['role'] = req['project'].roles.id(value)
+      req['requestedRole'] = req['requestedProject'].roles.id(value)
       next()
     })
     .catch((err) => {
@@ -74,7 +90,7 @@ router.param('storyId', (req, res, next, value) => {
 
   Project.find({ "_id": projectId, "stories._id": value })
     .then((project) => {
-      req['story'] = req['project'].stories.id(value)
+      req['requestedStory'] = req['requestedProject'].stories.id(value)
       next()
     })
     .catch((err) => {
@@ -92,7 +108,7 @@ router.route('/users')
   .get(UsersController.findAll)
   .post(UsersController.create)
 router.route('/users/:userId')
-  .get(UsersController.findById)
+  .get(requireAuth, restrictToSelf, UsersController.findById)
   .put(UsersController.update)
   .delete(UsersController.delete)
 
