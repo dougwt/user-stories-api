@@ -14,7 +14,15 @@ const User = mongoose.model('user');
 const Project = mongoose.model('project');
 
 // Route handler middleware to require authentication
-const requireAuth = passport.authenticate('jwt', { session: false });
+const requireAuth = (req, res, next) => {
+  return passport.authenticate('jwt', { session: false },
+    function(err, user, info) {
+      if (err) { return next(err); }
+      if (!user) { return res.status(401).send(Response.error('You are unauthorized to make this request.')); }
+      req.user = user;
+      next();
+    })(req, res, next);
+}
 const requireSignin = (req, res, next) => {
   if (!req.body.email) {
     return res.status(400).send(Response.error('Email is required.'))
@@ -36,6 +44,7 @@ const requireSignin = (req, res, next) => {
     })(req, res, next);
 }
 const restrictToSelf = (req, res, next) => {
+  // console.log('Entering restrictToSelf')
   const requestedUser = req['requestedUser'];
   const authenticatedUser = req.user;
   // console.log('requestedUser', requestedUser._id)
@@ -109,8 +118,8 @@ router.route('/users')
   .post(UsersController.create)
 router.route('/users/:userId')
   .get(requireAuth, restrictToSelf, UsersController.findById)
-  .put(UsersController.update)
-  .delete(UsersController.delete)
+  .put(requireAuth, restrictToSelf, UsersController.update)
+  .delete(requireAuth, restrictToSelf, UsersController.delete)
 
 router.route('/projects')
   .get(ProjectsController.findAll)

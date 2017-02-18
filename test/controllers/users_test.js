@@ -360,7 +360,6 @@ describe('Users API', () => {
           .get(`/users/${user._id}`)
           .set('authorization', tokenForUser(user))
           .end((err, res) => {
-            // console.log(err);
             res.should.have.status(200)
             res.should.be.json
             res.body.should.have.property('data')
@@ -373,6 +372,24 @@ describe('Users API', () => {
             res.body.data.email.should.equal('test@test.com')
             res.body.data.name.should.equal('Test')
             res.body.status.should.equal('success')
+            done()
+          });
+      });
+    });
+    it('returns a 401 status for unauthorized requests', (done) => {
+      const user = new User({
+        email: 'test@test.com',
+        password: 'password',
+        name: 'Test'
+      });
+      user.save().then(() => {
+        chai.request(app)
+          .get(`/users/${user._id}`)
+          .end((err, res) => {
+            res.should.have.status(401)
+            res.should.be.json
+            res.body.status.should.equal('error')
+            res.body.message.should.be.equal('You are unauthorized to make this request.')
             done()
           });
       });
@@ -466,6 +483,7 @@ describe('Users API', () => {
         chai.request(app)
           .put(`/users/${user._id}`)
           .send({ email: 'test2@test.com', name: 'Test 2' })
+          .set('authorization', tokenForUser(user))
           .end((err, res) => {
             res.should.have.status(204)
             res.headers.should.have.property('location')
@@ -491,6 +509,7 @@ describe('Users API', () => {
         chai.request(app)
           .put(`/users/${user._id}`)
           .send({ name: 'Test 2' })
+          .set('authorization', tokenForUser(user))
           .end((err, res) => {
             res.should.have.status(204)
             res.headers.should.have.property('location')
@@ -516,6 +535,7 @@ describe('Users API', () => {
         chai.request(app)
           .put(`/users/${user._id}`)
           .send({ _id: mongoose.Types.ObjectId() })
+          .set('authorization', tokenForUser(user))
           .end((err, res) => {
             res.should.have.status(403)
             res.should.be.json
@@ -539,6 +559,7 @@ describe('Users API', () => {
     it('returns error status on non-existent /users/:id PUT', (done) => {
       chai.request(app)
         .put(`/users/${mongoose.Types.ObjectId()}`)
+        .set('authorization', tokenForUser(u1))
         .end((err, res) => {
           res.should.have.status(404)
           res.should.be.json
@@ -557,6 +578,7 @@ describe('Users API', () => {
         chai.request(app)
           .put(`/users/${user._id}`)
           .send({ email: 'test2' })
+          .set('authorization', tokenForUser(user))
           .end((err, res) => {
             res.should.have.status(400);
             res.should.be.json;
@@ -569,6 +591,25 @@ describe('Users API', () => {
               })
           })
       })
+    });
+    it('returns a 401 status for unauthorized requests', (done) => {
+      const user = new User({
+        email: 'test1@test.com',
+        password: 'password',
+        name: 'Test 1'
+      });
+      user.save().then(() => {
+        chai.request(app)
+          .put(`/users/${user._id}`)
+          .send({ email: 'test2@test.com' })
+          .end((err, res) => {
+            res.should.have.status(401)
+            res.should.be.json
+            res.body.status.should.equal('error')
+            res.body.message.should.be.equal('You are unauthorized to make this request.')
+            done()
+          });
+      });
     });
   })
 
@@ -602,7 +643,9 @@ describe('Users API', () => {
       user1.save().then(() => {
         chai.request(app)
           .delete(`/users/${user1._id}`)
+          .set('authorization', tokenForUser(user1))
           .end((err, res) => {
+            res.should.have.status(204)
             Object.keys(res.body).length.should.equal(0)
             res.body.constructor.should.equal(Object)
             User.findById(user1._id)
@@ -613,6 +656,24 @@ describe('Users API', () => {
           })
       })
     })
+    it('returns a 401 status for unauthorized requests', (done) => {
+      const user1 = new User({
+        email: 'test@test.com',
+        password: 'password',
+        name: 'Test'
+      });
+      user1.save().then(() => {
+        chai.request(app)
+          .delete(`/users/${user1._id}`)
+          .end((err, res) => {
+            res.should.have.status(401)
+            res.should.be.json
+            res.body.status.should.equal('error')
+            res.body.message.should.be.equal('You are unauthorized to make this request.')
+            done()
+          })
+      })
+    });
     it('returns a 404 status for invalid ids', (done) => {
       chai.request(app)
         .delete('/users/invalid')
