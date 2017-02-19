@@ -4,6 +4,7 @@ const chaiHttp = require('chai-http');
 const should = chai.should();
 const app = require('../../app');
 const Project = mongoose.model('project');
+import { tokenForUser } from '../../app/controllers/authentication'
 
 chai.use(chaiHttp)
 
@@ -23,6 +24,7 @@ describe('Roles API', () => {
       project.save().then(() => {
         chai.request(app)
           .get(`/projects/${project._id}/roles`)
+          // .set('authorization', tokenForUser(user))
           .end((err, res) => {
             res.should.have.status(200);
             res.should.be.json;

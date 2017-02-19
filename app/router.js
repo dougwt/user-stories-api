@@ -45,9 +45,10 @@ const requireSignin = (req, res, next) => {
 }
 const restrictToSelf = (req, res, next) => {
   // console.log('Entering restrictToSelf')
+  // console.log('requestedUser:', req['requestedUser'])
   const requestedUser = req['requestedUser'];
   const authenticatedUser = req.user;
-  // console.log('requestedUser', requestedUser._id)
+  // console.log('requestedUser', requestedUser)
   // console.log('authenticatedUser', authenticatedUser._id)
   // console.log(requestedUser.id !== authenticatedUser.id)
   if (requestedUser && authenticatedUser && requestedUser.id !== authenticatedUser.id) {
@@ -73,10 +74,22 @@ router.param('userId', (req, res, next, value) => {
     })
 })
 router.param('projectId', (req, res, next, value) => {
+  // console.log('Entering projectId:', value)
   Project.findById(value)
     .then((project) => {
       req['requestedProject'] = project
-      next()
+      // console.log('storing requestedProject:', req['requestedProject'])
+      // console.log('project owner:', project.owner)
+      // User.find({}).then((users) => {
+      //   console.log('users:', users.map((user) => user.id))
+      // })
+      User.findById(project.owner)
+        .then((user) => {
+          // console.log('user:', user)
+          req['requestedUser'] = user
+          // console.log('storing requestedUser:', req['requestedUser'])
+          next()
+        })
     })
     .catch((err) => {
       res.status(404).send(Response.error('The requested resource does not exist.'))
@@ -125,9 +138,9 @@ router.route('/projects')
   .get(requireAuth, ProjectsController.findAll)
   .post(requireAuth, ProjectsController.create)
 router.route('/projects/:projectId')
-  .get(requireAuth, ProjectsController.findById)
-  .put(requireAuth, ProjectsController.update)
-  .delete(requireAuth, ProjectsController.delete)
+  .get(requireAuth, restrictToSelf, ProjectsController.findById)
+  .put(requireAuth, restrictToSelf, ProjectsController.update)
+  .delete(requireAuth, restrictToSelf, ProjectsController.delete)
 
 router.route('/projects/:projectId/roles')
   .get(RolesController.findAll)

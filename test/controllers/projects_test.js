@@ -29,7 +29,8 @@ describe('Projects API', () => {
     it('lists ALL projects', (done) => {
       const project = new Project({
         name: 'Test',
-        slug: 'test'
+        slug: 'test',
+        owner: user
       });
       project.save(() => {
         chai.request(app)
@@ -51,7 +52,8 @@ describe('Projects API', () => {
     it('returns a 401 status for unauthorized requests', (done) => {
       const project = new Project({
         name: 'Test',
-        slug: 'test'
+        slug: 'test',
+        owner: user
       });
       project.save(() => {
         chai.request(app)
@@ -68,15 +70,18 @@ describe('Projects API', () => {
     it('lists ALL projects sorted by descending creation dates', (done) => {
       const u1 = new Project({
         name: 'Test 1',
-        slug: 'test-1'
+        slug: 'test-1',
+        owner: user
       });
       const u2 = new Project({
         name: 'Test 2',
-        slug: 'test-2'
+        slug: 'test-2',
+        owner: user
       });
       const u3 = new Project({
         name: 'Test 3',
-        slug: 'test-3'
+        slug: 'test-3',
+        owner: user
       });
       const { projects } = mongoose.connection.collections;
       projects.drop(() => {
@@ -124,19 +129,23 @@ describe('Projects API', () => {
     it('supports use of only the skip param', (done) => {
       const p1 = new Project({
         name: 'Test 1',
-        slug: 'test-1'
+        slug: 'test-1',
+        owner: user
       });
       const p2 = new Project({
         name: 'Test 2',
-        slug: 'test-2'
+        slug: 'test-2',
+        owner: user
       });
       const p3 = new Project({
         name: 'Test 3',
-        slug: 'test-3'
+        slug: 'test-3',
+        owner: user
       });
       const p4 = new Project({
         name: 'Test 4',
-        slug: 'test-4'
+        slug: 'test-4',
+        owner: user
       });
       const { users } = mongoose.connection.collections;
       p1.save(() => {
@@ -166,19 +175,23 @@ describe('Projects API', () => {
     it('supports use of only the limit param', (done) => {
       const p1 = new Project({
         name: 'Test 1',
-        slug: 'test-1'
+        slug: 'test-1',
+        owner: user
       });
       const p2 = new Project({
         name: 'Test 2',
-        slug: 'test-2'
+        slug: 'test-2',
+        owner: user
       });
       const p3 = new Project({
         name: 'Test 3',
-        slug: 'test-3'
+        slug: 'test-3',
+        owner: user
       });
       const p4 = new Project({
         name: 'Test 4',
-        slug: 'test-4'
+        slug: 'test-4',
+        owner: user
       });
       const { users } = mongoose.connection.collections;
       p1.save(() => {
@@ -209,19 +222,23 @@ describe('Projects API', () => {
     it('supports use of both the skip and limit params', (done) => {
       const p1 = new Project({
         name: 'Test 1',
-        slug: 'test-1'
+        slug: 'test-1',
+        owner: user
       });
       const p2 = new Project({
         name: 'Test 2',
-        slug: 'test-2'
+        slug: 'test-2',
+        owner: user
       });
       const p3 = new Project({
         name: 'Test 3',
-        slug: 'test-3'
+        slug: 'test-3',
+        owner: user
       });
       const p4 = new Project({
         name: 'Test 4',
-        slug: 'test-4'
+        slug: 'test-4',
+        owner: user
       });
       const { users } = mongoose.connection.collections;
       p1.save(() => {
@@ -337,7 +354,8 @@ describe('Projects API', () => {
     it('returns an error when a duplicate slug is provided', (done) => {
       const project = new Project({
         name: 'Test 1',
-        slug: 'test'
+        slug: 'test',
+        owner: user
       });
       project.save().then(() => {
         chai.request(app)
@@ -387,7 +405,8 @@ describe('Projects API', () => {
     it('lists a SINGLE project', (done) => {
       const project = new Project({
         name: 'Test',
-        slug: 'test'
+        slug: 'test',
+        owner: user
       });
       project.save().then(() => {
         chai.request(app)
@@ -415,7 +434,8 @@ describe('Projects API', () => {
     it('returns a 401 status for unauthorized requests', (done) => {
       const project = new Project({
         name: 'Test',
-        slug: 'test'
+        slug: 'test',
+        owner: user
       });
       project.save().then(() => {
         chai.request(app)
@@ -427,6 +447,32 @@ describe('Projects API', () => {
             res.body.message.should.be.equal('You are unauthorized to make this request.')
             done()
           });
+      });
+    });
+    it('returns a 403 status for restricted ids', (done) => {
+      const u2 = new User({
+        email: 'test2@test.com',
+        password: 'password',
+        name: 'Test 2'
+      });
+      const project = new Project({
+        name: 'Test',
+        slug: 'test',
+        owner: u2
+      });
+      u2.save(() => {
+        project.save(() => {
+          chai.request(app)
+            .get(`/projects/${project._id}`)
+            .set('authorization', tokenForUser(user))
+            .end((err, res) => {
+              res.should.have.status(403)
+              res.should.be.json
+              res.body.status.should.equal('error')
+              res.body.message.should.be.equal('You do not have sufficient permissions to execute this operation.')
+              done()
+            });
+        });
       });
     });
     it('returns a 404 status for invalid ids', (done) => {
@@ -461,10 +507,12 @@ describe('Projects API', () => {
       p1 = new Project({
         name: 'Test Project A',
         slug: 'test-project-a',
+        owner: user
       });
       p2 = new Project({
         name: 'Test Project B',
         slug: 'test-project-b',
+        owner: user
       });
       p1.save(() => {
         p2.save(() => {
@@ -476,7 +524,8 @@ describe('Projects API', () => {
     it('updates a SINGLE project', (done) => {
       const project = new Project({
         name: 'Test 1',
-        slug: 'test-1'
+        slug: 'test-1',
+        owner: user
       });
       project.save().then(() => {
         chai.request(app)
@@ -501,7 +550,8 @@ describe('Projects API', () => {
     it('only updates provided fields', (done) => {
       const project = new Project({
         name: 'Test 1',
-        slug: 'test-1'
+        slug: 'test-1',
+        owner: user
       });
       project.save().then(() => {
         chai.request(app)
@@ -526,7 +576,8 @@ describe('Projects API', () => {
     it('does not modify the original id', (done) => {
       const project = new Project({
         name: 'Test 1',
-        slug: 'test-1'
+        slug: 'test-1',
+        owner: user
       });
       project.save().then(() => {
         chai.request(app)
@@ -542,50 +593,11 @@ describe('Projects API', () => {
           })
       })
     })
-    it('returns a 401 status for unauthorized requests', (done) => {
-      const project = new Project({
-        name: 'Test',
-        slug: 'test'
-      });
-      project.save().then(() => {
-        chai.request(app)
-          .put(`/projects/${project._id}`)
-          .end((err, res) => {
-            res.should.have.status(401)
-            res.should.be.json
-            res.body.status.should.equal('error')
-            res.body.message.should.be.equal('You are unauthorized to make this request.')
-            done()
-          });
-      });
-    });
-    it('returns error status for invalid ids', (done) => {
-      chai.request(app)
-        .put('/projects/invalid')
-        .end((err, res) => {
-          res.should.have.status(404)
-          res.should.be.json
-          res.body.status.should.equal('error')
-          res.body.message.should.be.equal('The requested resource does not exist.')
-          done()
-        })
-    })
-    it('returns error status for non-existent ids', (done) => {
-      chai.request(app)
-        .put(`/projects/${mongoose.Types.ObjectId()}`)
-        .set('authorization', tokenForUser(user))
-        .end((err, res) => {
-          res.should.have.status(404)
-          res.should.be.json
-          res.body.status.should.equal('error')
-          res.body.message.should.be.equal('The requested resource does not exist.')
-          done()
-        })
-    })
-    it('returns an error when an invalid slug is provided', (done) => {
+    it('returns an 400 when an invalid slug is provided', (done) => {
       const project = new Project({
         name: 'Test 1',
-        slug: 'test-1'
+        slug: 'test-1',
+        owner: user
       });
       project.save().then(() => {
         chai.request(app)
@@ -605,10 +617,72 @@ describe('Projects API', () => {
           })
       })
     })
-    it('returns an error when a duplicate slug is provided', (done) => {
+    it('returns a 401 status for unauthorized requests', (done) => {
+      const project = new Project({
+        name: 'Test',
+        slug: 'test',
+        owner: user
+      });
+      project.save().then(() => {
+        chai.request(app)
+          .put(`/projects/${project._id}`)
+          .end((err, res) => {
+            res.should.have.status(401)
+            res.should.be.json
+            res.body.status.should.equal('error')
+            res.body.message.should.be.equal('You are unauthorized to make this request.')
+            done()
+          });
+      });
+    });
+    it('returns a 403 status for restricted ids', (done) => {
+      const u2 = new User({
+        email: 'test2@test.com',
+        password: 'password',
+        name: 'Test 2'
+      });
+      u2.save().then(() => {
+        chai.request(app)
+          .put(`/projects/${p1._id}`)
+          .send({ name: 'Test 2' })
+          .set('authorization', tokenForUser(u2))
+          .end((err, res) => {
+            res.should.have.status(403)
+            res.should.be.json
+            res.body.status.should.equal('error')
+            res.body.message.should.be.equal('You do not have sufficient permissions to execute this operation.')
+            done()
+          });
+      });
+    });
+    it('returns 404 status for invalid ids', (done) => {
+      chai.request(app)
+        .put('/projects/invalid')
+        .end((err, res) => {
+          res.should.have.status(404)
+          res.should.be.json
+          res.body.status.should.equal('error')
+          res.body.message.should.be.equal('The requested resource does not exist.')
+          done()
+        })
+    })
+    it('returns 404 status for non-existent ids', (done) => {
+      chai.request(app)
+        .put(`/projects/${mongoose.Types.ObjectId()}`)
+        .set('authorization', tokenForUser(user))
+        .end((err, res) => {
+          res.should.have.status(404)
+          res.should.be.json
+          res.body.status.should.equal('error')
+          res.body.message.should.be.equal('The requested resource does not exist.')
+          done()
+        })
+    })
+    it('returns an 409 when a duplicate slug is provided', (done) => {
       const project = new Project({
         name: 'Test 1',
-        slug: 'test-1'
+        slug: 'test-1',
+        owner: user
       });
       project.save().then(() => {
         chai.request(app)
@@ -637,10 +711,12 @@ describe('Projects API', () => {
       p1 = new Project({
         name: 'Test Project A',
         slug: 'test-project-a',
+        owner: user
       });
       p2 = new Project({
         name: 'Test Project B',
         slug: 'test-project-b',
+        owner: user
       });
       p1.save(() => {
         p2.save(() => {
@@ -652,7 +728,8 @@ describe('Projects API', () => {
     it('deletes a SINGLE project', (done) => {
       const project1 = new Project({
         name: 'Test',
-        slug: 'test'
+        slug: 'test',
+        owner: user
       });
       project1.save().then(() => {
         chai.request(app)
@@ -672,7 +749,8 @@ describe('Projects API', () => {
     it('returns a 401 status for unauthorized requests', (done) => {
       const project1 = new Project({
         name: 'Test',
-        slug: 'test'
+        slug: 'test',
+        owner: user
       });
       project1.save().then(() => {
         chai.request(app)
@@ -682,6 +760,25 @@ describe('Projects API', () => {
             res.should.be.json
             res.body.status.should.equal('error')
             res.body.message.should.be.equal('You are unauthorized to make this request.')
+            done()
+          });
+      });
+    });
+    it('returns a 403 status for restricted ids', (done) => {
+      const u2 = new User({
+        email: 'test2@test.com',
+        password: 'password',
+        name: 'Test 2'
+      });
+      u2.save().then(() => {
+        chai.request(app)
+          .delete(`/projects/${p1._id}`)
+          .set('authorization', tokenForUser(u2))
+          .end((err, res) => {
+            res.should.have.status(403)
+            res.should.be.json
+            res.body.status.should.equal('error')
+            res.body.message.should.be.equal('You do not have sufficient permissions to execute this operation.')
             done()
           });
       });
