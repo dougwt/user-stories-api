@@ -257,6 +257,30 @@ describe('Users API', () => {
           });
       });
     });
+    it('creates non-admin users by default', (done) => {
+      chai.request(app)
+        .post('/users')
+        .send({ email: 'test@test.com', password: 'password', name: 'Test' })
+        .end((err, res) => {
+          res.should.have.status(201);
+          res.should.be.json;
+          res.body.status.should.equal('success');
+          res.body.data.admin.should.equal(false);
+          done();
+        });
+    });
+    it('creates non-admin users even when passed admin prop', (done) => {
+      chai.request(app)
+        .post('/users')
+        .send({ email: 'test@test.com', password: 'password', name: 'Test', admin: true })
+        .end((err, res) => {
+          res.should.have.status(201);
+          res.should.be.json;
+          res.body.status.should.equal('success');
+          res.body.data.admin.should.equal(false);
+          done();
+        });
+    });
     it('returns a 400 status when an email is not provided', (done) => {
       chai.request(app)
         .post('/users')
