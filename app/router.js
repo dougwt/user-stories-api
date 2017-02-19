@@ -23,6 +23,7 @@ const requireAuth = (req, res, next) => {
       next();
     })(req, res, next);
 }
+// Route handler middleware to require sign in
 const requireSignin = (req, res, next) => {
   if (!req.body.email) {
     return res.status(400).send(Response.error('Email is required.'))
@@ -35,30 +36,21 @@ const requireSignin = (req, res, next) => {
     function(err, user, info) {
       if (err) { return next(err); }
       if (!user) { return res.status(401).send(Response.error('You are unauthorized to make this request.')); }
-      // req.logIn(user, function(err) {
-      //   if (err) { return res.status(401).send({"ok": false}); }
-      //   res.send(Response.authenticated(tokenForUser(req.user)))
-      // });
       req.user = user;
       next();
     })(req, res, next);
 }
+// Route handler middleware to restrict access to projects not owned by the authenticated User
 const restrictToSelf = (req, res, next) => {
-  // console.log('Entering restrictToSelf')
-  // console.log('requestedUser:', req['requestedUser'])
   const requestedUser = req['requestedUser'];
   const authenticatedUser = req.user;
-  // console.log('requestedUser', requestedUser)
-  // console.log('authenticatedUser', authenticatedUser._id)
-  // console.log(requestedUser.id !== authenticatedUser.id)
   if (requestedUser && authenticatedUser && requestedUser.id !== authenticatedUser.id) {
     return res.status(403).send(Response.error('You do not have sufficient permissions to execute this operation.'))
   }
-  // console.log('next...')
   next();
 }
 
-// Param middleware to automatically return 404 for invalid user ID
+// Param middleware to automatically return 404 for invalid User ID
 router.param('userId', (req, res, next, value) => {
   User.findById(value)
     .then((user) => {
@@ -73,21 +65,14 @@ router.param('userId', (req, res, next, value) => {
       res.status(404).send(Response.error('The requested resource does not exist.'))
     })
 })
+// Param middleware to automatically return 404 for invalid Project ID
 router.param('projectId', (req, res, next, value) => {
-  // console.log('Entering projectId:', value)
   Project.findById(value)
     .then((project) => {
       req['requestedProject'] = project
-      // console.log('storing requestedProject:', req['requestedProject'])
-      // console.log('project owner:', project.owner)
-      // User.find({}).then((users) => {
-      //   console.log('users:', users.map((user) => user.id))
-      // })
       User.findById(project.owner)
         .then((user) => {
-          // console.log('user:', user)
           req['requestedUser'] = user
-          // console.log('storing requestedUser:', req['requestedUser'])
           next()
         })
     })
@@ -95,6 +80,7 @@ router.param('projectId', (req, res, next, value) => {
       res.status(404).send(Response.error('The requested resource does not exist.'))
     })
 })
+// Param middleware to automatically return 404 for invalid Role ID
 router.param('roleId', (req, res, next, value) => {
   const projectId = req.params.projectId;
 
@@ -107,6 +93,7 @@ router.param('roleId', (req, res, next, value) => {
       res.status(404).send(Response.error('The requested resource does not exist.'))
     })
 })
+// Param middleware to automatically return 404 for invalid Story ID
 router.param('storyId', (req, res, next, value) => {
   const projectId = req.params.projectId;
 
