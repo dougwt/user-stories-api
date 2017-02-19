@@ -257,7 +257,7 @@ describe('Users API', () => {
           });
       });
     });
-    it('returns an error when an email is not provided', (done) => {
+    it('returns a 400 status when an email is not provided', (done) => {
       chai.request(app)
         .post('/users')
         .send({ password: 'password', name: 'Test' })
@@ -269,7 +269,7 @@ describe('Users API', () => {
           done();
         });
     });
-    it('returns an error when an invalid email is provided', (done) => {
+    it('returns a 400 status when an invalid email is provided', (done) => {
       chai.request(app)
         .post('/users')
         .send({ email: 'test', password: 'password', name: 'Test' })
@@ -281,7 +281,7 @@ describe('Users API', () => {
           done();
         });
     });
-    it('returns an error when a duplicate email is provided', (done) => {
+    it('returns a 409 status when a duplicate email is provided', (done) => {
       const user = new User({ email: 'test@test.com', password: 'password', name: 'Test 1' });
       user.save().then(() => {
         chai.request(app)
@@ -296,7 +296,7 @@ describe('Users API', () => {
           });
       });
     });
-    it('returns an error when a password is not provided', (done) => {
+    it('returns a 400 status when a password is not provided', (done) => {
       chai.request(app)
         .post('/users')
         .send({ email: 'test@test.com', name: 'Test' })
@@ -308,7 +308,7 @@ describe('Users API', () => {
           done();
         });
     });
-    it('returns an error when a name is not provided', (done) => {
+    it('returns a 400 status when a name is not provided', (done) => {
       chai.request(app)
         .post('/users')
         .send({ email: 'test@test.com', password: 'password' })
@@ -545,7 +545,7 @@ describe('Users API', () => {
           })
       })
     });
-    it('returns error status on invalid /users/:id PUT', (done) => {
+    it('returns a 404 status on invalid /users/:id PUT', (done) => {
       chai.request(app)
         .put('/users/invalid')
         .end((err, res) => {
@@ -556,7 +556,7 @@ describe('Users API', () => {
           done()
         })
     })
-    it('returns error status on non-existent /users/:id PUT', (done) => {
+    it('returns a 404 status on non-existent /users/:id PUT', (done) => {
       chai.request(app)
         .put(`/users/${mongoose.Types.ObjectId()}`)
         .set('authorization', tokenForUser(u1))
@@ -568,7 +568,7 @@ describe('Users API', () => {
           done()
         })
     })
-    it('returns an error when an invalid email is provided', (done) => {
+    it('returns a 400 status when an invalid email is provided', (done) => {
       const user = new User({
         email: 'test1@test.com',
         password: 'password',

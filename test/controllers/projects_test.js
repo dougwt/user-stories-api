@@ -287,7 +287,7 @@ describe('Projects API', () => {
           });
       });
     });
-    it('returns an error when a name is not provided', (done) => {
+    it('returns a 400 status when a name is not provided', (done) => {
       chai.request(app)
         .post('/projects')
         .send({ slug: 'test' })
@@ -300,7 +300,7 @@ describe('Projects API', () => {
           done();
         });
     });
-    it('returns an error when a slug is not provided', (done) => {
+    it('returns a 400 status when a slug is not provided', (done) => {
       chai.request(app)
         .post('/projects')
         .send({ name: 'Test' })
@@ -313,7 +313,7 @@ describe('Projects API', () => {
           done();
         });
     });
-    it('returns an error when an invalid slug is provided (punctuation)', (done) => {
+    it('returns a 400 status when an invalid slug is provided (punctuation)', (done) => {
       chai.request(app)
         .post('/projects')
         .send({ name: 'Test', slug: 'test!' })
@@ -326,7 +326,7 @@ describe('Projects API', () => {
           done();
         });
     });
-    it('returns an error when an invalid slug is provided (trailing-slash)', (done) => {
+    it('returns a 400 status when an invalid slug is provided (trailing-slash)', (done) => {
       chai.request(app)
         .post('/projects')
         .send({ name: 'Test', slug: 'test-' })
@@ -351,7 +351,7 @@ describe('Projects API', () => {
           done()
         });
     });
-    it('returns an error when a duplicate slug is provided', (done) => {
+    it('returns a 409 status when a duplicate slug is provided', (done) => {
       const project = new Project({
         name: 'Test 1',
         slug: 'test',
@@ -593,7 +593,7 @@ describe('Projects API', () => {
           })
       })
     })
-    it('returns an 400 when an invalid slug is provided', (done) => {
+    it('returns a 400 status when an invalid slug is provided', (done) => {
       const project = new Project({
         name: 'Test 1',
         slug: 'test-1',
@@ -655,7 +655,7 @@ describe('Projects API', () => {
           });
       });
     });
-    it('returns 404 status for invalid ids', (done) => {
+    it('returns a 404 status for invalid ids', (done) => {
       chai.request(app)
         .put('/projects/invalid')
         .end((err, res) => {
@@ -666,7 +666,7 @@ describe('Projects API', () => {
           done()
         })
     })
-    it('returns 404 status for non-existent ids', (done) => {
+    it('returns a 404 status for non-existent ids', (done) => {
       chai.request(app)
         .put(`/projects/${mongoose.Types.ObjectId()}`)
         .set('authorization', tokenForUser(user))
@@ -678,7 +678,7 @@ describe('Projects API', () => {
           done()
         })
     })
-    it('returns an 409 when a duplicate slug is provided', (done) => {
+    it('returns a 409 status when a duplicate slug is provided', (done) => {
       const project = new Project({
         name: 'Test 1',
         slug: 'test-1',
