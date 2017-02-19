@@ -3,11 +3,23 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const should = chai.should();
 const app = require('../../app');
+const User = mongoose.model('user');
 const Project = mongoose.model('project');
+import { tokenForUser } from '../../app/controllers/authentication'
 
 chai.use(chaiHttp)
 
 describe('Projects API', () => {
+  let user;
+
+  beforeEach((done) => {
+    user = new User({
+      email: 'test@test.com',
+      password: 'password',
+      name: 'Test'
+    });
+    user.save(() => { done(); })
+  })
 
   //////////////////////////////////////////////////////////
   //  /projects
@@ -19,9 +31,10 @@ describe('Projects API', () => {
         name: 'Test',
         slug: 'test'
       });
-      project.save().then(() => {
+      project.save(() => {
         chai.request(app)
           .get('/projects')
+          .set('authorization', tokenForUser(user))
           .end((err, res) => {
             res.should.have.status(200);
             res.should.be.json;
@@ -34,6 +47,23 @@ describe('Projects API', () => {
             done();
           })
       });
+    });
+    it('returns a 401 status for unauthorized requests', (done) => {
+      const project = new Project({
+        name: 'Test',
+        slug: 'test'
+      });
+      project.save(() => {
+        chai.request(app)
+          .get('/projects')
+          .end((err, res) => {
+            res.should.have.status(401)
+            res.should.be.json
+            res.body.status.should.equal('error')
+            res.body.message.should.be.equal('You are unauthorized to make this request.')
+            done()
+          });
+      })
     });
     it('lists ALL projects sorted by descending creation dates', (done) => {
       const u1 = new Project({
@@ -55,6 +85,7 @@ describe('Projects API', () => {
             u3.save(() => {
               chai.request(app)
                 .get('/projects')
+                .set('authorization', tokenForUser(user))
                 .end((err, res) => {
                   res.should.have.status(200);
                   res.should.be.json;
@@ -78,6 +109,7 @@ describe('Projects API', () => {
       Project.find({}).then((projects) => {
         chai.request(app)
           .get('/projects')
+          .set('authorization', tokenForUser(user))
           .end((err, res) => {
             projects.length.should.be.equal(0)
             res.should.have.status(200);
@@ -107,25 +139,24 @@ describe('Projects API', () => {
         slug: 'test-4'
       });
       const { users } = mongoose.connection.collections;
-      users.drop(() => {
-        p1.save(() => {
-          p2.save(() => {
+      p1.save(() => {
+        p2.save(() => {
+          p3.save(() => {
             p3.save(() => {
-              p3.save(() => {
-                p4.save(() => {
-                  chai.request(app)
-                    .get('/projects?skip=2')
-                    .end((err, res) => {
-                      res.should.have.status(200);
-                      res.should.be.json;
-                      res.body.status.should.equal('success')
-                      res.body.data.should.be.a('array');
-                      res.body.data.length.should.be.equal(2);
-                      res.body.data[0].name.should.equal('Test 2');
-                      res.body.data[1].name.should.equal('Test 1');
-                      done();
-                    })
-                })
+              p4.save(() => {
+                chai.request(app)
+                  .get('/projects?skip=2')
+                  .set('authorization', tokenForUser(user))
+                  .end((err, res) => {
+                    res.should.have.status(200);
+                    res.should.be.json;
+                    res.body.status.should.equal('success')
+                    res.body.data.should.be.a('array');
+                    res.body.data.length.should.be.equal(2);
+                    res.body.data[0].name.should.equal('Test 2');
+                    res.body.data[1].name.should.equal('Test 1');
+                    done();
+                  })
               })
             })
           })
@@ -150,26 +181,25 @@ describe('Projects API', () => {
         slug: 'test-4'
       });
       const { users } = mongoose.connection.collections;
-      users.drop(() => {
-        p1.save(() => {
-          p2.save(() => {
+      p1.save(() => {
+        p2.save(() => {
+          p3.save(() => {
             p3.save(() => {
-              p3.save(() => {
-                p4.save(() => {
-                  chai.request(app)
-                    .get('/projects?limit=3')
-                    .end((err, res) => {
-                      res.should.have.status(200);
-                      res.should.be.json;
-                      res.body.status.should.equal('success')
-                      res.body.data.should.be.a('array');
-                      res.body.data.length.should.be.equal(3);
-                      res.body.data[0].name.should.equal('Test 4');
-                      res.body.data[1].name.should.equal('Test 3');
-                      res.body.data[2].name.should.equal('Test 2');
-                      done();
-                    })
-                })
+              p4.save(() => {
+                chai.request(app)
+                  .get('/projects?limit=3')
+                  .set('authorization', tokenForUser(user))
+                  .end((err, res) => {
+                    res.should.have.status(200);
+                    res.should.be.json;
+                    res.body.status.should.equal('success')
+                    res.body.data.should.be.a('array');
+                    res.body.data.length.should.be.equal(3);
+                    res.body.data[0].name.should.equal('Test 4');
+                    res.body.data[1].name.should.equal('Test 3');
+                    res.body.data[2].name.should.equal('Test 2');
+                    done();
+                  })
               })
             })
           })
@@ -194,25 +224,24 @@ describe('Projects API', () => {
         slug: 'test-4'
       });
       const { users } = mongoose.connection.collections;
-      users.drop(() => {
-        p1.save(() => {
-          p2.save(() => {
+      p1.save(() => {
+        p2.save(() => {
+          p3.save(() => {
             p3.save(() => {
-              p3.save(() => {
-                p4.save(() => {
-                  chai.request(app)
-                    .get('/projects?skip=1&limit=2')
-                    .end((err, res) => {
-                      res.should.have.status(200);
-                      res.should.be.json;
-                      res.body.status.should.equal('success')
-                      res.body.data.should.be.a('array');
-                      res.body.data.length.should.be.equal(2);
-                      res.body.data[0].name.should.equal('Test 3');
-                      res.body.data[1].name.should.equal('Test 2');
-                      done();
-                    })
-                })
+              p4.save(() => {
+                chai.request(app)
+                  .get('/projects?skip=1&limit=2')
+                  .set('authorization', tokenForUser(user))
+                  .end((err, res) => {
+                    res.should.have.status(200);
+                    res.should.be.json;
+                    res.body.status.should.equal('success')
+                    res.body.data.should.be.a('array');
+                    res.body.data.length.should.be.equal(2);
+                    res.body.data[0].name.should.equal('Test 3');
+                    res.body.data[1].name.should.equal('Test 2');
+                    done();
+                  })
               })
             })
           })
@@ -227,6 +256,7 @@ describe('Projects API', () => {
         chai.request(app)
           .post('/projects')
           .send({ name: 'Test', slug: 'test' })
+          .set('authorization', tokenForUser(user))
           .end((err, res) => {
             Project.count().then(newCount => {
               res.should.have.status(201);
@@ -244,6 +274,7 @@ describe('Projects API', () => {
       chai.request(app)
         .post('/projects')
         .send({ slug: 'test' })
+        .set('authorization', tokenForUser(user))
         .end((err, res) => {
           res.should.have.status(400);
           res.should.be.json;
@@ -256,6 +287,7 @@ describe('Projects API', () => {
       chai.request(app)
         .post('/projects')
         .send({ name: 'Test' })
+        .set('authorization', tokenForUser(user))
         .end((err, res) => {
           res.should.have.status(400);
           res.should.be.json;
@@ -268,6 +300,7 @@ describe('Projects API', () => {
       chai.request(app)
         .post('/projects')
         .send({ name: 'Test', slug: 'test!' })
+        .set('authorization', tokenForUser(user))
         .end((err, res) => {
           res.should.have.status(400);
           res.should.be.json;
@@ -280,12 +313,25 @@ describe('Projects API', () => {
       chai.request(app)
         .post('/projects')
         .send({ name: 'Test', slug: 'test-' })
+        .set('authorization', tokenForUser(user))
         .end((err, res) => {
           res.should.have.status(400);
           res.should.be.json;
           res.body.status.should.equal('error');
           res.body.message.should.be.equal('Slug is invalid.');
           done();
+        });
+    });
+    it('returns a 401 status for unauthorized requests', (done) => {
+      chai.request(app)
+        .post('/projects')
+        .send({ name: 'Test', slug: 'test!' })
+        .end((err, res) => {
+          res.should.have.status(401)
+          res.should.be.json
+          res.body.status.should.equal('error')
+          res.body.message.should.be.equal('You are unauthorized to make this request.')
+          done()
         });
     });
     it('returns an error when a duplicate slug is provided', (done) => {
@@ -297,6 +343,7 @@ describe('Projects API', () => {
         chai.request(app)
           .post('/projects')
           .send({ name: 'Test 2', slug: 'test' })
+          .set('authorization', tokenForUser(user))
           .end((err, res) => {
             res.should.have.status(409);
             res.should.be.json;
@@ -310,6 +357,7 @@ describe('Projects API', () => {
       chai.request(app)
         .post('/projects')
         .send({ name: 'TEST', slug: 'TEST' })
+        .set('authorization', tokenForUser(user))
         .end((err, res) => {
           res.should.be.json;
           res.body.status.should.equal('success')
@@ -321,6 +369,7 @@ describe('Projects API', () => {
       chai.request(app)
         .post('/projects')
         .send({ name: 'Test', slug: 'test' })
+        .set('authorization', tokenForUser(user))
         .end((err, res) => {
           res.should.be.json;
           res.body.status.should.equal('success')
@@ -343,6 +392,7 @@ describe('Projects API', () => {
       project.save().then(() => {
         chai.request(app)
           .get(`/projects/${project._id}`)
+          .set('authorization', tokenForUser(user))
           .end((err, res) => {
             res.should.have.status(200)
             res.should.be.json
@@ -362,6 +412,23 @@ describe('Projects API', () => {
           });
       });
     })
+    it('returns a 401 status for unauthorized requests', (done) => {
+      const project = new Project({
+        name: 'Test',
+        slug: 'test'
+      });
+      project.save().then(() => {
+        chai.request(app)
+          .get(`/projects/${project._id}`)
+          .end((err, res) => {
+            res.should.have.status(401)
+            res.should.be.json
+            res.body.status.should.equal('error')
+            res.body.message.should.be.equal('You are unauthorized to make this request.')
+            done()
+          });
+      });
+    });
     it('returns a 404 status for invalid ids', (done) => {
       chai.request(app)
         .get('/projects/invalid')
@@ -376,6 +443,7 @@ describe('Projects API', () => {
     it('returns a 404 status for non-existent ids', (done) => {
       chai.request(app)
         .get(`/projects/${mongoose.Types.ObjectId()}`)
+        .set('authorization', tokenForUser(user))
         .end((err, res) => {
           res.should.have.status(404)
           res.should.be.json
@@ -414,6 +482,7 @@ describe('Projects API', () => {
         chai.request(app)
           .put(`/projects/${project._id}`)
           .send({ name: 'Test 2', slug: 'test-2' })
+          .set('authorization', tokenForUser(user))
           .end((err, res) => {
             res.should.have.status(204)
             res.headers.should.have.property('location')
@@ -438,6 +507,7 @@ describe('Projects API', () => {
         chai.request(app)
           .put(`/projects/${project._id}`)
           .send({ name: 'Test 2' })
+          .set('authorization', tokenForUser(user))
           .end((err, res) => {
             res.should.have.status(204)
             res.headers.should.have.property('location')
@@ -462,6 +532,7 @@ describe('Projects API', () => {
         chai.request(app)
           .put(`/projects/${project._id}`)
           .send({ _id: mongoose.Types.ObjectId() })
+          .set('authorization', tokenForUser(user))
           .end((err, res) => {
             res.should.have.status(403)
             res.should.be.json
@@ -471,6 +542,23 @@ describe('Projects API', () => {
           })
       })
     })
+    it('returns a 401 status for unauthorized requests', (done) => {
+      const project = new Project({
+        name: 'Test',
+        slug: 'test'
+      });
+      project.save().then(() => {
+        chai.request(app)
+          .put(`/projects/${project._id}`)
+          .end((err, res) => {
+            res.should.have.status(401)
+            res.should.be.json
+            res.body.status.should.equal('error')
+            res.body.message.should.be.equal('You are unauthorized to make this request.')
+            done()
+          });
+      });
+    });
     it('returns error status for invalid ids', (done) => {
       chai.request(app)
         .put('/projects/invalid')
@@ -485,6 +573,7 @@ describe('Projects API', () => {
     it('returns error status for non-existent ids', (done) => {
       chai.request(app)
         .put(`/projects/${mongoose.Types.ObjectId()}`)
+        .set('authorization', tokenForUser(user))
         .end((err, res) => {
           res.should.have.status(404)
           res.should.be.json
@@ -502,6 +591,7 @@ describe('Projects API', () => {
         chai.request(app)
           .put(`/projects/${project._id}`)
           .send({ slug: 'test-' })
+          .set('authorization', tokenForUser(user))
           .end((err, res) => {
             res.should.have.status(400);
             res.should.be.json;
@@ -524,6 +614,7 @@ describe('Projects API', () => {
         chai.request(app)
           .put(`/projects/${project._id}`)
           .send({ slug: 'test-project-a' })
+          .set('authorization', tokenForUser(user))
           .end((err, res) => {
             res.should.have.status(409);
             res.should.be.json;
@@ -566,6 +657,7 @@ describe('Projects API', () => {
       project1.save().then(() => {
         chai.request(app)
           .delete(`/projects/${project1._id}`)
+          .set('authorization', tokenForUser(user))
           .end((err, res) => {
             Object.keys(res.body).length.should.equal(0)
             res.body.constructor.should.equal(Object)
@@ -577,9 +669,27 @@ describe('Projects API', () => {
           })
       })
     });
+    it('returns a 401 status for unauthorized requests', (done) => {
+      const project1 = new Project({
+        name: 'Test',
+        slug: 'test'
+      });
+      project1.save().then(() => {
+        chai.request(app)
+          .delete(`/projects/${project1._id}`)
+          .end((err, res) => {
+            res.should.have.status(401)
+            res.should.be.json
+            res.body.status.should.equal('error')
+            res.body.message.should.be.equal('You are unauthorized to make this request.')
+            done()
+          });
+      });
+    });
     it('returns a 404 status for invalid ids', (done) => {
       chai.request(app)
         .delete('/projects/invalid')
+        .set('authorization', tokenForUser(user))
         .end((err, res) => {
           res.should.have.status(404)
           res.should.be.json
@@ -591,6 +701,7 @@ describe('Projects API', () => {
     it('returns a 404 status for non-existent ids', (done) => {
       chai.request(app)
         .delete(`/projects/${mongoose.Types.ObjectId()}`)
+        .set('authorization', tokenForUser(user))
         .end((err, res) => {
           res.should.have.status(404)
           res.should.be.json
