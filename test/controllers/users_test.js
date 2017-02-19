@@ -257,7 +257,7 @@ describe('Users API', () => {
           });
       });
     });
-    it('creates non-admin users by default', (done) => {
+    it('creates a non-admin user by default', (done) => {
       chai.request(app)
         .post('/users')
         .send({ email: 'test@test.com', password: 'password', name: 'Test' })
@@ -269,7 +269,7 @@ describe('Users API', () => {
           done();
         });
     });
-    it('creates non-admin users even when passed admin prop', (done) => {
+    it('creates a non-admin user even when passed admin prop', (done) => {
       chai.request(app)
         .post('/users')
         .send({ email: 'test@test.com', password: 'password', name: 'Test', admin: true })
@@ -569,6 +569,48 @@ describe('Users API', () => {
           })
       })
     });
+    it('does not modify the original admin value when false', (done) => {
+      const user = new User({
+        email: 'test1@test.com',
+        password: 'password',
+        name: 'Test 1',
+        admin: false
+      });
+      user.save().then(() => {
+        chai.request(app)
+          .put(`/users/${user._id}`)
+          .send({ admin: true })
+          .set('authorization', tokenForUser(user))
+          .end((err, res) => {
+            res.should.have.status(403)
+            res.should.be.json
+            res.body.status.should.equal('error')
+            res.body.message.should.be.equal('This action is forbidden.')
+            done()
+          })
+      })
+    });
+    it('does not modify the original admin value when true', (done) => {
+      const user = new User({
+        email: 'test1@test.com',
+        password: 'password',
+        name: 'Test 1',
+        admin: true
+      });
+      user.save().then(() => {
+        chai.request(app)
+          .put(`/users/${user._id}`)
+          .send({ admin: false })
+          .set('authorization', tokenForUser(user))
+          .end((err, res) => {
+            res.should.have.status(403)
+            res.should.be.json
+            res.body.status.should.equal('error')
+            res.body.message.should.be.equal('This action is forbidden.')
+            done()
+          })
+      })
+    });
     it('returns a 404 status on invalid /users/:id PUT', (done) => {
       chai.request(app)
         .put('/users/invalid')
@@ -720,6 +762,46 @@ describe('Users API', () => {
           done()
         })
     });
+  })
+
+  //////////////////////////////////////////////////////////
+  //  /users/:id/admin
+  //////////////////////////////////////////////////////////
+
+  describe('POST /users/:id/admin', () => {
+    xit('successful with admin authentication', (done) => {
+      done();
+    })
+    xit('returns a 401 status for unauthorized requests', (done) => {
+      done();
+    }),
+    xit('returns a 403 status for non-admin authenticated ids', (done) => {
+      done();
+    }),
+    xit('returns a 404 status for invalid ids', (done) => {
+      done();
+    })
+    xit('returns a 404 status for non-existent ids', (done) => {
+      done();
+    })
+  })
+
+  describe('DELETE /users/:id/admin', () => {
+    xit('successful with admin authentication', (done) => {
+      done();
+    })
+    xit('returns a 401 status for unauthorized requests', (done) => {
+      done();
+    }),
+    xit('returns a 403 status for non-admin authenticated ids', (done) => {
+      done();
+    }),
+    xit('returns a 404 status for invalid ids', (done) => {
+      done();
+    })
+    xit('returns a 404 status for non-existent ids', (done) => {
+      done();
+    })
   })
 
 });

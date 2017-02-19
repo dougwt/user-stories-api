@@ -65,10 +65,14 @@ module.exports = {
 
   update(req, res, next) {
     const userId = req.params.userId;
-    const { _id, id, email, password, name } = req.body;
+    const { _id, id, admin, email, password, name } = req.body;
+
+    function isSet(value) {
+      return (typeof value !== 'undefined');
+    }
 
     const userProps = {};
-    if (_id || id) { return res.status(403).send(Response.error('This action is forbidden.')); }
+    if ( isSet(_id) || isSet(id) || isSet(admin) ) { return res.status(403).send(Response.error('This action is forbidden.')); }
     if (email) { userProps['email'] = email };
     if (password) { userProps['password'] = password };
     if (name) { userProps['name'] = name };
@@ -108,6 +112,38 @@ module.exports = {
           err.status = 404;
           next(err);
         }
+      })
+  },
+
+  grantAdmin(req, res, next) {
+    const userId = req.params.userId;
+    const user = req['user']
+
+    // Set user.admin = true
+    user.admin = true;
+    user
+      .save(() => {
+        // Send success response
+        return res.status(204).send(Response.success(user))
+      })
+      .catch((err) => {
+        next(err);
+      })
+  },
+
+  revokeAdmin(req, res, next) {
+    const userId = req.params.userId;
+    const user = req['user']
+
+    // Set user.admin = false
+    user.admin = false;
+    user
+      .save(() => {
+        // Send success response
+        return res.status(204).send(Response.success(user))
+      })
+      .catch((err) => {
+        next(err);
       })
   }
 
