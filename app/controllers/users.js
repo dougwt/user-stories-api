@@ -5,7 +5,7 @@ module.exports = {
 
   findById(req, res, next) {
     const userId = req.params.userId;
-    const user = req['user']
+    const user = req['requestedUser']
 
     if (user) {
       return res.status(200).send(Response.success(user))
@@ -117,34 +117,27 @@ module.exports = {
 
   grantAdmin(req, res, next) {
     const userId = req.params.userId;
-    const user = req['user']
+    const requestedUser = req['requestedUser'];
 
-    // Set user.admin = true
-    user.admin = true;
-    user
-      .save(() => {
+    User.findByIdAndUpdate(requestedUser._id, { admin: true }, { new: true, context: 'query' })
+      .then((user) => {
         // Send success response
         return res.status(204).send(Response.success(user))
       })
-      .catch((err) => {
-        next(err);
-      })
+      .catch((err) => { next(err); })
   },
 
   revokeAdmin(req, res, next) {
     const userId = req.params.userId;
-    const user = req['user']
+    const requestedUser = req['requestedUser'];
 
     // Set user.admin = false
-    user.admin = false;
-    user
-      .save(() => {
+    User.findByIdAndUpdate(requestedUser._id, { admin: false }, { context: 'query' })
+      .then((user) => {
         // Send success response
         return res.status(204).send(Response.success(user))
       })
-      .catch((err) => {
-        next(err);
-      })
+      .catch((err) => { next(err); })
   }
 
 };

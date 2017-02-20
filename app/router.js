@@ -40,6 +40,14 @@ const requireSignin = (req, res, next) => {
       next();
     })(req, res, next);
 }
+// Route handler middleware to require authentication with an admin account
+const requireAdmin = (req, res, next) => {
+  const authenticatedUser = req.user;
+  if (!authenticatedUser.admin) {
+    return res.status(403).send(Response.error('You do not have sufficient permissions to execute this operation.'))
+  }
+  next();
+}
 // Route handler middleware to restrict access to projects not owned by the authenticated User
 const restrictToSelf = (req, res, next) => {
   const requestedUser = req['requestedUser'];
@@ -54,6 +62,7 @@ const restrictToSelf = (req, res, next) => {
 router.param('userId', (req, res, next, value) => {
   User.findById(value)
     .then((user) => {
+      // console.log('userId param:', user.id)
       if (!user) {
         return res.status(404).send(Response.error('The requested resource does not exist.'));
       }
@@ -121,7 +130,7 @@ router.route('/users/:userId')
   .put(requireAuth, restrictToSelf, UsersController.update)
   .delete(requireAuth, restrictToSelf, UsersController.delete)
 router.route('/users/:userId/admin')
-  .post(UsersController.grantAdmin)
+  .post(requireAuth, requireAdmin, UsersController.grantAdmin)
   .delete(UsersController.revokeAdmin)
 
 router.route('/projects')
