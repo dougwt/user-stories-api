@@ -264,11 +264,33 @@ describe('Users API', () => {
   })
 
   describe('POST /users', () => {
+    let u1, u2;
+
+    beforeEach((done) => {
+      u1 = new User({
+        email: 'testA@test.com',
+        password: 'password',
+        name: 'Test A',
+        admin: true
+      });
+      u2 = new User({
+        email: 'testB@test.com',
+        password: 'password',
+        name: 'Test B'
+      });
+      u1.save(() => {
+        u2.save(() => {
+          done()
+        })
+      })
+    })
+
     it('creates a new user', (done) => {
       User.count().then(count => {
         chai.request(app)
           .post('/users')
           .send({ email: 'test@test.com', password: 'password', name: 'Test' })
+          .set('authorization', tokenForUser(u1))
           .end((err, res) => {
             User.count().then(newCount => {
               res.should.have.status(201);
@@ -286,6 +308,7 @@ describe('Users API', () => {
       chai.request(app)
         .post('/users')
         .send({ email: 'test@test.com', password: 'password', name: 'Test' })
+        .set('authorization', tokenForUser(u1))
         .end((err, res) => {
           res.should.have.status(201);
           res.should.be.json;
@@ -298,6 +321,7 @@ describe('Users API', () => {
       chai.request(app)
         .post('/users')
         .send({ email: 'test@test.com', password: 'password', name: 'Test', admin: true })
+        .set('authorization', tokenForUser(u1))
         .end((err, res) => {
           res.should.have.status(201);
           res.should.be.json;
@@ -310,6 +334,7 @@ describe('Users API', () => {
       chai.request(app)
         .post('/users')
         .send({ password: 'password', name: 'Test' })
+        .set('authorization', tokenForUser(u1))
         .end((err, res) => {
           res.should.have.status(400);
           res.should.be.json;
@@ -322,6 +347,7 @@ describe('Users API', () => {
       chai.request(app)
         .post('/users')
         .send({ email: 'test', password: 'password', name: 'Test' })
+        .set('authorization', tokenForUser(u1))
         .end((err, res) => {
           res.should.have.status(400);
           res.should.be.json;
@@ -336,6 +362,7 @@ describe('Users API', () => {
         chai.request(app)
           .post('/users')
           .send({ email: 'test@test.com', password: 'password', name: 'Test 2' })
+          .set('authorization', tokenForUser(u1))
           .end((err, res) => {
             res.should.have.status(409);
             res.should.be.json;
@@ -349,6 +376,7 @@ describe('Users API', () => {
       chai.request(app)
         .post('/users')
         .send({ email: 'test@test.com', name: 'Test' })
+        .set('authorization', tokenForUser(u1))
         .end((err, res) => {
           res.should.have.status(400);
           res.should.be.json;
@@ -361,6 +389,7 @@ describe('Users API', () => {
       chai.request(app)
         .post('/users')
         .send({ email: 'test@test.com', password: 'password' })
+        .set('authorization', tokenForUser(u1))
         .end((err, res) => {
           res.should.have.status(400);
           res.should.be.json;
@@ -373,6 +402,7 @@ describe('Users API', () => {
       chai.request(app)
         .post('/users')
         .send({ email: 'TEST@TEST.COM', password: 'password', name: 'Test' })
+        .set('authorization', tokenForUser(u1))
         .end((err, res) => {
           res.should.be.json;
           res.body.status.should.equal('success')
@@ -384,12 +414,36 @@ describe('Users API', () => {
       chai.request(app)
         .post('/users')
         .send({ email: 'test@test.com', password: 'password', name: 'Test' })
+        .set('authorization', tokenForUser(u1))
         .end((err, res) => {
           res.should.be.json;
           res.body.status.should.equal('success')
           res.body.data._createdAt.should.not.be.null;
           done();
         });
+    });
+    it('returns a 401 status for unauthorized requests', (done) => {
+      chai.request(app)
+        .post('/users')
+        .end((err, res) => {
+          res.should.have.status(401)
+          res.should.be.json
+          res.body.status.should.equal('error')
+          res.body.message.should.be.equal('You are unauthorized to make this request.')
+          done();
+        })
+    });
+    it('returns a 403 status for non-admin authenticated ids', (done) => {
+      chai.request(app)
+        .post('/users')
+        .set('authorization', tokenForUser(u2))
+        .end((err, res) => {
+          res.should.have.status(403)
+          res.should.be.json
+          res.body.status.should.equal('error')
+          res.body.message.should.be.equal('You do not have sufficient permissions to execute this operation.')
+          done();
+        })
     });
   })
 
