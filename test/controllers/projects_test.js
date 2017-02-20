@@ -297,7 +297,6 @@ describe('Projects API', () => {
         slug: 'test-4',
         owner: userNonAdmin
       });
-      const { users } = mongoose.connection.collections;
       userAdmin.save(() => {
         userNonAdmin.save(() => {
           p1.save(() => {

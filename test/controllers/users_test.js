@@ -242,24 +242,64 @@ describe('Users API', () => {
           done();
         })
     });
-    it('returns a 403 status for non-admin authenticated ids', (done) => {
-      const user = new User({
-        email: 'test@test.com',
+    it('only shows an authed user their own account', (done) => {
+      const userAdmin = new User({
+        email: 'test1@test.com',
+        password: 'password',
+        name: 'Test 1',
+        admin: true
+      });
+      const userNonAdmin = new User({
+        email: 'test2@test.com',
+        password: 'password',
+        name: 'Test 2'
+      });
+      userAdmin.save(() => {
+        userNonAdmin.save(() => {
+          chai.request(app)
+            .get('/users')
+            .set('authorization', tokenForUser(userNonAdmin))
+            .end((err, res) => {
+              res.should.have.status(200);
+              res.should.be.json;
+              res.body.status.should.equal('success')
+              res.body.data.should.be.a('array');
+              res.body.data.length.should.be.equal(1);
+              res.body.data[0].email.should.equal('test2@test.com');
+              done();
+            })
+        });
+      });
+    });
+    it('shows an authed admin everyone\'s accounts', (done) => {
+      const userAdmin = new User({
+        email: 'test1@test.com',
+        password: 'password',
+        name: 'Test',
+        admin: true
+      });
+      const userNonAdmin = new User({
+        email: 'test2@test.com',
         password: 'password',
         name: 'Test'
       });
-      user.save(() => {
-        chai.request(app)
-          .get('/users')
-          .set('authorization', tokenForUser(user))
-          .end((err, res) => {
-            res.should.have.status(403)
-            res.should.be.json
-            res.body.status.should.equal('error')
-            res.body.message.should.be.equal('You do not have sufficient permissions to execute this operation.')
-            done();
-          })
-      })
+      userAdmin.save(() => {
+        userNonAdmin.save(() => {
+          chai.request(app)
+            .get('/users')
+            .set('authorization', tokenForUser(userAdmin))
+            .end((err, res) => {
+              res.should.have.status(200);
+              res.should.be.json;
+              res.body.status.should.equal('success')
+              res.body.data.should.be.a('array');
+              res.body.data.length.should.be.equal(2);
+              res.body.data[0].email.should.equal('test2@test.com');
+              res.body.data[1].email.should.equal('test1@test.com');
+              done();
+            })
+        });
+      });
     });
   })
 

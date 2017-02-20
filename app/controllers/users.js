@@ -17,7 +17,9 @@ module.exports = {
   },
 
   findAll(req, res, next) {
-    User.find({})
+    const authenticatedUser = req.user;
+    const query = authenticatedUser.admin ? {} : { _id: authenticatedUser._id }
+    User.find(query)
       .sort({ _createdAt: -1 })
       .skip(parseInt(req.query.skip))
       .limit(parseInt(req.query.limit ? req.query.limit : 100 + parseInt(req.query.skip)))
