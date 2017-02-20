@@ -858,20 +858,92 @@ describe('Users API', () => {
   })
 
   describe('DELETE /users/:id/admin', () => {
-    xit('successful with admin authentication', (done) => {
-      done();
+
+    let userAdmin, userNonAdmin;
+
+    beforeEach((done) => {
+      userAdmin = new User({
+        email: 'testA@test.com',
+        password: 'password',
+        name: 'Test A',
+        admin: true
+      });
+      userNonAdmin = new User({
+        email: 'testB@test.com',
+        password: 'password',
+        name: 'Test B',
+        admin: false
+      });
+      userAdmin.save(() => {
+        userNonAdmin.save(() => {
+          done();
+        })
+      })
     })
-    xit('returns a 401 status for unauthorized requests', (done) => {
-      done();
-    }),
-    xit('returns a 403 status for non-admin authenticated ids', (done) => {
-      done();
-    }),
-    xit('returns a 404 status for invalid ids', (done) => {
-      done();
+
+    it('successful with admin authentication', (done) => {
+      userNonAdmin.admin.should.be.false
+      chai.request(app)
+        .delete(`/users/${userAdmin._id}/admin`)
+        .set('authorization', tokenForUser(userAdmin))
+        .end((err, res) => {
+          res.should.have.status(204)
+          Object.keys(res.body).length.should.equal(0)
+          res.body.constructor.should.equal(Object)
+          User.findById(userNonAdmin._id)
+            .then((user) => {
+              user.admin.should.be.false
+              done()
+            })
+            .catch((err) => console.log(err))
+        })
     })
-    xit('returns a 404 status for non-existent ids', (done) => {
-      done();
+    it('returns a 401 status for unauthorized requests', (done) => {
+      chai.request(app)
+        .delete(`/users/${userAdmin._id}/admin`)
+        .end((err, res) => {
+          res.should.have.status(401)
+          res.should.be.json
+          res.body.status.should.equal('error')
+          res.body.message.should.be.equal('You are unauthorized to make this request.')
+          done();
+        })
+    }),
+    it('returns a 403 status for non-admin authenticated ids', (done) => {
+      chai.request(app)
+        .delete(`/users/${userAdmin._id}/admin`)
+        .set('authorization', tokenForUser(userNonAdmin))
+        .end((err, res) => {
+          res.should.have.status(403)
+          res.should.be.json
+          res.body.status.should.equal('error')
+          res.body.message.should.be.equal('You do not have sufficient permissions to execute this operation.')
+          done();
+        })
+    }),
+    it('returns a 404 status for invalid ids', (done) => {
+      chai.request(app)
+        .delete(`/users/invalid/admin`)
+        .set('authorization', tokenForUser(userNonAdmin))
+        .end((err, res) => {
+          res.should.have.status(404)
+          res.should.be.json
+          res.body.status.should.equal('error')
+          res.body.message.should.be.equal('The requested resource does not exist.')
+          done();
+        })
+    })
+    it('returns a 404 status for non-existent ids', (done) => {
+      chai.request(app)
+        .post(`/users/${mongoose.Types.ObjectId()}/admin`)
+        .set('authorization', tokenForUser(userNonAdmin))
+        .end((err, res) => {
+          res.should.have.status(404)
+          res.should.be.json
+          res.body.status.should.equal('error')
+          res.body.message.should.be.equal('The requested resource does not exist.')
+          done();
+        })
     })
   })
 

@@ -131,7 +131,7 @@ router.route('/users/:userId')
   .delete(requireAuth, restrictToSelf, UsersController.delete)
 router.route('/users/:userId/admin')
   .post(requireAuth, requireAdmin, UsersController.grantAdmin)
-  .delete(UsersController.revokeAdmin)
+  .delete(requireAuth, requireAdmin, UsersController.revokeAdmin)
 
 router.route('/projects')
   .get(requireAuth, ProjectsController.findAll)
