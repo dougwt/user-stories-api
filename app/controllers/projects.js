@@ -22,7 +22,9 @@ module.exports = {
   },
 
   findAll(req, res, next) {
-    Project.find({})
+    const authenticatedUser = req.user;
+    const query = authenticatedUser.admin ? {} : { owner: authenticatedUser._id }
+    Project.find(query)
       .sort({ _createdAt: -1 })
       .skip(parseInt(req.query.skip))
       .limit(parseInt(req.query.limit ? req.query.limit : 100 + parseInt(req.query.skip)))

@@ -265,6 +265,130 @@ describe('Projects API', () => {
         })
       })
     });
+    it('only shows an authed user their own projects', (done) => {
+      const userAdmin = new User({
+        email: 'test1@test.com',
+        password: 'password',
+        name: 'Test',
+        admin: true
+      });
+      const userNonAdmin = new User({
+        email: 'test2@test.com',
+        password: 'password',
+        name: 'Test'
+      });
+      const p1 = new Project({
+        name: 'Test 1',
+        slug: 'test-1',
+        owner: user
+      });
+      const p2 = new Project({
+        name: 'Test 2',
+        slug: 'test-2',
+        owner: userAdmin
+      });
+      const p3 = new Project({
+        name: 'Test 3',
+        slug: 'test-3',
+        owner: userNonAdmin
+      });
+      const p4 = new Project({
+        name: 'Test 4',
+        slug: 'test-4',
+        owner: userNonAdmin
+      });
+      const { users } = mongoose.connection.collections;
+      userAdmin.save(() => {
+        userNonAdmin.save(() => {
+          p1.save(() => {
+            p2.save(() => {
+              p3.save(() => {
+                p3.save(() => {
+                  p4.save(() => {
+                    chai.request(app)
+                      .get('/projects')
+                      .set('authorization', tokenForUser(userNonAdmin))
+                      .end((err, res) => {
+                        res.should.have.status(200);
+                        res.should.be.json;
+                        res.body.status.should.equal('success')
+                        res.body.data.should.be.a('array');
+                        res.body.data.length.should.be.equal(2);
+                        res.body.data[0].name.should.equal('Test 4');
+                        res.body.data[1].name.should.equal('Test 3');
+                        done();
+                      })
+                  })
+                })
+              })
+            })
+          })
+        })
+      })
+    });
+    it('shows an authed admin everyone\'s projects', (done) => {
+      const userAdmin = new User({
+        email: 'test1@test.com',
+        password: 'password',
+        name: 'Test',
+        admin: true
+      });
+      const userNonAdmin = new User({
+        email: 'test2@test.com',
+        password: 'password',
+        name: 'Test'
+      });
+      const p1 = new Project({
+        name: 'Test 1',
+        slug: 'test-1',
+        owner: user
+      });
+      const p2 = new Project({
+        name: 'Test 2',
+        slug: 'test-2',
+        owner: userAdmin
+      });
+      const p3 = new Project({
+        name: 'Test 3',
+        slug: 'test-3',
+        owner: userNonAdmin
+      });
+      const p4 = new Project({
+        name: 'Test 4',
+        slug: 'test-4',
+        owner: userNonAdmin
+      });
+      const { users } = mongoose.connection.collections;
+      userAdmin.save(() => {
+        userNonAdmin.save(() => {
+          p1.save(() => {
+            p2.save(() => {
+              p3.save(() => {
+                p3.save(() => {
+                  p4.save(() => {
+                    chai.request(app)
+                      .get('/projects')
+                      .set('authorization', tokenForUser(userAdmin))
+                      .end((err, res) => {
+                        res.should.have.status(200);
+                        res.should.be.json;
+                        res.body.status.should.equal('success')
+                        res.body.data.should.be.a('array');
+                        res.body.data.length.should.be.equal(4);
+                        res.body.data[0].name.should.equal('Test 4');
+                        res.body.data[1].name.should.equal('Test 3');
+                        res.body.data[2].name.should.equal('Test 2');
+                        res.body.data[3].name.should.equal('Test 1');
+                        done();
+                      })
+                  })
+                })
+              })
+            })
+          })
+        })
+      })
+    });
   })
 
   describe('POST /projects', () => {
