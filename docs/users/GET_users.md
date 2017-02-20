@@ -14,7 +14,7 @@ Returns a collection of the 100 most recently created Users.
 
 **Required**
 
-*   `authorization`: *a valid JSON Web Token authenticating an existing user with Administrator privileges*
+*   `authorization`: *a valid JSON Web Token authenticating an existing user*
 
 ## URL Params
 
@@ -68,18 +68,5 @@ Returns a collection of the 100 most recently created Users.
 {
   "status": "error",
   "message": "You are unauthorized to make this request."
-}
-```
-
-OR
-
-**Code:** `403 Forbidden`
-
-**Content:**
-
-```json
-{
-  "status": "error",
-  "message": "You do not have sufficient permissions to execute this operation."
 }
 ```

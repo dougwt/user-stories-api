@@ -45,16 +45,13 @@ To run the included tests:
 
 ### Users
 
-*   [GET users](docs/users/GET_users.md)
-*   [POST users](docs/users/POST_users.md)
+*   [GET users](docs/users/GET_users.md)†
+*   [POST users](docs/users/POST_users.md)‡
 *   [GET users/:id](docs/users/GET_users_id.md)†
 *   [PUT users/:id](docs/users/PUT_users_id.md)†
 *   [DELETE users/:id](docs/users/DELETE_users_id.md)†
-
-### Admin
-
-*   [POST users/:id/admin](docs/admin/POST_admin.md)
-*   [DELETE users/:id/admin](docs/admin/DELETE_admin.md)
+*   [POST users/:id/admin](docs/admin/POST_admin.md)‡
+*   [DELETE users/:id/admin](docs/admin/DELETE_admin.md)‡
 
 ### Projects
 
@@ -79,6 +76,8 @@ To run the included tests:
 *   [DELETE projects/:id/stories/:id](docs/stories/DELETE_stories_id.md)†
 
 †This protected route restricts access to resources owned by the authenticated user. Requests by non-administrators to resources owned by other users will result in a 401 Unauthorized error.
+
+‡This restricted route requires authentication with Administrator privileges.
 
 ## Software License
 

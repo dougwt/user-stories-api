@@ -7,16 +7,13 @@
 
 ## Users
 
-*   [GET users](users/GET_users.md)
-*   [POST users](users/POST_users.md)
+*   [GET users](users/GET_users.md)†
+*   [POST users](users/POST_users.md)‡
 *   [GET users/:id](users/GET_users_id.md)†
 *   [PUT users/:id](users/PUT_users_id.md)†
 *   [DELETE users/:id](users/DELETE_users_id.md)†
-
-## Admin
-
-*   [POST users/:id/admin](admin/POST_admin.md)
-*   [DELETE users/:id/admin](admin/DELETE_admin.md)
+*   [POST users/:id/admin](admin/POST_admin.md)‡
+*   [DELETE users/:id/admin](admin/DELETE_admin.md)‡
 
 ## Projects
 
@@ -41,3 +38,5 @@
 *   [DELETE projects/:id/stories/:id](stories/DELETE_stories_id.md)†
 
 †This protected route restricts access to resources owned by the authenticated user. Requests by non-administrators to resources owned by other users will result in a 401 Unauthorized error.
+
+‡This restricted route requires authentication with Administrator privileges.
