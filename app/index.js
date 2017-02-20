@@ -1,27 +1,28 @@
 import express from 'express'
-// import http from 'http'
 import bodyParser from 'body-parser'
 import morgan from 'morgan'
 import mongoose from 'mongoose'
 import cors from 'cors'
-import routes from './routes'
+import router from './router'
 import Response from './response'
 import { NODE_ENV, MONGODB_CONNECTION } from './config'
 
 const app = express();
 
 // DB setup
-mongoose.Promise = global.Promise;
+mongoose.Promise = global.Promise;          // Use ES6 Promise
 if (NODE_ENV !== 'test') {
   console.log(`Connecting to mongodb://${MONGODB_CONNECTION}`)
   mongoose.connect(`mongodb://${MONGODB_CONNECTION}`);
 };
 
 // App setup
-app.use(morgan('combined'))
-app.use(cors())
-app.use(bodyParser.json({ type: '*/*' }));
-app.use('/', routes);
+if (NODE_ENV !== 'test') {
+  app.use(morgan('combined'))               // Log incoming http requests
+}
+app.use(cors())                             // Enable CORS for all routes
+app.use(bodyParser.json({ type: '*/*' }));  // Parse all http requests as json
+app.use('/', router);                       // Load API router
 
 // Handle express errors
 app.get('*', (req, res, next) => {
@@ -47,5 +48,4 @@ app.use((err, req, res, next) => {
 
 });
 
-// module.exports = http.createServer(app)
 module.exports = app;

@@ -10,6 +10,12 @@ Returns a collection of the Project's 100 most recently created Roles.
 
 `GET`
 
+## Request Headers
+
+**Required**
+
+*   `authorization`: *a valid JSON Web Token authenticating an existing user*
+
 ## URL Params
 
 **Optional**
@@ -40,5 +46,31 @@ Returns a collection of the Project's 100 most recently created Roles.
       "name": "Developer"
     }
   ]
+}
+```
+
+## Error Response
+
+**Code:** `401 Unauthorized`
+
+**Content:**
+
+```json
+{
+  "status": "error",
+  "message": "You are unauthorized to make this request."
+}
+```
+
+OR
+
+**Code:** `403 Forbidden`
+
+**Content:**
+
+```json
+{
+  "status": "error",
+  "message": "You do not have sufficient permissions to execute this operation."
 }
 ```

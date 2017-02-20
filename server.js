@@ -1,8 +1,6 @@
 import app from './app'
+import { API_PORT } from './app/config'
 
-// Server setup
-export const port = process.env.API_PORT || 8080;
-
-app.listen(port, () => {
-  console.log(`API server listening on: ${port}`);
+app.listen(API_PORT, () => {
+  console.log(`API server listening on: ${API_PORT}`);
 });

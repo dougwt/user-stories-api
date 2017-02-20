@@ -10,6 +10,12 @@ Create a new Story for a Project, specified by the id parameter..
 
 `POST`
 
+## Request Headers
+
+**Required**
+
+*   `authorization`: *a valid JSON Web Token authenticating an existing user*
+
 ## Data Params
 
 **Required**
@@ -45,7 +51,7 @@ Create a new Story for a Project, specified by the id parameter..
 }
 ```
 
-## Error Response:
+## Error Response
 
 **Code:** `400 Bad Request`
 
@@ -68,5 +74,31 @@ OR
 {
   "status": "error",
   "message": "Benefit is required."
+}
+```
+
+OR
+
+**Code:** `401 Unauthorized`
+
+**Content:**
+
+```json
+{
+  "status": "error",
+  "message": "You are unauthorized to make this request."
+}
+```
+
+OR
+
+**Code:** `403 Forbidden`
+
+**Content:**
+
+```json
+{
+  "status": "error",
+  "message": "You do not have sufficient permissions to execute this operation."
 }
 ```

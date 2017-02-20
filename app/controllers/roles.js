@@ -42,8 +42,12 @@ module.exports = {
 
   create(req, res, next) {
     const projectId = req.params.projectId;
-    const roleProps = req.body;
-    const project = req['project']
+    const project = req['requestedProject']
+    const { _id, id, name } = req.body;
+
+    const roleProps = {};
+    if (_id || id) { return res.status(403).send(Response.error('This action is forbidden.')); }
+    if (name) { roleProps['name'] = name };
 
     project.roles.push(roleProps);
     project.save((err) => {
@@ -64,7 +68,11 @@ module.exports = {
   update(req, res, next) {
     const projectId = req.params.projectId;
     const roleId = req.params.roleId;
-    const roleProps = req.body;
+    const { _id, id, name } = req.body;
+
+    const roleProps = {};
+    if (_id || id) { return res.status(403).send(Response.error('This action is forbidden.')); }
+    if (name) { roleProps['name'] = name };
 
     if (roleProps.hasOwnProperty('_id')) {
       res.status(403).send(Response.error('This action is forbidden.'));
@@ -95,7 +103,7 @@ module.exports = {
     const projectId = req.params.projectId;
     const roleId = req.params.roleId;
 
-    const project = req['project']
+    const project = req['requestedProject']
     const role = project.roles.id(roleId)
 
     if (role === null) {

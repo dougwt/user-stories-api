@@ -23,5 +23,13 @@ module.exports = {
       status: 'error',
       message: message
     }
+  },
+
+  // The user has been successfully authenticated and will be returned a token
+  authenticated(token) {
+    return {
+      status: 'success',
+      token: token
+    }
   }
 };

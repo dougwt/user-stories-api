@@ -10,6 +10,12 @@ Returns a collection of the 100 most recently created Users.
 
 `GET`
 
+## Request Headers
+
+**Required**
+
+*   `authorization`: *a valid JSON Web Token authenticating an existing user*
+
 ## URL Params
 
 **Optional**
@@ -49,5 +55,18 @@ Returns a collection of the 100 most recently created Users.
       "name": "Grace Murray"
     }
   ]
+}
+```
+
+## Error Response
+
+**Code:** `401 Unauthorized`
+
+**Content:**
+
+```json
+{
+  "status": "error",
+  "message": "You are unauthorized to make this request."
 }
 ```

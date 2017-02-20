@@ -10,6 +10,12 @@ Update a single Project, specified by the id parameter. Only the parameters spec
 
 `PUT`
 
+## Request Headers
+
+**Required**
+
+*   `authorization`: *a valid JSON Web Token authenticating an existing user*
+
 ## Data Params
 
 **Optional**
@@ -24,7 +30,7 @@ Update a single Project, specified by the id parameter. Only the parameters spec
 
 **Code:** `204 No Content`
 
-## Error Response:
+## Error Response
 
 **Code:** `400 Bad Request`
 
@@ -39,6 +45,19 @@ Update a single Project, specified by the id parameter. Only the parameters spec
 
 OR
 
+**Code:** `401 Unauthorized`
+
+**Content:**
+
+```json
+{
+  "status": "error",
+  "message": "You are unauthorized to make this request."
+}
+```
+
+OR
+
 **Code:** `403 Forbidden`
 
 **Content:**
@@ -46,7 +65,7 @@ OR
 ```json
 {
   "status": "error",
-  "message": "This action is forbidden."
+  "message": "You do not have sufficient permissions to execute this operation."
 }
 ```
 

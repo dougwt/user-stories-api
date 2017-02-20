@@ -1,20 +1,14 @@
-# POST users
+# POST signin
 
-Create a new User.
+Create a new User and return an authentication token.
 
 ## Resource URL
 
-<https://api.mycodebytes.com/v1/users>
+<https://api.mycodebytes.com/v1/signup>
 
 ## Method
 
 `POST`
-
-## Request Headers
-
-**Required**
-
-*   `authorization`: *a valid JSON Web Token authenticating an existing user with Administrator privileges*
 
 ## Data Params
 
@@ -33,17 +27,11 @@ Create a new User.
 ```json
 {
   "status": "success",
-  "data": {
-    "_id": "588b0b53bcb4baeeeff2d1da",
-    "_createdAt": "2017-01-27T08:56:52.013Z",
-    "_updatedAt": "2017-01-27T08:56:52.013Z",
-    "email": "grace@example.com",
-    "name": "Grace Murray"
-  }
+  "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1OGEwMDU3OTRkYjczMzE2NjcxYjdiMTAiLCJpYXQiOjE0ODY5NDE3NTIxNzh9.XIrVFzi0QiWT3DkIzkpeFFrEYRXsJVkXW9GCYrrvpYY"
 }
 ```
 
-## Error Response
+## Error Response:
 
 **Code:** `400 Bad Request`
 
@@ -53,19 +41,6 @@ Create a new User.
 {
   "status": "error",
   "message": "Email is required."
-}
-```
-
-OR
-
-**Code:** `400 Bad Request`
-
-**Content:**
-
-```json
-{
-  "status": "error",
-  "message": "Name is required."
 }
 ```
 
@@ -91,33 +66,33 @@ OR
 ```json
 {
   "status": "error",
+  "message": "Name is required."
+}
+```
+
+OR
+
+**Code:** `400 Bad Request`
+
+**Content:**
+
+```json
+{
+  "status": "error",
   "message": "Email is invalid."
 }
 ```
 
 OR
 
-**Code:** `401 Unauthorized`
+**Code:** `400 Bad Request`
 
 **Content:**
 
 ```json
 {
   "status": "error",
-  "message": "You are unauthorized to make this request."
-}
-```
-
-OR
-
-**Code:** `403 Forbidden`
-
-**Content:**
-
-```json
-{
-  "status": "error",
-  "message": "You do not have sufficient permissions to execute this operation."
+  "message": "Password is invalid."
 }
 ```
 

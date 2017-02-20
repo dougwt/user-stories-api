@@ -3,11 +3,24 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const should = chai.should();
 const app = require('../../app');
+const User = mongoose.model('user');
 const Project = mongoose.model('project');
+import { tokenForUser } from '../../app/controllers/authentication'
 
 chai.use(chaiHttp)
 
 describe('Roles API', () => {
+
+  let user;
+
+  beforeEach((done) => {
+    user = new User({
+      email: 'test@test.com',
+      password: 'password',
+      name: 'Test'
+    });
+    user.save(() => { done(); })
+  })
 
   //////////////////////////////////////////////////////////
   //  /projects/:id/roles
@@ -18,11 +31,13 @@ describe('Roles API', () => {
       const project = new Project({
         name: 'Test Project',
         slug: 'test-project',
-        roles: [{ name: 'Test' }]
+        roles: [{ name: 'Test' }],
+        owner: user
       });
       project.save().then(() => {
         chai.request(app)
           .get(`/projects/${project._id}/roles`)
+          .set('authorization', tokenForUser(user))
           .end((err, res) => {
             res.should.have.status(200);
             res.should.be.json;
@@ -40,7 +55,8 @@ describe('Roles API', () => {
       const project = new Project({
         name: 'Test Project',
         slug: 'test-project',
-        roles: [{ name: 'Test 1' }]
+        roles: [{ name: 'Test 1' }],
+        owner: user
       });
       const r2 = { name: 'Test 2' };
       const r3 = { name: 'Test 3' };
@@ -51,6 +67,7 @@ describe('Roles API', () => {
           project.save().then(() => {
             chai.request(app)
               .get(`/projects/${project._id}/roles`)
+              .set('authorization', tokenForUser(user))
               .end((err, res) => {
                 res.should.have.status(200);
                 res.should.be.json;
@@ -72,11 +89,13 @@ describe('Roles API', () => {
       const project = new Project({
         name: 'Test Project',
         slug: 'test-project',
-        roles: []
+        roles: [],
+        owner: user
       });
       project.save().then(() => {
         chai.request(app)
           .get(`/projects/${project._id}/roles`)
+          .set('authorization', tokenForUser(user))
           .end((err, res) => {
             project.roles.length.should.be.equal(0)
             res.should.have.status(200);
@@ -92,7 +111,8 @@ describe('Roles API', () => {
       const p1 = new Project({
         name: 'Test Project',
         slug: 'test-project',
-        roles: [{ name: 'Test 1' }]
+        roles: [{ name: 'Test 1' }],
+        owner: user
       });
       const r2 = { name: 'Test 2' };
       const r3 = { name: 'Test 3' };
@@ -107,6 +127,7 @@ describe('Roles API', () => {
             p1.save(() => {
               chai.request(app)
                 .get(`/projects/${p1._id}/roles?skip=2`)
+                .set('authorization', tokenForUser(user))
                 .end((err, res) => {
                   res.should.have.status(200);
                   res.should.be.json;
@@ -126,7 +147,8 @@ describe('Roles API', () => {
       const p1 = new Project({
         name: 'Test Project',
         slug: 'test-project',
-        roles: [{ name: 'Test 1' }]
+        roles: [{ name: 'Test 1' }],
+        owner: user
       });
       const r2 = { name: 'Test 2' };
       const r3 = { name: 'Test 3' };
@@ -141,6 +163,7 @@ describe('Roles API', () => {
             p1.save(() => {
               chai.request(app)
                 .get(`/projects/${p1._id}/roles?limit=3`)
+                .set('authorization', tokenForUser(user))
                 .end((err, res) => {
                   res.should.have.status(200);
                   res.should.be.json;
@@ -161,7 +184,8 @@ describe('Roles API', () => {
       const p1 = new Project({
         name: 'Test Project',
         slug: 'test-project',
-        roles: [{ name: 'Test 1' }]
+        roles: [{ name: 'Test 1' }],
+        owner: user
       });
       const r2 = { name: 'Test 2' };
       const r3 = { name: 'Test 3' };
@@ -176,6 +200,7 @@ describe('Roles API', () => {
             p1.save(() => {
               chai.request(app)
                 .get(`/projects/${p1._id}/roles?skip=1&limit=2`)
+                .set('authorization', tokenForUser(user))
                 .end((err, res) => {
                   res.should.have.status(200);
                   res.should.be.json;
@@ -191,6 +216,52 @@ describe('Roles API', () => {
         })
       })
     });
+    it('returns a 401 status for unauthorized requests', (done) => {
+      const project = new Project({
+        name: 'Test Project',
+        slug: 'test-project',
+        roles: [{ name: 'Test' }],
+        owner: user
+      });
+      project.save().then(() => {
+        chai.request(app)
+          .get(`/projects/${project._id}/roles`)
+          .end((err, res) => {
+            res.should.have.status(401)
+            res.should.be.json
+            res.body.status.should.equal('error')
+            res.body.message.should.be.equal('You are unauthorized to make this request.')
+            done();
+          })
+      });
+    });
+    it('returns a 403 status for restricted ids', (done) => {
+      const u2 = new User({
+        email: 'test2@test.com',
+        password: 'password',
+        name: 'Test 2'
+      });
+      const project = new Project({
+        name: 'Test Project',
+        slug: 'test-project',
+        roles: [{ name: 'Test' }],
+        owner: user
+      });
+      u2.save(() => {
+        project.save(() => {
+          chai.request(app)
+            .get(`/projects/${project._id}/roles`)
+            .set('authorization', tokenForUser(u2))
+            .end((err, res) => {
+              res.should.have.status(403)
+              res.should.be.json
+              res.body.status.should.equal('error')
+              res.body.message.should.be.equal('You do not have sufficient permissions to execute this operation.')
+              done()
+            });
+        })
+      });
+    });
   })
 
   describe('POST /projects/:id/roles', () => {
@@ -200,7 +271,8 @@ describe('Roles API', () => {
       p1 = new Project({
         name: 'Test Project',
         slug: 'test-project',
-        roles: []
+        roles: [],
+        owner: user
       });
       p1.save().then(() => {
         done()
@@ -212,6 +284,7 @@ describe('Roles API', () => {
       chai.request(app)
         .post(`/projects/${p1._id}/roles`)
         .send({ name: 'Test', slug: 'test' })
+        .set('authorization', tokenForUser(user))
         .end((err, res) => {
           Project.findById(p1.id).then(project => {
             const newCount = project.roles.length
@@ -225,10 +298,11 @@ describe('Roles API', () => {
           });
         });
     });
-    it('returns an error when a name is not provided', (done) => {
+    it('returns a 400 status when a name is not provided', (done) => {
       chai.request(app)
         .post(`/projects/${p1._id}/roles`)
         .send({ slug: 'test' })
+        .set('authorization', tokenForUser(user))
         .end((err, res) => {
           res.should.have.status(400);
           res.should.be.json;
@@ -237,10 +311,43 @@ describe('Roles API', () => {
           done();
         });
     });
+    it('returns a 401 status for unauthorized requests', (done) => {
+      chai.request(app)
+        .post(`/projects/${p1._id}/roles`)
+        .send({ slug: 'test' })
+        .end((err, res) => {
+          res.should.have.status(401);
+          res.should.be.json;
+          res.body.status.should.equal('error');
+          res.body.message.should.be.equal('You are unauthorized to make this request.')
+          done();
+        });
+    });
+    it('returns a 403 status for restricted ids', (done) => {
+      const u2 = new User({
+        email: 'test2@test.com',
+        password: 'password',
+        name: 'Test 2'
+      });
+      u2.save(() => {
+        chai.request(app)
+          .post(`/projects/${p1._id}/roles`)
+          .send({ slug: 'test' })
+          .set('authorization', tokenForUser(u2))
+          .end((err, res) => {
+            res.should.have.status(403)
+            res.should.be.json
+            res.body.status.should.equal('error')
+            res.body.message.should.be.equal('You do not have sufficient permissions to execute this operation.')
+            done()
+          });
+      });
+    });
     it('automatically assigns a creation_date', (done) => {
       chai.request(app)
         .post(`/projects/${p1._id}/roles`)
         .send({ name: 'Test', slug: 'test' })
+        .set('authorization', tokenForUser(user))
         .end((err, res) => {
           res.should.be.json;
           res.body.status.should.equal('success')
@@ -261,17 +368,20 @@ describe('Roles API', () => {
       p1 = new Project({
         name: 'Test Project',
         slug: 'test-project',
-        roles: [{ name: 'Test 1' }]
+        roles: [{ name: 'Test 1' }],
+        owner: user
       });
       p2 = new Project({
         name: 'Test Project B',
         slug: 'test-project-b',
-        roles: [{ name: 'Test  A' }, {name: 'Test B'}]
+        roles: [{ name: 'Test  A' }, {name: 'Test B'}],
+        owner: user
       });
       p3 = new Project({
         name: 'Test Project C',
         slug: 'test-project-c',
-        roles: [{ name: 'Test  7' }, {name: 'Test X'}]
+        roles: [{ name: 'Test  7' }, {name: 'Test X'}],
+        owner: user
       });
       p1.save(() => {
         p2.save(() => {
@@ -286,6 +396,7 @@ describe('Roles API', () => {
       chai.request(app)
         .put(`/projects/${p1._id}/roles/${p1.roles[0]._id}`)
         .send({ name: 'Test 2' })
+        .set('authorization', tokenForUser(user))
         .end((err, res) => {
           res.should.have.status(204)
           res.headers.should.have.property('location')
@@ -306,6 +417,7 @@ describe('Roles API', () => {
       chai.request(app)
         .put(`/projects/${p1._id}/roles/${p1.roles[0]._id}`)
         .send({ _id: mongoose.Types.ObjectId() })
+        .set('authorization', tokenForUser(user))
         .end((err, res) => {
           res.should.have.status(403)
           res.should.be.json
@@ -314,7 +426,39 @@ describe('Roles API', () => {
           done()
         })
     });
-    it('returns an error for invalid ids', (done) => {
+    it('returns a 401 status for unauthorized requests', (done) => {
+      chai.request(app)
+        .put(`/projects/${p1._id}/roles/${p1.roles[0]._id}`)
+        .send({ name: 'Test 2' })
+        .end((err, res) => {
+          res.should.have.status(401)
+          res.should.be.json
+          res.body.status.should.equal('error')
+          res.body.message.should.be.equal('You are unauthorized to make this request.')
+          done()
+        })
+    });
+    it('returns a 403 status for restricted ids', (done) => {
+      const u2 = new User({
+        email: 'test2@test.com',
+        password: 'password',
+        name: 'Test 2'
+      });
+      u2.save(() => {
+        chai.request(app)
+          .put(`/projects/${p1._id}/roles/${p1.roles[0]._id}`)
+          .send({ name: 'Test 2' })
+          .set('authorization', tokenForUser(u2))
+          .end((err, res) => {
+            res.should.have.status(403)
+            res.should.be.json
+            res.body.status.should.equal('error')
+            res.body.message.should.be.equal('You do not have sufficient permissions to execute this operation.')
+            done()
+          });
+      });
+    });
+    it('returns a 404 status for invalid ids', (done) => {
       chai.request(app)
         .put(`/projects/${p1._id}/roles/invalid`)
         .end((err, res) => {
@@ -325,9 +469,10 @@ describe('Roles API', () => {
           done()
         })
     });
-    it('returns an error for non-existent ids', (done) => {
+    it('returns a 404 status for non-existent ids', (done) => {
       chai.request(app)
         .put(`/projects/${p1._id}/roles/${mongoose.Types.ObjectId()}`)
+        .set('authorization', tokenForUser(user))
         .end((err, res) => {
           res.should.have.status(404)
           res.should.be.json
@@ -347,17 +492,20 @@ describe('Roles API', () => {
       p1 = new Project({
         name: 'Test Project',
         slug: 'test-project',
-        roles: [{ name: 'Test 1' }]
+        roles: [{ name: 'Test 1' }],
+        owner: user
       });
       p2 = new Project({
         name: 'Test Project B',
         slug: 'test-project-b',
-        roles: [{ name: 'Test  A' }, {name: 'Test B'}]
+        roles: [{ name: 'Test  A' }, {name: 'Test B'}],
+        owner: user
       });
       p3 = new Project({
         name: 'Test Project C',
         slug: 'test-project-c',
-        roles: [{ name: 'Test  7' }, {name: 'Test X'}]
+        roles: [{ name: 'Test  7' }, {name: 'Test X'}],
+        owner: user
       });
       p1.save(() => {
         p2.save(() => {
@@ -373,6 +521,7 @@ describe('Roles API', () => {
     it('deletes a SINGLE role', (done) => {
       chai.request(app)
         .delete(`/projects/${projectId}/roles/${roleId}`)
+        .set('authorization', tokenForUser(user))
         .end((err, res) => {
           res.should.have.status(204)
           Object.keys(res.body).length.should.equal(0)
@@ -384,7 +533,37 @@ describe('Roles API', () => {
             })
         })
     });
-    it('returns an error for invalid ids', (done) => {
+    it('returns a 401 status for unauthorized requests', (done) => {
+      chai.request(app)
+        .delete(`/projects/${projectId}/roles/${roleId}`)
+        .end((err, res) => {
+          res.should.have.status(401)
+          res.should.be.json
+          res.body.status.should.equal('error')
+          res.body.message.should.be.equal('You are unauthorized to make this request.')
+          done()
+        })
+    });
+    it('returns a 403 status for restricted ids', (done) => {
+      const u2 = new User({
+        email: 'test2@test.com',
+        password: 'password',
+        name: 'Test 2'
+      });
+      u2.save(() => {
+        chai.request(app)
+          .delete(`/projects/${projectId}/roles/${roleId}`)
+          .set('authorization', tokenForUser(u2))
+          .end((err, res) => {
+            res.should.have.status(403)
+            res.should.be.json
+            res.body.status.should.equal('error')
+            res.body.message.should.be.equal('You do not have sufficient permissions to execute this operation.')
+            done()
+          });
+      });
+    });
+    it('returns a 404 status for invalid ids', (done) => {
       chai.request(app)
         .delete(`/projects/${projectId}/roles/invalid`)
         .end((err, res) => {
@@ -395,9 +574,10 @@ describe('Roles API', () => {
           done()
         })
     });
-    it('returns an error for non-existent ids', (done) => {
+    it('returns a 404 status for non-existent ids', (done) => {
       chai.request(app)
         .delete(`/projects/${projectId}/roles/${mongoose.Types.ObjectId()}`)
+        .set('authorization', tokenForUser(user))
         .end((err, res) => {
           res.should.have.status(404)
           res.should.be.json

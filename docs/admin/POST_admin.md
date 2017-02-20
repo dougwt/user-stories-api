@@ -1,42 +1,24 @@
-# GET projects/:id
+# GET users/:id
 
-Returns a single Project, specified by the id parameter.
+Grant admin privileges to a single User, specified by the id parameter.
 
 ## Resource URL
 
-<https://api.mycodebytes.com/v1/projects/:id>
+<https://api.mycodebytes.com/v1/users/:id/admin>
 
 ## Method
 
-`GET`
+`POST`
 
 ## Request Headers
 
 **Required**
 
-*   `authorization`: *a valid JSON Web Token authenticating an existing user*
+*   `authorization`: *a valid JSON Web Token authenticating an existing user with Administrator privileges*
 
 ## Success Response
 
-**Code:** `200 OK`
-
-**Content:**
-
-```json
-{
-  "status": "success",
-  "data": {
-    "_id": "588bb00b627569fc58ed44b6",
-    "_createdAt": "2017-01-27T20:39:39.225Z",
-    "_updatedAt": "2017-01-27T20:39:39.225Z",
-    "name": "My Example",
-    "slug": "my-example-project",
-    "roles": [],
-    "stories": [],
-    "owner": null
-  }
-}
-```
+**Code:** `204 No Content`
 
 ## Error Response
 
