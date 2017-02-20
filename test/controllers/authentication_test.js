@@ -135,6 +135,47 @@ describe('Authentication API', () => {
           });
       });
     });
+    it('creates a non-admin user by default', (done) => {
+      chai.request(app)
+        .post('/signup')
+        .send({
+          email: 'test@example.com',
+          password: 'pa55w0rd',
+          name: 'Test User',
+        })
+        .end((err, res) => {
+          res.should.have.status(201);
+          res.should.be.json;
+          res.body.status.should.equal('success');
+          User.findOne({ email: 'test@example.com' })
+            .then((user) => {
+              user.admin.should.equal(false);
+              done();
+            })
+            .catch((err) => console.log(err))
+        });
+    });
+    it('creates a non-admin user even when passed admin prop', (done) => {
+      chai.request(app)
+        .post('/signup')
+        .send({
+          email: 'test@example.com',
+          password: 'pa55w0rd',
+          name: 'Test User',
+          admin: true
+        })
+        .end((err, res) => {
+          res.should.have.status(201);
+          res.should.be.json;
+          res.body.status.should.equal('success');
+          User.findOne({ email: 'test@example.com' })
+            .then((user) => {
+              user.admin.should.equal(false);
+              done();
+            })
+            .catch((err) => console.log(err))
+        });
+    });
     it('returns an error when an email is not provided ', (done) => {
       chai.request(app)
         .post('/signup')
