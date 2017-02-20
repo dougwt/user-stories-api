@@ -3,14 +3,18 @@ import Response from '../response'
 
 module.exports = {
 
+  // Find a single project [GET /projects/:projectId]
   findById(req, res, next) {
     const projectId = req.params.projectId;
 
     Project.findById(projectId)
       .then((project) => {
+        // If the requested project was found...
         if (project) {
+          // Return the project along with a success response.
           return res.status(200).send(Response.success(project))
         } else {
+          // Otherwise, send a Not Found error response.
           var err = new Error();
           err.status = 404;
           next(err);
@@ -21,7 +25,10 @@ module.exports = {
       });
   },
 
+  // Find all visible projects [GET /projects]
   findAll(req, res, next) {
+    // Unless the authenticated user has Admin privileges, filter
+    // the query results to only display projects owned by the auth'ed user.
     const authenticatedUser = req.user;
     const query = authenticatedUser.admin ? {} : { owner: authenticatedUser._id }
     Project.find(query)
@@ -32,9 +39,11 @@ module.exports = {
       .catch(next);
   },
 
+  // Create a new project [POST /projects]
   create(req, res, next) {
+    // Pull off only the specific props we expect the form to submit
+    // and build our own props obj to protect from malicious clients.
     const { _id, id, name, slug, roles, stories, owner } = req.body;
-
     const projectProps = {};
     if (_id || id) { return res.status(403).send(Response.error('This action is forbidden.')); }
     if (name) { projectProps['name'] = name };
@@ -43,6 +52,7 @@ module.exports = {
     if (stories) { projectProps['stories'] = stories };
     if (owner) { projectProps['owner'] = owner };
 
+    // Create the new project with our sanitized input.
     Project.create(projectProps)
       // TODO: replace hardcoded URI prefix
       .then((project) => res.location('https://api.mycodebytes.com/v1/projects/'+ project.id).status(201).send(Response.success(project)))
@@ -65,10 +75,12 @@ module.exports = {
       });
   },
 
+  // Update an existing project [PUT /projects/:projectId]
   update(req, res, next) {
     const projectId = req.params.projectId;
+    // Pull off only the specific props we expect the form to submit
+    // and build our own props obj to protect from malicious clients.
     const { _id, id, name, slug, roles, stories, owner } = req.body;
-
     const projectProps = {};
     if (_id || id) { return res.status(403).send(Response.error('This action is forbidden.')); }
     if (name) { projectProps['name'] = name };
@@ -77,12 +89,16 @@ module.exports = {
     if (stories) { projectProps['stories'] = stories };
     if (owner) { projectProps['owner'] = owner };
 
+    // Update the project with our sanitized input.
     Project.findByIdAndUpdate(projectId, projectProps, { runValidators: true, context: 'query' })
       .then((project) => {
+        // If the requested project was found...
         if (project) {
+          // Return the project along with a success response.
           // TODO: replace hardcoded URI prefix
           return res.location('https://api.mycodebytes.com/v1/projects/'+ project._id).status(204).send(Response.success(project))
         } else {
+          // Otherwise, send a Not Found error response.
           var err = new Error();
           err.status = 404;
           next(err);
@@ -103,14 +119,18 @@ module.exports = {
       });
   },
 
+  // Delete an existing project [DELETE /projects/:projectId]
   delete(req, res, next) {
     const projectId = req.params.projectId;
 
     Project.findByIdAndRemove(projectId)
       .then((project) => {
+        // If the requested project was found...
         if (project) {
+          // Send a success response with the project.
           return res.status(204).send(Response.success(project))
         } else {
+          // Otherwise, return a Not Found error response.
           var err = new Error();
           err.status = 404;
           next(err);
