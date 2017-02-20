@@ -19,11 +19,13 @@ describe('Users API', () => {
       const user = new User({
         email: 'test@test.com',
         password: 'password',
-        name: 'Test'
+        name: 'Test',
+        admin: true
       });
       user.save().then(() => {
         chai.request(app)
           .get('/users')
+          .set('authorization', tokenForUser(user))
           .end((err, res) => {
             res.should.have.status(200);
             res.should.be.json;
@@ -41,7 +43,8 @@ describe('Users API', () => {
       const u1 = new User({
         email: 'test1@test.com',
         password: 'password',
-        name: 'Test 1'
+        name: 'Test 1',
+        admin: true
       });
       const u2 = new User({
         email: 'test2@test.com',
@@ -60,6 +63,7 @@ describe('Users API', () => {
             u3.save(() => {
               chai.request(app)
                 .get('/users')
+                .set('authorization', tokenForUser(u1))
                 .end((err, res) => {
                   res.should.have.status(200);
                   res.should.be.json;
@@ -79,26 +83,12 @@ describe('Users API', () => {
         });
       });
     });
-    it('returns an empty list when the collection is empty', (done) => {
-      User.find({}).then((users) => {
-        chai.request(app)
-          .get('/users')
-          .end((err, res) => {
-            users.length.should.be.equal(0)
-            res.should.have.status(200);
-            res.should.be.json;
-            res.body.status.should.equal('success')
-            res.body.data.should.be.a('array');
-            res.body.data.length.should.equal(0);
-            done();
-          });
-      });
-    });
     it('supports use of only the skip param', (done) => {
       const u1 = new User({
         email: 'test1@test.com',
         password: 'password',
-        name: 'Test 1'
+        name: 'Test 1',
+        admin: true
       });
       const u2 = new User({
         email: 'test2@test.com',
@@ -124,6 +114,7 @@ describe('Users API', () => {
                 u4.save(() => {
                   chai.request(app)
                     .get('/users?skip=2')
+                    .set('authorization', tokenForUser(u1))
                     .end((err, res) => {
                       res.should.have.status(200);
                       res.should.be.json;
@@ -145,7 +136,8 @@ describe('Users API', () => {
       const u1 = new User({
         email: 'test1@test.com',
         password: 'password',
-        name: 'Test 1'
+        name: 'Test 1',
+        admin: true
       });
       const u2 = new User({
         email: 'test2@test.com',
@@ -171,6 +163,7 @@ describe('Users API', () => {
                 u4.save(() => {
                   chai.request(app)
                     .get('/users?limit=3')
+                    .set('authorization', tokenForUser(u1))
                     .end((err, res) => {
                       res.should.have.status(200);
                       res.should.be.json;
@@ -193,7 +186,8 @@ describe('Users API', () => {
       const u1 = new User({
         email: 'test1@test.com',
         password: 'password',
-        name: 'Test 1'
+        name: 'Test 1',
+        admin: true
       });
       const u2 = new User({
         email: 'test2@test.com',
@@ -219,6 +213,7 @@ describe('Users API', () => {
                 u4.save(() => {
                   chai.request(app)
                     .get('/users?skip=1&limit=2')
+                    .set('authorization', tokenForUser(u1))
                     .end((err, res) => {
                       res.should.have.status(200);
                       res.should.be.json;
@@ -235,6 +230,36 @@ describe('Users API', () => {
           })
         })
       });
+    });
+    it('returns a 401 status for unauthorized requests', (done) => {
+      chai.request(app)
+        .get('/users')
+        .end((err, res) => {
+          res.should.have.status(401)
+          res.should.be.json
+          res.body.status.should.equal('error')
+          res.body.message.should.be.equal('You are unauthorized to make this request.')
+          done();
+        })
+    });
+    it('returns a 403 status for non-admin authenticated ids', (done) => {
+      const user = new User({
+        email: 'test@test.com',
+        password: 'password',
+        name: 'Test'
+      });
+      user.save(() => {
+        chai.request(app)
+          .get('/users')
+          .set('authorization', tokenForUser(user))
+          .end((err, res) => {
+            res.should.have.status(403)
+            res.should.be.json
+            res.body.status.should.equal('error')
+            res.body.message.should.be.equal('You do not have sufficient permissions to execute this operation.')
+            done();
+          })
+      })
     });
   })
 
