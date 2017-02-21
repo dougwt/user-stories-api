@@ -1,5 +1,6 @@
-import Project from '../models/project';
+import Project from '../models/project'
 import Response from '../response'
+import { URI_PREFIX } from '../config'
 
 module.exports = {
 
@@ -54,8 +55,7 @@ module.exports = {
 
     // Create the new project with our sanitized input.
     Project.create(projectProps)
-      // TODO: replace hardcoded URI prefix
-      .then((project) => res.location('https://api.mycodebytes.com/v1/projects/'+ project.id).status(201).send(Response.success(project)))
+      .then((project) => res.location(`${URI_PREFIX}projects/${project._id}`).status(201).send(Response.success(project)))
       .catch((err) => {
         if (err.errors.name && err.errors.name.name === 'ValidatorError' && err.errors.name.message === 'Path `name` is required.') {
           res.status(400).send(Response.error('Name is required.'))
@@ -95,8 +95,7 @@ module.exports = {
         // If the requested project was found...
         if (project) {
           // Return the project along with a success response.
-          // TODO: replace hardcoded URI prefix
-          return res.location('https://api.mycodebytes.com/v1/projects/'+ project._id).status(204).send(Response.success(project))
+          return res.location(`${URI_PREFIX}projects/${project._id}`).status(204).send(Response.success(project))
         } else {
           // Otherwise, send a Not Found error response.
           var err = new Error();

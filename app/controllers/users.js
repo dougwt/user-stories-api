@@ -1,5 +1,6 @@
-import User from '../models/user';
+import User from '../models/user'
 import Response from '../response'
+import { URI_PREFIX } from '../config'
 
 // TODO: refactor to utils
 function isSet(value) {
@@ -54,8 +55,7 @@ module.exports = {
 
     // Create the new user with our sanitized input.
     User.create(userProps)
-      // TODO: replace hardcoded URI prefix
-      .then((user) => res.location('https://api.mycodebytes.com/v1/users/'+ user.id).status(201).send(Response.success(user)))
+      .then((user) => res.location(`${URI_PREFIX}users/${user.id}`).status(201).send(Response.success(user)))
       .catch((err) => {
         if (err.errors.email && err.errors.email.name === 'ValidatorError' && err.errors.email.message === 'Path `email` is required.') {
           res.status(400).send(Response.error('Email is required.'))
@@ -96,8 +96,7 @@ module.exports = {
         // If the requested user was found...
         if (user) {
           // Return the user along with a success response.
-          // TODO: replace hardcoded URI prefix
-          return res.location('https://api.mycodebytes.com/v1/users/'+ user._id).status(204).send(Response.success(user))
+          return res.location(`${URI_PREFIX}users/${user._id}`).status(204).send(Response.success(user))
         } else {
           // Otherwise, send a Not Found error response.
           var err = new Error();
