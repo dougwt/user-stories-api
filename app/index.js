@@ -1,5 +1,6 @@
 import express from 'express'
 import bodyParser from 'body-parser'
+import helmet from 'helmet'
 import morgan from 'morgan'
 import mongoose from 'mongoose'
 import cors from 'cors'
@@ -20,6 +21,7 @@ if (NODE_ENV !== 'test') {
 if (NODE_ENV !== 'test') {
   app.use(morgan('combined'))               // Log incoming http requests
 }
+app.use(helmet())                           // Secure w/ various HTTP headers
 app.use(cors())                             // Enable CORS for all routes
 app.use(bodyParser.json({ type: '*/*' }));  // Parse all http requests as json
 app.use('/', router);                       // Load API router
