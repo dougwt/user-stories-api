@@ -1,5 +1,6 @@
-import Project from '../models/project';
+import Project from '../models/project'
 import Response from '../response'
+import { URI_PREFIX } from '../config'
 
 // TODO: refactor to utils
 function renameNestedProps(roleProps, prefix) {
@@ -75,8 +76,7 @@ module.exports = {
           next(err);
         }
       } else {
-        // TODO: replace hardcoded URI prefix
-        return res.location('https://api.mycodebytes.com/v1/projects/'+ projectId).status(201).send(Response.success(project.stories));
+        return res.location(`${URI_PREFIX}projects/${projectId}`).status(201).send(Response.success(project.stories));
       }
     });
   },
@@ -109,8 +109,7 @@ module.exports = {
         // If the requested project was found...
         if (project) {
           // Return the project along with a success response.
-          // TODO: replace hardcoded URI prefix
-          return res.location('https://api.mycodebytes.com/v1/projects/'+ project._id).status(204).send(Response.success(project))
+          return res.location(`${URI_PREFIX}projects/${project._id}`).status(204).send(Response.success(project))
         }
         // Otherwise, send a Not Found error response.
         var err = new Error();

@@ -4,6 +4,10 @@ export const NODE_ENV = process.env.NODE_ENV || 'dev'
 
 export const API_PORT = process.env.API_PORT || 8080;
 
+// https://api.mycodebytes.com/v1/
+// http://localhost
+export const URI_PREFIX = process.env.API_PORT || 'http://localhost/'
+
 // MongoDB Connection String URI (excluding the 'mongodb://' prefix)
 // Reference: https://docs.mongodb.com/manual/reference/connection-string/
 export const MONGODB_CONNECTION = process.env.MONGODB_CONNECTION || 'localhost/user_stories';
