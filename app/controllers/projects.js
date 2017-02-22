@@ -44,14 +44,15 @@ module.exports = {
   create(req, res, next) {
     // Pull off only the specific props we expect the form to submit
     // and build our own props obj to protect from malicious clients.
-    const { _id, id, name, slug, roles, stories, owner } = req.body;
+    const { _id, id, name, slug, roles, stories } = req.body;
     const projectProps = {};
     if (_id || id) { return res.status(403).send(Response.error('This action is forbidden.')); }
     if (name) { projectProps['name'] = name };
     if (slug) { projectProps['slug'] = slug };
     if (roles) { projectProps['roles'] = roles };
     if (stories) { projectProps['stories'] = stories };
-    if (owner) { projectProps['owner'] = owner };
+    // Set the project owner to the authenticated user who made the request
+    projectProps['owner'] = req.user;
 
     // Create the new project with our sanitized input.
     Project.create(projectProps)

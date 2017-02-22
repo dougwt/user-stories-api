@@ -494,7 +494,22 @@ describe('Projects API', () => {
           });
       });
     });
-    it('converts a slug to lowercase', (done) => {
+    it('automatically sets the project owner to the authorized user', (done) => {
+      Project.count().then(count => {
+        chai.request(app)
+          .post('/projects')
+          .send({ name: 'Test', slug: 'test' })
+          .set('authorization', tokenForUser(user))
+          .end((err, res) => {
+            res.should.be.json;
+            res.body.should.have.property('data')
+            res.body.data.should.have.property('owner');
+            res.body.data.owner._id.should.equal(user.id);
+            done();
+          });
+      });
+    });
+    it('automatically converts a slug to lowercase', (done) => {
       chai.request(app)
         .post('/projects')
         .send({ name: 'TEST', slug: 'TEST' })

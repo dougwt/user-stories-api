@@ -4,7 +4,7 @@ module.exports = {
   success(data) {
     return {
       status: 'success',
-      data: data
+      data
     }
   },
 
@@ -13,7 +13,7 @@ module.exports = {
   fail(data) {
     return {
       status: 'fail',
-      data: data
+      data
     }
   },
 
@@ -21,7 +21,7 @@ module.exports = {
   error(message) {
     return {
       status: 'error',
-      message: message
+      message
     }
   },
 
@@ -29,7 +29,7 @@ module.exports = {
   authenticated(token) {
     return {
       status: 'success',
-      token: token
+      token
     }
   }
 };
