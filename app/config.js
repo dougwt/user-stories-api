@@ -6,7 +6,7 @@ export const API_PORT = process.env.API_PORT || 8080;
 
 // https://api.mycodebytes.com/v1/
 // http://localhost
-export const URI_PREFIX = process.env.API_PORT || 'http://localhost/'
+export const URI_PREFIX = process.env.URI_PREFIX || 'http://localhost/'
 
 // MongoDB Connection String URI (excluding the 'mongodb://' prefix)
 // Reference: https://docs.mongodb.com/manual/reference/connection-string/
