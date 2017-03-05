@@ -271,7 +271,7 @@ describe('Roles API', () => {
       p1 = new Project({
         name: 'Test Project',
         slug: 'test-project',
-        roles: [],
+        roles: [{ name: 'Duplicate' }],
         owner: user
       });
       p1.save().then(() => {
@@ -283,7 +283,7 @@ describe('Roles API', () => {
       const count = p1.roles.length;
       chai.request(app)
         .post(`/projects/${p1._id}/roles`)
-        .send({ name: 'Test', slug: 'test' })
+        .send({ name: 'Test' })
         .set('authorization', tokenForUser(user))
         .end((err, res) => {
           Project.findById(p1.id).then(project => {
@@ -301,7 +301,7 @@ describe('Roles API', () => {
     it('returns a 400 status when a name is not provided', (done) => {
       chai.request(app)
         .post(`/projects/${p1._id}/roles`)
-        .send({ slug: 'test' })
+        .send({ slug: 'random-obj-without-name-prop' })
         .set('authorization', tokenForUser(user))
         .end((err, res) => {
           res.should.have.status(400);
@@ -314,7 +314,7 @@ describe('Roles API', () => {
     it('returns a 401 status for unauthorized requests', (done) => {
       chai.request(app)
         .post(`/projects/${p1._id}/roles`)
-        .send({ slug: 'test' })
+        .send({ name: 'Test' })
         .end((err, res) => {
           res.should.have.status(401);
           res.should.be.json;
@@ -332,7 +332,7 @@ describe('Roles API', () => {
       u2.save(() => {
         chai.request(app)
           .post(`/projects/${p1._id}/roles`)
-          .send({ slug: 'test' })
+          .send({ name: 'Test' })
           .set('authorization', tokenForUser(u2))
           .end((err, res) => {
             res.should.have.status(403)
@@ -343,10 +343,23 @@ describe('Roles API', () => {
           });
       });
     });
+    it('returns a 409 status for duplicate role names', (done) => {
+      chai.request(app)
+        .post(`/projects/${p1._id}/roles`)
+        .send({ name: 'Duplicate' })
+        .set('authorization', tokenForUser(user))
+        .end((err, res) => {
+          res.should.have.status(409);
+          res.should.be.json;
+          res.body.status.should.equal('error');
+          res.body.message.should.be.equal('A role with this name already exists for this project.')
+          done();
+        });
+    });
     it('automatically assigns a creation_date', (done) => {
       chai.request(app)
         .post(`/projects/${p1._id}/roles`)
-        .send({ name: 'Test', slug: 'test' })
+        .send({ name: 'Test' })
         .set('authorization', tokenForUser(user))
         .end((err, res) => {
           res.should.be.json;
