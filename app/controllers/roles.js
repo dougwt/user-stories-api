@@ -55,13 +55,24 @@ module.exports = {
     const { _id, id, name } = req.body;
     const roleProps = {};
     if (_id || id) { return res.status(403).send(Response.error('This action is forbidden.')); }
-    if (name) { roleProps['name'] = name };
+    if (name) {
+      roleProps['name'] = name;
+    } else {
+      return res.status(400).send(Response.error('Name is required.'));
+    };
+
+    // Ensure a role with this same name
+    // doesn't already exist within this project.
+    if(project.roles.find(role => role.name === name)) {
+      return res.status(409).send(Response.error('A role with this name already exists for this project.'));
+    }
 
     // Create the new project role with our sanitized input.
     project.roles.push(roleProps);
     project.save((err) => {
       if (err) {
         if (err.errors['roles.0.name'] && err.errors['roles.0.name'].name && err.errors['roles.0.name'].name === 'ValidatorError' && err.errors['roles.0.name'].message === 'Path `name` is required.') {
+          // TODO: I don't think I need this? At very least, 0 should not be hardcoded.
           res.status(400).send(Response.error('Name is required.'))
           next();
         } else {

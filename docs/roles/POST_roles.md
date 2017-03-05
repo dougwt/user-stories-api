@@ -80,3 +80,16 @@ OR
   "message": "You do not have sufficient permissions to execute this operation."
 }
 ```
+
+OR
+
+**Code:** `409 Conflict`
+
+**Content:**
+
+```json
+{
+  "status": "error",
+  "message": "A role with this name already exists for this project."
+}
+```
